@@ -12,6 +12,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 /**
  * Handler untuk packet dari client
+ *
+ * ✅ FIXED: Tambah sync packet ke client setelah toggle
  */
 public class ServerPacketHandler {
 
@@ -29,9 +31,13 @@ public class ServerPacketHandler {
                         switch (packet.effectType()) {
                             case TOOLS -> {
                                 stateManager.setToolsEnabled(player.getUuid(), packet.enabled());
-                                EmeraldMod.LOGGER.info("Player {} toggled tools effect: {}",
+
+                                EmeraldMod.LOGGER.info("Player {} toggled tools effect: {} (SAVED)",
                                         player.getName().getString(),
                                         packet.enabled() ? "ON" : "OFF");
+
+                                // ✅ Sync state ke client
+                                sendSyncPacket(player, stateManager);
 
                                 // Hapus tool effects jika disabled
                                 if (!packet.enabled()) {
@@ -40,11 +46,15 @@ public class ServerPacketHandler {
                             }
                             case ARMOR -> {
                                 stateManager.setArmorEnabled(player.getUuid(), packet.enabled());
-                                EmeraldMod.LOGGER.info("Player {} toggled armor effect: {}",
+
+                                EmeraldMod.LOGGER.info("Player {} toggled armor effect: {} (SAVED)",
                                         player.getName().getString(),
                                         packet.enabled() ? "ON" : "OFF");
 
-                                // ⭐ IMPROVED: Jika enabled dan player punya Ruby Armor, hapus negative effects SEGERA
+                                // ✅ Sync state ke client
+                                sendSyncPacket(player, stateManager);
+
+                                // ✅ IMPROVED: Jika enabled dan player punya Ruby Armor, hapus negative effects SEGERA
                                 if (packet.enabled() && hasAnyRubyArmor(player)) {
                                     // Hapus negative effects 2x untuk memastikan benar-benar bersih
                                     removeAllNegativeEffects(player);
@@ -68,11 +78,39 @@ public class ServerPacketHandler {
                 }
         );
 
-        EmeraldMod.LOGGER.info("✓ Registered Server Packet Handlers");
+        EmeraldMod.LOGGER.info("✅ Registered Server Packet Handlers (with State Sync)");
     }
 
     /**
-     * ⭐ NEW METHOD: Check if player is wearing ANY Ruby armor piece
+     * ✅ NEW: Send sync packet ke client untuk update UI state
+     */
+    private static void sendSyncPacket(ServerPlayerEntity player, EffectStateManager stateManager) {
+        boolean toolsEnabled = stateManager.isToolsEnabled(player.getUuid());
+        boolean armorEnabled = stateManager.isArmorEnabled(player.getUuid());
+
+        ServerPlayNetworking.send(
+                player,
+                new EffectStateSyncPacket(toolsEnabled, armorEnabled)
+        );
+
+        EmeraldMod.LOGGER.debug("Synced state to client {}: Tools={}, Armor={}",
+                player.getName().getString(), toolsEnabled, armorEnabled);
+    }
+
+    /**
+     * ✅ NEW: Public method untuk send sync packet saat player join
+     */
+    public static void sendInitialSync(ServerPlayerEntity player, EffectStateManager stateManager) {
+        sendSyncPacket(player, stateManager);
+
+        EmeraldMod.LOGGER.info("Sent initial state sync to player {}: Tools={}, Armor={}",
+                player.getName().getString(),
+                stateManager.isToolsEnabled(player.getUuid()),
+                stateManager.isArmorEnabled(player.getUuid()));
+    }
+
+    /**
+     * ✅ NEW METHOD: Check if player is wearing ANY Ruby armor piece
      */
     private static boolean hasAnyRubyArmor(ServerPlayerEntity player) {
         ItemStack helmet = player.getEquippedStack(EquipmentSlot.HEAD);
@@ -87,7 +125,7 @@ public class ServerPacketHandler {
     }
 
     /**
-     * ⭐ IMPROVED METHOD: Remove semua negative effects dari player
+     * ✅ IMPROVED METHOD: Remove semua negative effects dari player
      * Hanya menghapus HARMFUL effects, membiarkan BENEFICIAL effects
      */
     private static void removeAllNegativeEffects(ServerPlayerEntity player) {

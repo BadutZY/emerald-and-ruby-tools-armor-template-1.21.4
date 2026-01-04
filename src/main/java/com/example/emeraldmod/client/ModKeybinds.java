@@ -1,5 +1,6 @@
 package com.example.emeraldmod.client;
 
+import com.example.emeraldmod.network.EffectStateSyncPacket;
 import com.example.emeraldmod.network.ToggleEffectPacket;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -11,6 +12,8 @@ import org.lwjgl.glfw.GLFW;
 
 /**
  * Keybind registration untuk toggle effect
+ *
+ * ✅ FIXED: Client-side state sync dengan server
  */
 public class ModKeybinds {
 
@@ -26,9 +29,9 @@ public class ModKeybinds {
     private static boolean toolsKeyWasPressed = false;
     private static boolean armorKeyWasPressed = false;
 
-    // Client-side state untuk display
-    private static boolean toolsEnabled = true;
-    private static boolean armorEnabled = true;
+    // ✅ Client-side state untuk display (synced dengan server)
+    private static boolean toolsEnabled = true;  // Default ON
+    private static boolean armorEnabled = true;  // Default ON
 
     public static void register() {
         // Register keybinds
@@ -46,6 +49,20 @@ public class ModKeybinds {
                 CATEGORY
         ));
 
+        // ✅ Register packet receiver untuk sync dari server
+        ClientPlayNetworking.registerGlobalReceiver(
+                EffectStateSyncPacket.ID,
+                (packet, context) -> {
+                    // Update client-side state dengan data dari server
+                    toolsEnabled = packet.toolsEnabled();
+                    armorEnabled = packet.armorEnabled();
+
+                    // Log untuk debugging
+                    System.out.println("[EmeraldMod Client] State synced from server: Tools=" +
+                            toolsEnabled + ", Armor=" + armorEnabled);
+                }
+        );
+
         // Register tick handler untuk detect key press
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             // Handle tools toggle
@@ -53,7 +70,7 @@ public class ModKeybinds {
                 if (!toolsKeyWasPressed) {
                     toolsKeyWasPressed = true;
 
-                    // Toggle state
+                    // Toggle state (optimistic update)
                     toolsEnabled = !toolsEnabled;
 
                     // Send packet ke server
@@ -81,7 +98,7 @@ public class ModKeybinds {
                 if (!armorKeyWasPressed) {
                     armorKeyWasPressed = true;
 
-                    // Toggle state
+                    // Toggle state (optimistic update)
                     armorEnabled = !armorEnabled;
 
                     // Send packet ke server
@@ -106,7 +123,7 @@ public class ModKeybinds {
         });
     }
 
-    // Getters untuk client-side display (optional)
+    // Getters untuk client-side display
     public static boolean isToolsEnabled() {
         return toolsEnabled;
     }
@@ -115,12 +132,20 @@ public class ModKeybinds {
         return armorEnabled;
     }
 
-    // Setters untuk sync dari server (optional)
+    // ✅ Setters untuk sync dari server (diupdate via packet)
     public static void setToolsEnabled(boolean enabled) {
         toolsEnabled = enabled;
     }
 
     public static void setArmorEnabled(boolean enabled) {
         armorEnabled = enabled;
+    }
+
+    // ✅ Reset state saat disconnect
+    public static void reset() {
+        toolsEnabled = true;
+        armorEnabled = true;
+        toolsKeyWasPressed = false;
+        armorKeyWasPressed = false;
     }
 }

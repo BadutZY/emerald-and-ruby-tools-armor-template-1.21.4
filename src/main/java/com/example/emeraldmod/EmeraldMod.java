@@ -6,8 +6,10 @@ import com.example.emeraldmod.effect.ModEffects;
 import com.example.emeraldmod.event.*;
 import com.example.emeraldmod.item.ModItemGroups;
 import com.example.emeraldmod.item.ModItems;
+import com.example.emeraldmod.network.EffectStateSyncPacket;
 import com.example.emeraldmod.network.ServerPacketHandler;
 import com.example.emeraldmod.network.ToggleEffectPacket;
+import com.example.emeraldmod.state.EffectStateManager;
 import com.example.emeraldmod.world.gen.InstantRetrofitSystem;
 import com.example.emeraldmod.world.gen.ModWorldGeneration;
 import com.example.emeraldmod.world.gen.OreRetrofitState;
@@ -25,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Main mod class untuk Emerald & Ruby Mod
- * ✨ COMPLETE VERSION dengan Resume Support
+ * ✅ COMPLETE VERSION dengan Resume Support dan State Sync
  */
 public class EmeraldMod implements ModInitializer {
     public static final String MOD_ID = "emeraldmod";
@@ -65,7 +67,17 @@ public class EmeraldMod implements ModInitializer {
         registerGameplayHandlers();
 
         // ============================================
-        // PHASE 6: FINALIZATION
+        // PHASE 6: PLAYER CONNECTION HANDLERS
+        // ============================================
+        registerPlayerConnectionHandlers();
+
+        // ============================================
+        // PHASE 7: SERVER LIFECYCLE HANDLERS
+        // ============================================
+        registerServerLifecycleHandlers();
+
+        // ============================================
+        // PHASE 8: FINALIZATION
         // ============================================
         logInitializationComplete();
     }
@@ -82,6 +94,14 @@ public class EmeraldMod implements ModInitializer {
             LOGGER.info("✅ Registered Toggle Effect Packet");
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Toggle Effect Packet already registered, skipping");
+        }
+
+        // ✅ NEW: Effect state sync packet
+        try {
+            EffectStateSyncPacket.register();
+            LOGGER.info("✅ Registered Effect State Sync Packet");
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Effect State Sync Packet already registered, skipping");
         }
 
         // Server packet handler
@@ -139,18 +159,12 @@ public class EmeraldMod implements ModInitializer {
     }
 
     /**
-     * 🔧 PHASE 4: Register retrofit system with SCANNING & RESUME
-     *
-     * Enhanced Flow:
-     * 1. Player joins → Check for resume OR start scanning
-     * 2. If can resume → Auto-resume from last checkpoint
-     * 3. If new world → Scan for ruby ores
-     * 4. Show appropriate screen based on state
+     * PHASE 4: Register retrofit system with SCANNING & RESUME
      */
     private void registerRetrofitSystem() {
         LOGGER.info("--- Phase 4: Retrofit System (With Scanning & Resume) ---");
 
-        // 🔧 Player disconnect event - CLEANUP STATE
+        // Player disconnect event - CLEANUP STATE
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             String playerName = handler.player.getName().getString();
             String worldName = server.getSaveProperties().getLevelName();
@@ -164,14 +178,14 @@ public class EmeraldMod implements ModInitializer {
             }
         });
 
-        // ✨ ENHANCED: Player join event - Check for RESUME or start scanning
+        // ENHANCED: Player join event - Check for RESUME or start scanning
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             String playerName = handler.player.getName().getString();
             String worldName = server.getSaveProperties().getLevelName();
 
             LOGGER.info("[Retrofit] Player {} joined world '{}'", playerName, worldName);
 
-            // ✨ NEW: Check if can resume retrofit
+            // NEW: Check if can resume retrofit
             ServerWorld overworld = server.getWorld(World.OVERWORLD);
             ServerWorld nether = server.getWorld(World.NETHER);
 
@@ -196,7 +210,7 @@ public class EmeraldMod implements ModInitializer {
                 }
             }
 
-            // 🔧 CHECK 1: Retrofit currently running
+            // CHECK 1: Retrofit currently running
             if (InstantRetrofitSystem.isRetrofitRunning(worldName)) {
                 LOGGER.info("[Retrofit] ⚡ World '{}' is currently retrofitting - showing loading screen", worldName);
 
@@ -215,7 +229,7 @@ public class EmeraldMod implements ModInitializer {
                 return; // Skip scanning and resume check
             }
 
-            // ✨ CHECK 2: Can resume? Auto-resume!
+            // CHECK 2: Can resume? Auto-resume!
             if (canResumeOverworld || canResumeNether) {
                 LOGGER.info("[Retrofit] 🔄 Auto-resuming retrofit for world '{}'", worldName);
 
@@ -241,7 +255,7 @@ public class EmeraldMod implements ModInitializer {
                 return; // Skip scanning - directly resume
             }
 
-            // 🔧 CHECK 3: Normal flow - start scanning
+            // CHECK 3: Normal flow - start scanning
             new Thread(() -> {
                 try {
                     Thread.sleep(1500);
@@ -286,7 +300,7 @@ public class EmeraldMod implements ModInitializer {
                 LOGGER.info("[Retrofit] ⏳ In progress for world '{}' ({} chunks done)",
                         worldName, state.getRetrofittedChunkCount());
 
-                // ✨ Log resume info
+                // Log resume info
                 if (state.canResume()) {
                     LOGGER.info("[Retrofit] 🔄 {}", state.getResumeInfo());
                 }
@@ -298,7 +312,7 @@ public class EmeraldMod implements ModInitializer {
             LOGGER.info("========================================");
         });
 
-        // 🔧 Server stopping event - CANCEL ALL RETROFITS
+        // Server stopping event - CANCEL ALL RETROFITS
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             String worldName = server.getSaveProperties().getLevelName();
 
@@ -309,6 +323,11 @@ public class EmeraldMod implements ModInitializer {
                 LOGGER.info("[Retrofit] Cancelling active retrofit for world '{}'", worldName);
                 InstantRetrofitSystem.cancelRetrofit(worldName);
             }
+
+            // ✅ NEW: Force save effect states
+            EffectStateManager stateManager = EffectStateManager.getServerState(server);
+            stateManager.forceSave();
+            LOGGER.info("[EffectState] Force saved all player states before shutdown");
         });
 
         // Register retrofit commands
@@ -322,7 +341,7 @@ public class EmeraldMod implements ModInitializer {
     }
 
     /**
-     * 🔧 Start scanning process dengan proper world checking
+     * Start scanning process dengan proper world checking
      */
     private void startScanningProcess(MinecraftServer server, ServerPlayerEntity player) {
         ServerWorld overworld = server.getWorld(World.OVERWORLD);
@@ -347,7 +366,7 @@ public class EmeraldMod implements ModInitializer {
             return;
         }
 
-        // 🔧 STEP 2: Check if retrofit currently running UNTUK WORLD INI
+        // CHECK 2: Check if retrofit currently running UNTUK WORLD INI
         boolean isThisWorldRetrofitting = InstantRetrofitSystem.isRetrofitRunning(worldName);
 
         if (isThisWorldRetrofitting) {
@@ -495,7 +514,65 @@ public class EmeraldMod implements ModInitializer {
     }
 
     /**
-     * PHASE 6: Log initialization complete with feature summary
+     * ✅ NEW PHASE 6: Register player connection handlers untuk state sync
+     */
+    private void registerPlayerConnectionHandlers() {
+        LOGGER.info("--- Phase 6: Player Connection Handlers ---");
+
+        // ✅ Player join - Send initial state sync
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            // Delay untuk memastikan client sudah ready
+            new Thread(() -> {
+                try {
+                    Thread.sleep(500); // 500ms delay
+
+                    server.execute(() -> {
+                        EffectStateManager stateManager = EffectStateManager.getServerState(server);
+                        ServerPacketHandler.sendInitialSync(handler.player, stateManager);
+
+                        LOGGER.info("[EffectState] Sent initial sync to player {}: Tools={}, Armor={}",
+                                handler.player.getName().getString(),
+                                stateManager.isToolsEnabled(handler.player.getUuid()),
+                                stateManager.isArmorEnabled(handler.player.getUuid()));
+                    });
+                } catch (InterruptedException e) {
+                    LOGGER.error("[EffectState] Interrupted during initial sync", e);
+                }
+            }, "StateSync-" + handler.player.getName().getString()).start();
+        });
+
+        LOGGER.info("✅ Player Connection Handlers (State Sync)");
+    }
+
+    /**
+     * ✅ NEW PHASE 7: Register server lifecycle handlers
+     */
+    private void registerServerLifecycleHandlers() {
+        LOGGER.info("--- Phase 7: Server Lifecycle Handlers ---");
+
+        // Force save states setiap 5 menit (auto-save)
+        ServerTickEvents.END_SERVER_TICK.register(new Object() {
+            private int tickCounter = 0;
+            private static final int SAVE_INTERVAL = 20 * 60 * 5; // 5 minutes
+
+            public void onServerTick(MinecraftServer server) {
+                tickCounter++;
+                if (tickCounter >= SAVE_INTERVAL) {
+                    tickCounter = 0;
+
+                    EffectStateManager stateManager = EffectStateManager.getServerState(server);
+                    stateManager.forceSave();
+
+                    LOGGER.debug("[EffectState] Auto-saved player states (5min interval)");
+                }
+            }
+        }::onServerTick);
+
+        LOGGER.info("✅ Server Lifecycle Handlers (Auto-save)");
+    }
+
+    /**
+     * PHASE 8: Log initialization complete with feature summary
      */
     private void logInitializationComplete() {
         LOGGER.info("========================================");
@@ -519,6 +596,15 @@ public class EmeraldMod implements ModInitializer {
         LOGGER.info("  - Attack Damage: 6.0 (Strongest)");
         LOGGER.info("  - Enchantability: 15 (Best)");
         LOGGER.info("  - Toughness: 6.0 (Highest)");
+        LOGGER.info("");
+
+        // ✅ NEW: State management info
+        LOGGER.info("💾 STATE MANAGEMENT:");
+        LOGGER.info("  - ✅ Effect states saved per-player");
+        LOGGER.info("  - ✅ Auto-sync on player join");
+        LOGGER.info("  - ✅ Persistent across sessions");
+        LOGGER.info("  - ✅ Auto-save every 5 minutes");
+        LOGGER.info("  - ✅ Force save on server shutdown");
         LOGGER.info("");
 
         // Scanning & Retrofit system

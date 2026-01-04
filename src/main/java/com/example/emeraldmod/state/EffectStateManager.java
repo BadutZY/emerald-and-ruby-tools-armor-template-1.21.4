@@ -15,6 +15,8 @@ import java.util.UUID;
 /**
  * Manager untuk menyimpan state effect (on/off) per player
  * Data disimpan per-world untuk persistence
+ *
+ * ✅ FIXED: Proper saving/loading dengan markDirty() setiap perubahan
  */
 public class EffectStateManager extends PersistentState {
 
@@ -47,12 +49,13 @@ public class EffectStateManager extends PersistentState {
     }
 
     /**
-     * Create dari NBT
+     * Create dari NBT (loading dari disk)
      */
     public static EffectStateManager createFromNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         EffectStateManager manager = new EffectStateManager();
 
         NbtCompound statesNbt = nbt.getCompound("PlayerStates");
+
         for (String uuidString : statesNbt.getKeys()) {
             try {
                 UUID uuid = UUID.fromString(uuidString);
@@ -62,14 +65,22 @@ public class EffectStateManager extends PersistentState {
                 boolean armorEnabled = playerNbt.getBoolean("ArmorEnabled");
 
                 manager.playerStates.put(uuid, new PlayerEffectState(toolsEnabled, armorEnabled));
+
+                EmeraldMod.LOGGER.info("Loaded effect state for player {}: Tools={}, Armor={}",
+                        uuidString.substring(0, 8), toolsEnabled, armorEnabled);
             } catch (IllegalArgumentException e) {
                 EmeraldMod.LOGGER.warn("Invalid UUID in effect state: {}", uuidString);
             }
         }
 
+        EmeraldMod.LOGGER.info("Loaded {} player effect states from disk", manager.playerStates.size());
+
         return manager;
     }
 
+    /**
+     * Save ke NBT (saving ke disk)
+     */
     @Override
     public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         NbtCompound statesNbt = new NbtCompound();
@@ -83,14 +94,29 @@ public class EffectStateManager extends PersistentState {
         }
 
         nbt.put("PlayerStates", statesNbt);
+
+        EmeraldMod.LOGGER.debug("Saved {} player effect states to disk", playerStates.size());
+
         return nbt;
     }
 
     /**
-     * Get player effect state (default: enabled)
+     * Get player effect state (default: enabled untuk player baru)
      */
     public PlayerEffectState getPlayerState(UUID playerUuid) {
-        return playerStates.getOrDefault(playerUuid, new PlayerEffectState(true, true));
+        PlayerEffectState state = playerStates.get(playerUuid);
+
+        if (state == null) {
+            // Default state untuk player baru
+            state = new PlayerEffectState(true, true);
+            playerStates.put(playerUuid, state);
+            markDirty(); // Save default state
+
+            EmeraldMod.LOGGER.info("Created new effect state for player {}: Tools=ON, Armor=ON (default)",
+                    playerUuid.toString().substring(0, 8));
+        }
+
+        return state;
     }
 
     /**
@@ -98,10 +124,13 @@ public class EffectStateManager extends PersistentState {
      */
     public void setToolsEnabled(UUID playerUuid, boolean enabled) {
         PlayerEffectState current = getPlayerState(playerUuid);
-        playerStates.put(playerUuid, new PlayerEffectState(enabled, current.armorEnabled()));
-        markDirty();
+        PlayerEffectState newState = new PlayerEffectState(enabled, current.armorEnabled());
 
-        EmeraldMod.LOGGER.info("Player {} tools effect: {}", playerUuid, enabled ? "ON" : "OFF");
+        playerStates.put(playerUuid, newState);
+        markDirty(); // ✅ IMPORTANT: Mark dirty untuk trigger save
+
+        EmeraldMod.LOGGER.info("Player {} tools effect: {} -> SAVED",
+                playerUuid.toString().substring(0, 8), enabled ? "ON" : "OFF");
     }
 
     /**
@@ -109,10 +138,13 @@ public class EffectStateManager extends PersistentState {
      */
     public void setArmorEnabled(UUID playerUuid, boolean enabled) {
         PlayerEffectState current = getPlayerState(playerUuid);
-        playerStates.put(playerUuid, new PlayerEffectState(current.toolsEnabled(), enabled));
-        markDirty();
+        PlayerEffectState newState = new PlayerEffectState(current.toolsEnabled(), enabled);
 
-        EmeraldMod.LOGGER.info("Player {} armor effect: {}", playerUuid, enabled ? "ON" : "OFF");
+        playerStates.put(playerUuid, newState);
+        markDirty(); // ✅ IMPORTANT: Mark dirty untuk trigger save
+
+        EmeraldMod.LOGGER.info("Player {} armor effect: {} -> SAVED",
+                playerUuid.toString().substring(0, 8), enabled ? "ON" : "OFF");
     }
 
     /**
@@ -147,6 +179,14 @@ public class EffectStateManager extends PersistentState {
      */
     public boolean isArmorEnabled(UUID playerUuid) {
         return getPlayerState(playerUuid).armorEnabled();
+    }
+
+    /**
+     * Force save state (dipanggil saat server stopping)
+     */
+    public void forceSave() {
+        markDirty();
+        EmeraldMod.LOGGER.info("Force saved all effect states ({} players)", playerStates.size());
     }
 
     /**

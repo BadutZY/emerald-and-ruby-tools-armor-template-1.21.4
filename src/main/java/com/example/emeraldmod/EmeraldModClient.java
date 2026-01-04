@@ -8,7 +8,7 @@ import net.minecraft.client.MinecraftClient;
 
 /**
  * Client-side initialization for Emerald & Ruby Mod
- * FIXED: Proper cleanup ketika disconnect dan world change
+ * ✅ FIXED: Proper cleanup ketika disconnect dan world change + State reset
  */
 public class EmeraldModClient implements ClientModInitializer {
 
@@ -64,7 +64,7 @@ public class EmeraldModClient implements ClientModInitializer {
 
         // Toggle keybinds (V for tools, B for armor)
         ModKeybinds.register();
-        EmeraldMod.LOGGER.info("✅ Toggle Keybinds (V, B)");
+        EmeraldMod.LOGGER.info("✅ Toggle Keybinds (V, B) with State Sync");
 
         // Retrofit keybinds (M for maximize, N for generate now)
         RetrofitKeybind.register();
@@ -115,7 +115,7 @@ public class EmeraldModClient implements ClientModInitializer {
 
     /**
      * PHASE 5: Register world tracking
-     * 🔧 FIXED: Proper cleanup ketika disconnect dan world change
+     * ✅ FIXED: Proper cleanup ketika disconnect dan world change + State reset
      */
     private void registerWorldTracking() {
         EmeraldMod.LOGGER.info("--- Phase 5: World Tracking ---");
@@ -129,15 +129,19 @@ public class EmeraldModClient implements ClientModInitializer {
                 EmeraldMod.LOGGER.info("[Client] Joining world: {}", worldName);
                 EmeraldMod.LOGGER.info("[Client] ========================================");
 
-                // 🔧 FIX: Reset SEMUA UI sebelum update world
+                // Reset SEMUA UI sebelum update world
                 hideAllUI();
 
                 // Update current world
                 ClientWorldTracker.updateCurrentWorld(worldName);
+
+                // ✅ IMPORTANT: State akan di-sync dari server via packet
+                // Client tidak perlu reset state di sini karena server akan send sync packet
+                EmeraldMod.LOGGER.info("[Client] Waiting for effect state sync from server...");
             }
         });
 
-        // 🔧 FIX: Track ketika disconnect - CLEANUP SEMUA
+        // ✅ FIXED: Track ketika disconnect - CLEANUP SEMUA + RESET STATE
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             String previousWorld = ClientWorldTracker.getCurrentWorldName();
 
@@ -151,10 +155,13 @@ public class EmeraldModClient implements ClientModInitializer {
             // Reset world tracker
             ClientWorldTracker.reset();
 
-            EmeraldMod.LOGGER.info("[Client] ✅ All UI hidden and state reset");
+            // ✅ NEW: Reset keybind state ke default
+            ModKeybinds.reset();
+
+            EmeraldMod.LOGGER.info("[Client] ✅ All UI hidden, state reset, and keybinds reset to default");
         });
 
-        // 🔧 FIX: Track setiap tick untuk detect world changes
+        // Track setiap tick untuk detect world changes
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.getServer() != null) {
                 String currentWorld = client.getServer().getSaveProperties().getLevelName();
@@ -166,22 +173,25 @@ public class EmeraldModClient implements ClientModInitializer {
                     EmeraldMod.LOGGER.info("[Client] World changed: {} -> {}", trackedWorld, currentWorld);
                     EmeraldMod.LOGGER.info("[Client] ========================================");
 
-                    // 🔧 FIX: Hide SEMUA UI ketika world berubah
+                    // Hide SEMUA UI ketika world berubah
                     hideAllUI();
 
                     // Update current world
                     ClientWorldTracker.updateCurrentWorld(currentWorld);
 
-                    EmeraldMod.LOGGER.info("[Client] ✅ UI reset for new world");
+                    // ✅ NEW: Reset keybind state ketika world berubah
+                    ModKeybinds.reset();
+
+                    EmeraldMod.LOGGER.info("[Client] ✅ UI reset and keybinds reset for new world");
                 }
             }
         });
 
-        EmeraldMod.LOGGER.info("✅ World Tracking System");
+        EmeraldMod.LOGGER.info("✅ World Tracking System (with State Reset)");
     }
 
     /**
-     * 🔧 NEW: Helper method untuk hide semua UI
+     * Helper method untuk hide semua UI
      */
     private void hideAllUI() {
         try {
@@ -223,6 +233,13 @@ public class EmeraldModClient implements ClientModInitializer {
         EmeraldMod.LOGGER.info("  - Retrofit Reminder Widget");
         EmeraldMod.LOGGER.info("  - Status Tooltips");
         EmeraldMod.LOGGER.info("  - Per-World UI Tracking ✨");
+        EmeraldMod.LOGGER.info("");
+
+        // ✅ NEW: State sync info
+        EmeraldMod.LOGGER.info("💾 STATE MANAGEMENT:");
+        EmeraldMod.LOGGER.info("  - ✅ Auto-sync from server on join");
+        EmeraldMod.LOGGER.info("  - ✅ Persistent effect states");
+        EmeraldMod.LOGGER.info("  - ✅ Reset on disconnect/world change");
         EmeraldMod.LOGGER.info("");
 
         EmeraldMod.LOGGER.info("========================================");
