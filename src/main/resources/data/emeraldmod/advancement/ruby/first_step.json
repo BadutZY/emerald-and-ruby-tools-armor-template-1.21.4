@@ -1,0 +1,42 @@
+{
+  "parent": "emeraldmod:ruby/ruby_ore",
+  "criteria": {
+    "basic_ruby_armor": {
+      "conditions": {
+        "items": [
+          {
+            "items": "emeraldmod:basic_ruby_helmet"
+          },
+          {
+            "items": "emeraldmod:basic_ruby_chestplate"
+          },
+          {
+            "items": "emeraldmod:basic_ruby_leggings"
+          },
+          {
+            "items": "emeraldmod:basic_ruby_boots"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": "Nice Nice",
+    "frame": "challenge",
+    "icon": {
+      "id": "emeraldmod:basic_ruby_chestplate",
+      "count": 1
+    },
+    "title": "First step"
+  },
+  "requirements": [
+    [
+      "basic_ruby_armor"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": true
+}

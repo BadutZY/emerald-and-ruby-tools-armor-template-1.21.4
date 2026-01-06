@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:emerald",
+      "components": {}
+    },
+    "title": "Emerald Upgrade",
+    "description": "You can upgrade now",
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "parent": "emeraldmod:emerald/emerald_ore",
+  "criteria": {
+    "emerald_upgrade": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "emeraldmod:emerald_upgrade_smithing_template"
+          }
+        ]
+      }
+    }
+  }
+}

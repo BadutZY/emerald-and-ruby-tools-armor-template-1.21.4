@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "###",
+    "#N#",
+    "###"
+  ],
+  "key": {
+    "#": "emeraldmod:emerald_cluster",
+    "N": "minecraft:netherite_hoe"
+  },
+  "result": {
+    "id": "emeraldmod:basic_emerald_hoe",
+    "count": 1
+  }
+}

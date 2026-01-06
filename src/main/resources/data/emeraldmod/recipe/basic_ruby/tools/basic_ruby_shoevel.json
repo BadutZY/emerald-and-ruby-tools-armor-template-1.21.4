@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "###",
+    "#N#",
+    "###"
+  ],
+  "key": {
+    "#": "emeraldmod:ruby_ingot",
+    "N": "emeraldmod:basic_emerald_shovel"
+  },
+  "result": {
+    "id": "emeraldmod:basic_ruby_shovel",
+    "count": 1
+  }
+}

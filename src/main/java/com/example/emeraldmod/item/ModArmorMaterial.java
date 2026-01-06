@@ -27,6 +27,11 @@ public class ModArmorMaterial {
             Identifier.of(EmeraldMod.MOD_ID, "emerald")
     );
 
+    public static final RegistryKey<EquipmentAsset> BASIC_EMERALD_EQUIPMENT_ASSET = RegistryKey.of(
+            EquipmentAssetKeys.REGISTRY_KEY,
+            Identifier.of(EmeraldMod.MOD_ID, "basic_emerald")
+    );
+
     // ArmorMaterial constructor parameters di 1.21.4:
     // 1. durability multiplier (int)
     // 2. protection values (Map<EquipmentType, Integer>)
@@ -51,6 +56,23 @@ public class ModArmorMaterial {
             0.3F, // Knockback resistance (higher than diamond)
             EMERALD_REPAIR_INGREDIENT,
             EMERALD_EQUIPMENT_ASSET
+    );
+
+    public static final ArmorMaterial BASIC_EMERALD_ARMOR_MATERIAL = new ArmorMaterial(
+            BASE_DURABILITY,
+            Map.of(
+                    EquipmentType.BOOTS, 4,
+                    EquipmentType.LEGGINGS, 7,
+                    EquipmentType.CHESTPLATE, 9,
+                    EquipmentType.HELMET, 4,
+                    EquipmentType.BODY, 21
+            ),
+            10, // Enchantability (Diamond = 10)
+            SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND,
+            5.0F, // Toughness (Netherite level)
+            0.3F, // Knockback resistance (higher than diamond)
+            EMERALD_REPAIR_INGREDIENT,
+            BASIC_EMERALD_EQUIPMENT_ASSET
     );
 
     public static void initialize() {

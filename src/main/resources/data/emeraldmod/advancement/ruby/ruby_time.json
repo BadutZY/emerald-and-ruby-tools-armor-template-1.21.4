@@ -1,0 +1,42 @@
+{
+  "parent": "emeraldmod:ruby/ruby_upgrade",
+  "criteria": {
+    "ruby_armor": {
+      "conditions": {
+        "items": [
+          {
+            "items": "emeraldmod:ruby_helmet"
+          },
+          {
+            "items": "emeraldmod:ruby_chestplate"
+          },
+          {
+            "items": "emeraldmod:ruby_leggings"
+          },
+          {
+            "items": "emeraldmod:ruby_boots"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": "Good job",
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "emeraldmod:ruby_chestplate"
+    },
+    "title": "RUBY TIME!!"
+  },
+  "requirements": [
+    [
+      "ruby_armor"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": true
+}

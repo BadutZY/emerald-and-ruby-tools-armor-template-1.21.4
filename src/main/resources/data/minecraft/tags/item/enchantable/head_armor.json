@@ -2,6 +2,8 @@
   "replace": false,
   "values": [
     "emeraldmod:emerald_helmet",
-    "emeraldmod:ruby_helmet"
+    "emeraldmod:ruby_helmet",
+    "emeraldmod:basic_emerald_helmet",
+    "emeraldmod:basic_ruby_helmet"
   ]
 }

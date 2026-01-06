@@ -106,23 +106,35 @@ public class ModBlocks {
                     .sounds(BlockSoundGroup.METAL)
             ));
 
+    // Ruby Ingot Block - NEW! (seperti metal block lainnya)
+    public static final Block EMERALD_CLUSTER_BLOCK = registerBlock("emerald_cluster_block",
+            new Block(AbstractBlock.Settings.create()
+                    .registryKey(createRegistryKey("emerald_cluster_block"))
+                    .strength(5.0f, 6.0f)
+                    .requiresTool()
+                    .sounds(BlockSoundGroup.METAL)
+            ));
+
+    // ============================================
+    // NETHER EMERALD ORE - NEW!
+    // ============================================
+
+    /**
+     * Nether Emerald Ore - drops 1-2 Emerald Ingots
+     * Rarer than Nether Gold Ore, similar mining level
+     */
+    public static final Block NETHER_EMERALD_ORE = registerBlock("nether_emerald_ore",
+            new ExperienceDroppingBlock(
+                    UniformIntProvider.create(1, 2), // XP: 1-2 (less than ruby)
+                    AbstractBlock.Settings.create()
+                            .registryKey(createRegistryKey("nether_emerald_ore"))
+                            .strength(3.0f, 3.0f) // Same as Nether Gold Ore
+                            .requiresTool()
+                            .sounds(BlockSoundGroup.NETHER_GOLD_ORE)
+            ));
+
     public static void registerModBlocks() {
         EmeraldMod.LOGGER.info("Registering Mod Blocks for " + EmeraldMod.MOD_ID);
-
-        // Add Ruby blocks to Building Blocks tab
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.BUILDING_BLOCKS).register(entries -> {
-            entries.add(RUBY_BLOCK);
-            entries.add(RAW_RUBY_BLOCK);
-            entries.add(RUBY_DEBRIS);
-            entries.add(RUBY_INGOT_BLOCK);
-        });
-
-        // Add Ruby ores to Natural Blocks tab
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(entries -> {
-            entries.add(RUBY_ORE);
-            entries.add(DEEPSLATE_RUBY_ORE);
-            entries.add(NETHER_RUBY_ORE);
-        });
 
         EmeraldMod.LOGGER.info("✓ Successfully registered all Ruby blocks");
         EmeraldMod.LOGGER.info("  - Ruby Ore (drops raw ruby)");
@@ -132,5 +144,8 @@ public class ModBlocks {
         EmeraldMod.LOGGER.info("  - Raw Ruby Block (drops itself)");
         EmeraldMod.LOGGER.info("  - Ruby Scrap Block (drops itself - Ancient Debris style)");
         EmeraldMod.LOGGER.info("  - Ruby Ingot Block (drops itself - Metal block)");
+        EmeraldMod.LOGGER.info("✓ Successfully registered Nether Emerald Ore");
+        EmeraldMod.LOGGER.info("  - Nether Emerald Ore (drops 1-2 emerald.json ingots)");
+        EmeraldMod.LOGGER.info("✅ Successfully registered Upgrading Table block");
     }
 }

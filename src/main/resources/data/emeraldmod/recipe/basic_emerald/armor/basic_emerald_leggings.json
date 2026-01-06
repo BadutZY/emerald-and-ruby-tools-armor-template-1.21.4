@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "###",
+    "#N#",
+    "###"
+  ],
+  "key": {
+    "#": "emeraldmod:emerald_cluster",
+    "N": "minecraft:netherite_leggings"
+  },
+  "result": {
+    "id": "emeraldmod:basic_emerald_leggings",
+    "count": 1
+  }
+}

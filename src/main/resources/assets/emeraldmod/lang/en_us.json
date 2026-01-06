@@ -2,7 +2,10 @@
   "itemgroup.emeraldmod.ruby_equipment": "Ruby Tools & Armor",
   "itemgroup.emeraldmod.emerald": "Emerald Tools & Armor",
   "itemgroup.emeraldmod.netherite": "Netherite Tools & Armor",
-  "itemgroup.emeraldmod.ruby_materials": "Ruby Block & Ores",
+  "itemgroup.emeraldmod.ruby_materials": "Ruby Blocks & Ores",
+  "itemgroup.emeraldmod.basic_emerald": "Basic Emerald Tools & Armor",
+  "itemgroup.emeraldmod.basic_ruby_equipment": "Basic Ruby Tools & Armor",
+  "itemgroup.emeraldmod.emerald_materials": "Emerald Blocks & Ores",
 
   "item.emeraldmod.ruby": "Ruby",
   "item.emeraldmod.raw_ruby": "Raw Ruby",
@@ -18,6 +21,13 @@
   "block.emeraldmod.raw_ruby_block": "Block of Raw Ruby",
   "block.emeraldmod.ruby_debris": "Ruby Debris",
   "block.emeraldmod.ruby_ingot_block": "Block of Ruby Ingot",
+
+  "block.emeraldmod.emerald_cluster_block": "Block of Emerald Cluster",
+
+  "item.emeraldmod.emerald_cluster": "Emerald Cluster",
+  "item.emeraldmod.emerald_nugget": "Emerald Nugget",
+
+  "block.emeraldmod.nether_emerald_ore": "Nether Emerald Ore",
 
   "item.emeraldmod.ruby_sword": "Ruby Sword",
   "item.emeraldmod.ruby_sword.tooltip": "§6Special Effect: Shockwave Strike",
@@ -58,6 +68,16 @@
   "item.emeraldmod.ruby_horse_armor": "Ruby Horse Armor",
   "item.emeraldmod.ruby_horse_armor.tooltip": "§6Ultimate horse protection",
   "item.emeraldmod.ruby_horse_armor.tooltip.shift": "§d✦ UNBREAKABLE ✦§r\n§7Ultimate defense for§r\n§7your horse§r\n§7• Speed Boost (30%)§r\n§7• Regeneration§r\n§7• Fire Resistance§r\n§7• Jump Boost§r\n§7• Resistance§r\n§7• Lava Swimming§r\n§7• Water Swimming§r\n§7• Powder Snow Walk§r\n§5Superior to all tiers",
+
+  "item.emeraldmod.basic_emerald_sword": "Basic Emerald Sword",
+  "item.emeraldmod.basic_emerald_pickaxe": "Basic Emerald Pickaxe",
+  "item.emeraldmod.basic_emerald_axe": "Basic Emerald Axe",
+  "item.emeraldmod.basic_emerald_shovel": "Basic Emerald Shovel",
+  "item.emeraldmod.basic_emerald_hoe": "Basic Emerald Hoe",
+  "item.emeraldmod.basic_emerald_helmet": "Basic Emerald Helmet",
+  "item.emeraldmod.basic_emerald_chestplate": "Basic Emerald Chestplate",
+  "item.emeraldmod.basic_emerald_leggings": "Basic Emerald Leggings",
+  "item.emeraldmod.basic_emerald_boots": "Basic Emerald Boots",
 
   "item.emeraldmod.emerald_sword": "Emerald Sword",
   "item.emeraldmod.emerald_sword.tooltip": "§6Special Effect: Shockwave Strike",
@@ -103,6 +123,16 @@
   "item.emeraldmod.emerald_upgrade_smithing_template.description": "§eEmerald Upgrade",
   "item.emeraldmod.emerald_upgrade_smithing_template.tooltip": "§6Emerald Upgrade\n§9Ingredients",
   "item.emeraldmod.emerald_upgrade_smithing_template.tooltip.shift": "§7Use in Smithing Table§r\n§7to upgrade diamond gear§r\n§7to emerald tier§r\n§7• Applies to:§r\n§7  §aTools & Armor§r\n§7• Grants special§r\n§7  abilities§r\n§7• Increases durability§r\n§7  & stats",
+
+  "item.emeraldmod.basic_ruby_sword": "Basic Ruby Sword",
+  "item.emeraldmod.basic_ruby_pickaxe": "Basic Ruby Pickaxe",
+  "item.emeraldmod.basic_ruby_axe": "Basic Ruby Axe",
+  "item.emeraldmod.basic_ruby_shovel": "Basic Ruby Shovel",
+  "item.emeraldmod.basic_ruby_hoe": "Basic Ruby Hoe",
+  "item.emeraldmod.basic_ruby_helmet": "Basic Ruby Helmet",
+  "item.emeraldmod.basic_ruby_chestplate": "Basic Ruby Chestplate",
+  "item.emeraldmod.basic_ruby_leggings": "Basic Ruby Leggings",
+  "item.emeraldmod.basic_ruby_boots": "Basic Ruby Boots",
 
   "item.emeraldmod.ruby_upgrade_smithing_template": "§eRuby Upgrade",
   "item.emeraldmod.ruby_upgrade_smithing_template.description": "§eRuby Upgrade",
@@ -158,6 +188,7 @@
 
   "trim_material.emeraldmod.ruby": "Ruby Material",
   "trim_material.emeraldmod.ruby_ingot": "Ruby Ingot Material",
+  "trim_material.emeraldmod.emerald_cluster": "Emerald Cluster Material",
 
   "message.emeraldmod.tools_enabled": "§a✓ Tools Effect: ON",
   "message.emeraldmod.tools_disabled": "§c✗ Tools Effect: OFF",

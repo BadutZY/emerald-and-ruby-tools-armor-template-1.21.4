@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "id": "emeraldmod:ruby",
+      "components": {}
+    },
+    "title": "Ruby Upgrade",
+    "description": "You can upgrade now",
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "parent": "emeraldmod:ruby/ruby_debris",
+  "criteria": {
+    "ruby_upgrade": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "emeraldmod:ruby_upgrade_smithing_template"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -132,8 +132,8 @@ public class RubyOreScanningScreen extends Screen {
         int centerY = this.height / 2;
 
         if (isScanning) {
-            // Title
-            drawCenteredText(context, "🔍 Scanning for Ruby Ores",
+            // Title - UPDATED untuk include emerald.json
+            drawCenteredText(context, "🔍 Scanning for Mod Ores",
                     centerX, centerY - 60, 0xFFAA00, 2.0f);
 
             // Status with animated dots
@@ -143,7 +143,7 @@ public class RubyOreScanningScreen extends Screen {
                     centerX, centerY - 20, 0xFFFFFF, 1.2f);
 
             // Info text
-            drawCenteredText(context, "Please wait, checking your world...",
+            drawCenteredText(context, "Checking for Ruby & Emerald Ores...",
                     centerX, centerY + 20, 0xAAAAAA, 1.0f);
 
             // Animated scanning bar
@@ -151,11 +151,11 @@ public class RubyOreScanningScreen extends Screen {
 
         } else {
             if (hasOres) {
-                // Found ores - success message
-                drawCenteredText(context, "✅ Ruby Ores Found!",
+                // Found ores - success message - UPDATED
+                drawCenteredText(context, "✅ Mod Ores Found!",
                         centerX, centerY - 40, 0x00FF00, 2.0f);
 
-                drawCenteredText(context, "Your world already has Ruby Ores",
+                drawCenteredText(context, "Your world already has Ruby & Emerald Ores",
                         centerX, centerY - 5, 0xFFFFFF, 1.2f);
 
                 drawCenteredText(context, "No generation needed!",
@@ -165,11 +165,11 @@ public class RubyOreScanningScreen extends Screen {
                         centerX, centerY + 50, 0xAAAAAA, 0.9f);
 
             } else {
-                // No ores found
-                drawCenteredText(context, "❌ No Ruby Ores Detected",
+                // No ores found - UPDATED
+                drawCenteredText(context, "❌ No Mod Ores Detected",
                         centerX, centerY - 40, 0xFF5555, 2.0f);
 
-                drawCenteredText(context, "Your world needs Ruby Ore generation",
+                drawCenteredText(context, "Your world needs ore generation",
                         centerX, centerY - 5, 0xFFFFFF, 1.2f);
 
                 drawCenteredText(context, "Opening generation options...",

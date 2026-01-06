@@ -1,0 +1,42 @@
+{
+  "parent": "emeraldmod:emerald/emerald_cluster",
+  "criteria": {
+    "basic_emerald_armor": {
+      "conditions": {
+        "items": [
+          {
+            "items": "emeraldmod:basic_emerald_helmet"
+          },
+          {
+            "items": "emeraldmod:basic_emerald_chestplate"
+          },
+          {
+            "items": "emeraldmod:basic_emerald_leggings"
+          },
+          {
+            "items": "emeraldmod:basic_emerald_boots"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": "Good job",
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "emeraldmod:basic_emerald_chestplate"
+    },
+    "title": "You Get Emerald but Basic"
+  },
+  "requirements": [
+    [
+      "basic_emerald_armor"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": true
+}

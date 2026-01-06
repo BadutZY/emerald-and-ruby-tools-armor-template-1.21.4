@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "###",
+    "#N#",
+    "###"
+  ],
+  "key": {
+    "#": "emeraldmod:emerald_cluster",
+    "N": "minecraft:netherite_shovel"
+  },
+  "result": {
+    "id": "emeraldmod:basic_emerald_shovel",
+    "count": 1
+  }
+}

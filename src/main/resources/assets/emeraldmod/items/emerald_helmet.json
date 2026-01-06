@@ -92,6 +92,13 @@
           "model": "emeraldmod:item/trims/emerald/helmet/ruby_trim"
         },
         "when": "emeraldmod:ruby_ingot"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "emeraldmod:item/trims/emerald/helmet/emerald_trim"
+        },
+        "when": "emeraldmod:emerald_cluster"
       }
     ],
     "fallback": {

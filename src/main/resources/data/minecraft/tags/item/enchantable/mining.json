@@ -7,6 +7,14 @@
 
     "emeraldmod:ruby_pickaxe",
     "emeraldmod:ruby_axe",
-    "emeraldmod:ruby_shovel"
+    "emeraldmod:ruby_shovel",
+
+    "emeraldmod:basic_emerald_pickaxe",
+    "emeraldmod:basic_emerald_axe",
+    "emeraldmod:basic_emerald_shovel",
+
+    "emeraldmod:basic_ruby_pickaxe",
+    "emeraldmod:basic_ruby_axe",
+    "emeraldmod:basic_ruby_shovel"
   ]
 }

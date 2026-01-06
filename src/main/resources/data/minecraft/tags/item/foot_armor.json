@@ -1,6 +1,8 @@
 {
   "values": [
     "emeraldmod:emerald_boots",
-    "emeraldmod:ruby_boots"
+    "emeraldmod:ruby_boots",
+    "emeraldmod:basic_emerald_boots",
+    "emeraldmod:basic_ruby_boots"
   ]
 }

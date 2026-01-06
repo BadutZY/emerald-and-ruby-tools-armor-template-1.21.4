@@ -34,7 +34,7 @@ public abstract class EntityPowderSnowCheckMixin {
             return;
         }
 
-        // Only process if wearing emerald boots
+        // Only process if wearing emerald.json boots
         ItemStack boots = player.getEquippedStack(EquipmentSlot.FEET);
         if (!(boots.getItem() instanceof EmeraldArmorItem)) {
             return;

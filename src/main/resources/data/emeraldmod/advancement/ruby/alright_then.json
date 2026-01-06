@@ -1,0 +1,33 @@
+{
+  "parent": "emeraldmod:ruby/ruby_upgrade",
+  "criteria": {
+    "ruby_horse": {
+      "conditions": {
+        "items": [
+          {
+            "items": "emeraldmod:ruby_horse_armor"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": "Great",
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "emeraldmod:ruby_horse_armor"
+    },
+    "title": "Alright then"
+  },
+  "requirements": [
+    [
+      "ruby_horse"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": true
+}

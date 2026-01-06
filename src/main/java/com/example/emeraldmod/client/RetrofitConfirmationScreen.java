@@ -84,15 +84,15 @@ public class RetrofitConfirmationScreen extends Screen {
         int centerX = this.width / 2;
         int centerY = this.height / 2;
 
-        // Title with icon
-        drawCenteredText(context, "💎 Ruby Ore Generation", centerX, centerY - 80, 0xFFAA00, 2.0f);
+        // Title with icon - UPDATED
+        drawCenteredText(context, "💎 Ore Generation", centerX, centerY - 80, 0xFFAA00, 2.0f);
 
-        // Main question
-        drawCenteredText(context, "Do you want to generate ruby ores now?",
+        // Main question - UPDATED
+        drawCenteredText(context, "Do you want to generate mod ores now?",
                 centerX, centerY - 40, 0xFFFFFF, 1.5f);
 
-        // Info text
-        drawCenteredText(context, "This will add Ruby Ores to your existing world",
+        // Info text - UPDATED
+        drawCenteredText(context, "This will add Ruby & Emerald Ores to your world",
                 centerX, centerY - 10, 0xCCCCCC, 1.0f);
 
         drawCenteredText(context, "Including Overworld and Nether dimensions",

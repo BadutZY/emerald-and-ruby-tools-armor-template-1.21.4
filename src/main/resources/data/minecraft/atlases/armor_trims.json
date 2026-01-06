@@ -58,7 +58,8 @@
         "diamond_darker": "trims/color_palettes/diamond_darker",
         "netherite_darker": "trims/color_palettes/netherite_darker",
         "ruby": "emeraldmod:trims/color_palettes/ruby",
-        "ruby_ingot": "emeraldmod:trims/color_palettes/ruby_ingot"
+        "ruby_ingot": "emeraldmod:trims/color_palettes/ruby_ingot",
+        "emerald_cluster": "trims/color_palettes/emerald"
       }
     }
   ]

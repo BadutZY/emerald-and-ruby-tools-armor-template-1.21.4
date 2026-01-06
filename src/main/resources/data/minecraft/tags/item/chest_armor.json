@@ -1,6 +1,8 @@
 {
   "values": [
     "emeraldmod:emerald_chestplate",
-    "emeraldmod:ruby_chestplate"
+    "emeraldmod:ruby_chestplate",
+    "emeraldmod:basic_emerald_chestplate",
+    "emeraldmod:basic_ruby_chestplate"
   ]
 }

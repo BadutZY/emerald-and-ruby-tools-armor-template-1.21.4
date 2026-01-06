@@ -21,13 +21,15 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Main mod class untuk Emerald & Ruby Mod
- * ✅ COMPLETE VERSION dengan Resume Support dan State Sync
+ * ✅ COMPLETE VERSION dengan Resume Support, State Sync, dan Update Detection
  */
 public class EmeraldMod implements ModInitializer {
     public static final String MOD_ID = "emeraldmod";
@@ -57,7 +59,7 @@ public class EmeraldMod implements ModInitializer {
         registerWorldGeneration();
 
         // ============================================
-        // PHASE 4: RETROFIT SYSTEM (WITH SCANNING & RESUME)
+        // PHASE 4: RETROFIT SYSTEM (WITH SCANNING, RESUME & UPDATE DETECTION)
         // ============================================
         registerRetrofitSystem();
 
@@ -96,7 +98,7 @@ public class EmeraldMod implements ModInitializer {
             LOGGER.warn("Toggle Effect Packet already registered, skipping");
         }
 
-        // ✅ NEW: Effect state sync packet
+        // Effect state sync packet
         try {
             EffectStateSyncPacket.register();
             LOGGER.info("✅ Registered Effect State Sync Packet");
@@ -155,14 +157,14 @@ public class EmeraldMod implements ModInitializer {
         LOGGER.info("--- Phase 3: World Generation ---");
 
         ModWorldGeneration.generateModWorldGen();
-        LOGGER.info("✅ Registered Ruby Ore World Generation");
+        LOGGER.info("✅ Registered Ore World Generation");
     }
 
     /**
-     * PHASE 4: Register retrofit system with SCANNING & RESUME
+     * PHASE 4: Register retrofit system with SCANNING, RESUME & UPDATE DETECTION
      */
     private void registerRetrofitSystem() {
-        LOGGER.info("--- Phase 4: Retrofit System (With Scanning & Resume) ---");
+        LOGGER.info("--- Phase 4: Retrofit System (With Scanning, Resume & Update Detection) ---");
 
         // Player disconnect event - CLEANUP STATE
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
@@ -171,42 +173,54 @@ public class EmeraldMod implements ModInitializer {
 
             LOGGER.info("[Retrofit] Player {} disconnected from world '{}'", playerName, worldName);
 
-            // Check if retrofit is running untuk world ini
             if (InstantRetrofitSystem.isRetrofitRunning(worldName)) {
                 LOGGER.info("[Retrofit] ⚠️ Player left during retrofit - keeping retrofit running");
-                // Don't cancel - biarkan retrofit selesai
             }
         });
 
-        // ENHANCED: Player join event - Check for RESUME or start scanning
+        // ⭐ ENHANCED: Player join event - Check for RESUME, UPDATE, or start scanning
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             String playerName = handler.player.getName().getString();
             String worldName = server.getSaveProperties().getLevelName();
 
             LOGGER.info("[Retrofit] Player {} joined world '{}'", playerName, worldName);
 
-            // NEW: Check if can resume retrofit
+            // Check states
             ServerWorld overworld = server.getWorld(World.OVERWORLD);
             ServerWorld nether = server.getWorld(World.NETHER);
 
             boolean canResumeOverworld = false;
             boolean canResumeNether = false;
+            boolean needsUpdateOverworld = false;
+            boolean needsUpdateNether = false;
 
             if (overworld != null) {
                 OreRetrofitState state = OreRetrofitState.get(server, overworld);
                 canResumeOverworld = state.canResume();
+                needsUpdateOverworld = state.needsUpdate();
 
                 if (canResumeOverworld) {
                     LOGGER.info("[Retrofit] 🔄 Overworld can resume: {}", state.getResumeInfo());
+                }
+
+                if (needsUpdateOverworld && state.isComplete()) {
+                    LOGGER.warn("[Retrofit] ⚠️ Overworld retrofit is OUTDATED: {}",
+                            state.getVersionInfo());
                 }
             }
 
             if (nether != null) {
                 OreRetrofitState state = OreRetrofitState.get(server, nether);
                 canResumeNether = state.canResume();
+                needsUpdateNether = state.needsUpdate();
 
                 if (canResumeNether) {
                     LOGGER.info("[Retrofit] 🔄 Nether can resume: {}", state.getResumeInfo());
+                }
+
+                if (needsUpdateNether && state.isComplete()) {
+                    LOGGER.warn("[Retrofit] ⚠️ Nether retrofit is OUTDATED: {}",
+                            state.getVersionInfo());
                 }
             }
 
@@ -214,7 +228,6 @@ public class EmeraldMod implements ModInitializer {
             if (InstantRetrofitSystem.isRetrofitRunning(worldName)) {
                 LOGGER.info("[Retrofit] ⚡ World '{}' is currently retrofitting - showing loading screen", worldName);
 
-                // Show loading screen langsung (skip scanning)
                 new Thread(() -> {
                     try {
                         Thread.sleep(1500);
@@ -226,10 +239,31 @@ public class EmeraldMod implements ModInitializer {
                     }
                 }, "ShowLoading-" + playerName).start();
 
-                return; // Skip scanning and resume check
+                return;
             }
 
-            // CHECK 2: Can resume? Auto-resume!
+            // ⭐ CHECK 2: Needs update notification
+            boolean overworldComplete = overworld != null && OreRetrofitState.get(server, overworld).isComplete();
+            boolean netherComplete = nether != null && OreRetrofitState.get(server, nether).isComplete();
+
+            if ((needsUpdateOverworld || needsUpdateNether) && (overworldComplete || netherComplete)) {
+                LOGGER.info("[Retrofit] 📢 Notifying player about available update");
+
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(2000);
+                        server.execute(() -> {
+                            sendUpdateNotification(handler.player);
+                        });
+                    } catch (InterruptedException e) {
+                        LOGGER.error("[Retrofit] Interrupted during notification", e);
+                    }
+                }, "UpdateNotify-" + playerName).start();
+
+                return; // Don't start scanning
+            }
+
+            // CHECK 3: Can resume? Auto-resume!
             if (canResumeOverworld || canResumeNether) {
                 LOGGER.info("[Retrofit] 🔄 Auto-resuming retrofit for world '{}'", worldName);
 
@@ -238,7 +272,6 @@ public class EmeraldMod implements ModInitializer {
                         Thread.sleep(1500);
 
                         server.execute(() -> {
-                            // Start resume directly
                             boolean started = InstantRetrofitSystem.runInitialRetrofit(server);
 
                             if (started) {
@@ -252,10 +285,10 @@ public class EmeraldMod implements ModInitializer {
                     }
                 }, "AutoResume-" + playerName).start();
 
-                return; // Skip scanning - directly resume
+                return;
             }
 
-            // CHECK 3: Normal flow - start scanning
+            // CHECK 4: Normal flow - start scanning
             new Thread(() -> {
                 try {
                     Thread.sleep(1500);
@@ -296,11 +329,16 @@ public class EmeraldMod implements ModInitializer {
 
             if (state.isComplete()) {
                 LOGGER.info("[Retrofit] ✅ Already complete for world '{}'", worldName);
+
+                // Check version
+                if (state.needsUpdate()) {
+                    LOGGER.warn("[Retrofit] ⚠️ OUTDATED: {}", state.getVersionInfo());
+                    LOGGER.warn("[Retrofit] Players will be notified to run /retrofit force");
+                }
             } else if (state.isInProgress()) {
                 LOGGER.info("[Retrofit] ⏳ In progress for world '{}' ({} chunks done)",
                         worldName, state.getRetrofittedChunkCount());
 
-                // Log resume info
                 if (state.canResume()) {
                     LOGGER.info("[Retrofit] 🔄 {}", state.getResumeInfo());
                 }
@@ -318,13 +356,12 @@ public class EmeraldMod implements ModInitializer {
 
             LOGGER.info("[Retrofit] Server stopping - cleaning up world '{}'", worldName);
 
-            // Cancel retrofit jika masih running
             if (InstantRetrofitSystem.isRetrofitRunning(worldName)) {
                 LOGGER.info("[Retrofit] Cancelling active retrofit for world '{}'", worldName);
                 InstantRetrofitSystem.cancelRetrofit(worldName);
             }
 
-            // ✅ NEW: Force save effect states
+            // Force save effect states
             EffectStateManager stateManager = EffectStateManager.getServerState(server);
             stateManager.forceSave();
             LOGGER.info("[EffectState] Force saved all player states before shutdown");
@@ -333,11 +370,53 @@ public class EmeraldMod implements ModInitializer {
         // Register retrofit commands
         CommandRegistrationCallback.EVENT.register(RetrofitCommand::register);
 
-        LOGGER.info("✅ Registered Retrofit System (With Scanning & Resume)");
+        LOGGER.info("✅ Registered Retrofit System (With Scanning, Resume & Update Detection)");
         LOGGER.info("  → Shows scanning screen for new worlds");
         LOGGER.info("  → Auto-detects existing ores");
         LOGGER.info("  → Auto-resumes from last checkpoint");
+        LOGGER.info("  → Detects mod updates and notifies players");
         LOGGER.info("  → Per-world independent progress");
+    }
+
+    /**
+     * ⭐ NEW: Send update notification to player
+     */
+    private void sendUpdateNotification(ServerPlayerEntity player) {
+        try {
+            player.sendMessage(
+                    Text.literal("")
+                            .append(Text.literal("========================================\n")
+                                    .formatted(Formatting.GOLD, Formatting.BOLD))
+                            .append(Text.literal("⚠️  MOD UPDATE DETECTED!\n")
+                                    .formatted(Formatting.YELLOW, Formatting.BOLD))
+                            .append(Text.literal("\n"))
+                            .append(Text.literal("New ores have been added to the mod!\n")
+                                    .formatted(Formatting.WHITE))
+                            .append(Text.literal("Your world needs to be updated.\n")
+                                    .formatted(Formatting.WHITE))
+                            .append(Text.literal("\n"))
+                            .append(Text.literal("🎯 Run this command to update:\n")
+                                    .formatted(Formatting.AQUA, Formatting.BOLD))
+                            .append(Text.literal("   /retrofit force\n")
+                                    .formatted(Formatting.YELLOW, Formatting.BOLD))
+                            .append(Text.literal("\n"))
+                            .append(Text.literal("This will add Nether Emerald Ore\n")
+                                    .formatted(Formatting.GREEN))
+                            .append(Text.literal("to all existing chunks!\n")
+                                    .formatted(Formatting.GREEN))
+                            .append(Text.literal("\n"))
+                            .append(Text.literal("💡 Check status: /retrofit status\n")
+                                    .formatted(Formatting.GRAY))
+                            .append(Text.literal("========================================")
+                                    .formatted(Formatting.GOLD, Formatting.BOLD)),
+                    false
+            );
+
+            LOGGER.info("[Retrofit] ✅ Sent update notification to player {}",
+                    player.getName().getString());
+        } catch (Exception e) {
+            LOGGER.error("[Retrofit] Failed to send notification", e);
+        }
     }
 
     /**
@@ -360,13 +439,13 @@ public class EmeraldMod implements ModInitializer {
 
         OreRetrofitState overworldState = OreRetrofitState.get(server, overworld);
 
-        // STEP 1: Check if already complete (skip scanning)
+        // STEP 1: Check if already complete
         if (overworldState.isComplete()) {
             LOGGER.info("[Scanning] ✅ World '{}' already COMPLETE - no scanning needed", worldName);
             return;
         }
 
-        // CHECK 2: Check if retrofit currently running UNTUK WORLD INI
+        // CHECK 2: Check if retrofit currently running
         boolean isThisWorldRetrofitting = InstantRetrofitSystem.isRetrofitRunning(worldName);
 
         if (isThisWorldRetrofitting) {
@@ -430,7 +509,7 @@ public class EmeraldMod implements ModInitializer {
                 final boolean finalHasOres = hasOres;
                 server.execute(() -> {
                     if (finalHasOres) {
-                        LOGGER.info("[Scanning] ✅ Found Ruby Ores in world '{}'", worldName);
+                        LOGGER.info("[Scanning] ✅ Found Mod Ores in world '{}'", worldName);
 
                         // Mark as complete
                         overworldState.setComplete(true);
@@ -447,7 +526,7 @@ public class EmeraldMod implements ModInitializer {
                                 player, worldName, true
                         );
                     } else {
-                        LOGGER.info("[Scanning] ❌ No Ruby Ores found in world '{}'", worldName);
+                        LOGGER.info("[Scanning] ❌ No Mod Ores found in world '{}'", worldName);
 
                         // Send failure to client (will show confirmation)
                         com.example.emeraldmod.network.ScanningPackets.sendScanComplete(
@@ -468,63 +547,50 @@ public class EmeraldMod implements ModInitializer {
     private void registerGameplayHandlers() {
         LOGGER.info("--- Phase 5: Gameplay Handlers ---");
 
-        // Armor effects
         ArmorEffectsHandler.register();
         LOGGER.info("✅ Armor Effects Handler");
 
-        // Horse armor effects
         HorseArmorEffectsHandler.register();
         LOGGER.info("✅ Horse Armor Effects Handler");
 
-        // Tool effects
         ToolEffectsHandler.register();
         LOGGER.info("✅ Tool Effects Handler");
 
-        // Fire damage prevention
         DamagePreventionHandler.register();
         LOGGER.info("✅ Fire Damage Prevention Handler");
 
-        // Auto-smelt (Pickaxe)
         AutoSmeltHandler.register();
         LOGGER.info("✅ Auto-Smelt Handler");
 
-        // Tree chopping (Axe)
         TreeChoppingHandler.register();
         LOGGER.info("✅ Tree Chopping Handler");
 
-        // Auto-replant (Hoe)
         AutoReplantHandler.register();
         LOGGER.info("✅ Auto-Replant Handler");
 
-        // Shockwave (Sword)
         SwordShockwaveHandler.register();
         LOGGER.info("✅ Shockwave Handler");
 
-        // Anti-gravity (Shovel)
         AntiGravityHandler.register();
         LOGGER.info("✅ Anti-Gravity Handler");
 
-        // Powder snow handler
         PowderSnowHandler.register();
         LOGGER.info("✅ Powder Snow Handler");
 
-        // Server tick for anti-gravity
         ServerTickEvents.END_WORLD_TICK.register(AntiGravityHandler::tick);
         LOGGER.info("✅ Server Tick Events");
     }
 
     /**
-     * ✅ NEW PHASE 6: Register player connection handlers untuk state sync
+     * PHASE 6: Register player connection handlers untuk state sync
      */
     private void registerPlayerConnectionHandlers() {
         LOGGER.info("--- Phase 6: Player Connection Handlers ---");
 
-        // ✅ Player join - Send initial state sync
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            // Delay untuk memastikan client sudah ready
             new Thread(() -> {
                 try {
-                    Thread.sleep(500); // 500ms delay
+                    Thread.sleep(500);
 
                     server.execute(() -> {
                         EffectStateManager stateManager = EffectStateManager.getServerState(server);
@@ -545,15 +611,14 @@ public class EmeraldMod implements ModInitializer {
     }
 
     /**
-     * ✅ NEW PHASE 7: Register server lifecycle handlers
+     * PHASE 7: Register server lifecycle handlers
      */
     private void registerServerLifecycleHandlers() {
         LOGGER.info("--- Phase 7: Server Lifecycle Handlers ---");
 
-        // Force save states setiap 5 menit (auto-save)
         ServerTickEvents.END_SERVER_TICK.register(new Object() {
             private int tickCounter = 0;
-            private static final int SAVE_INTERVAL = 20 * 60 * 5; // 5 minutes
+            private static final int SAVE_INTERVAL = 20 * 60 * 5;
 
             public void onServerTick(MinecraftServer server) {
                 tickCounter++;
@@ -580,7 +645,6 @@ public class EmeraldMod implements ModInitializer {
         LOGGER.info("========================================");
         LOGGER.info("");
 
-        // Keybind controls
         LOGGER.info("🎮 KEYBIND CONTROLS:");
         LOGGER.info("  - Toggle Tools: V (default)");
         LOGGER.info("  - Toggle Armor: B (default)");
@@ -589,7 +653,6 @@ public class EmeraldMod implements ModInitializer {
         LOGGER.info("  - Customize in: Options → Controls");
         LOGGER.info("");
 
-        // Ruby features
         LOGGER.info("💎 RUBY FEATURES:");
         LOGGER.info("  - UNBREAKABLE Tools & Armor");
         LOGGER.info("  - Mining Speed: 12.0 (Fastest)");
@@ -598,7 +661,13 @@ public class EmeraldMod implements ModInitializer {
         LOGGER.info("  - Toughness: 6.0 (Highest)");
         LOGGER.info("");
 
-        // ✅ NEW: State management info
+        LOGGER.info("💚 EMERALD FEATURES:");
+        LOGGER.info("  - Nether Emerald Ore (NEW!)");
+        LOGGER.info("  - Drops 1-2 Emerald Ingots");
+        LOGGER.info("  - Fortune compatible");
+        LOGGER.info("  - Rarer than Nether Gold Ore");
+        LOGGER.info("");
+
         LOGGER.info("💾 STATE MANAGEMENT:");
         LOGGER.info("  - ✅ Effect states saved per-player");
         LOGGER.info("  - ✅ Auto-sync on player join");
@@ -607,20 +676,26 @@ public class EmeraldMod implements ModInitializer {
         LOGGER.info("  - ✅ Force save on server shutdown");
         LOGGER.info("");
 
-        // Scanning & Retrofit system
         LOGGER.info("🔍 SCANNING & RETROFIT SYSTEM:");
         LOGGER.info("  - 🔍 Auto-scan on world join");
-        LOGGER.info("  - ✅ Detects existing ruby ores");
+        LOGGER.info("  - ✅ Detects existing ores");
         LOGGER.info("  - 🔄 Auto-resumes from checkpoint");
         LOGGER.info("  - 💾 Saves progress per-world");
-        LOGGER.info("  - 💬 Confirmation dialog if needed");
+        LOGGER.info("  - 📢 Detects mod updates");
+        LOGGER.info("  - 💬 Shows update notification");
         LOGGER.info("  - 📦 Processes all chunks");
         LOGGER.info("  - ⏱️ Takes 2-10 minutes");
         LOGGER.info("  - 🎮 Can minimize and play");
         LOGGER.info("  - 🌍 Per-world independent");
         LOGGER.info("");
 
-        // Armor features
+        LOGGER.info("⚙️ COMMANDS:");
+        LOGGER.info("  - /retrofit status  → Check status");
+        LOGGER.info("  - /retrofit start   → Start generation");
+        LOGGER.info("  - /retrofit force   → Re-generate (updates)");
+        LOGGER.info("  - /retrofit reset   → Reset data");
+        LOGGER.info("");
+
         LOGGER.info("🛡️ ARMOR FEATURES:");
         LOGGER.info("  - Water Breathing (Helmet)");
         LOGGER.info("  - Dolphin's Grace (Chestplate)");
@@ -630,7 +705,6 @@ public class EmeraldMod implements ModInitializer {
         LOGGER.info("  - Silent Step (Leggings)");
         LOGGER.info("");
 
-        // Tool features
         LOGGER.info("⚔️ TOOL FEATURES:");
         LOGGER.info("  - Shockwave (Sword - 3rd hit)");
         LOGGER.info("  - Auto-Smelt (Pickaxe)");

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "###",
+    "#N#",
+    "###"
+  ],
+  "key": {
+    "#": "emeraldmod:ruby_ingot",
+    "N": "emeraldmod:basic_emerald_pickaxe"
+  },
+  "result": {
+    "id": "emeraldmod:basic_ruby_pickaxe",
+    "count": 1
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": "emeraldmod:emerald_cluster"
+  },
+  "result": {
+    "id": "emeraldmod:emerald_cluster_block",
+    "count": 1
+  }
+}

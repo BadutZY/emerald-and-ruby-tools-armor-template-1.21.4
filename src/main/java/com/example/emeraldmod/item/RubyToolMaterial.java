@@ -35,6 +35,15 @@ public class RubyToolMaterial {
             RUBY_REPAIR_INGREDIENT
     );
 
+    public static final ToolMaterial BASIC_RUBY = new ToolMaterial(
+            BlockTags.INCORRECT_FOR_NETHERITE_TOOL,
+            10000,              // Durability tinggi tapi tidak extreme, override di item class
+            9.0f,              // Mining speed (lebih cepat dari Emerald 9.0)
+            4.0f,               // Attack damage bonus (lebih kuat dari Emerald 4.0)
+            10,                 // Enchantability (lebih baik dari Diamond/Emerald 10)
+            RUBY_REPAIR_INGREDIENT
+    );
+
     public static void initialize() {
         EmeraldMod.LOGGER.info("Initializing Ruby Tool Material");
         EmeraldMod.LOGGER.info("  - Durability: UNBREAKABLE (via item class override)");

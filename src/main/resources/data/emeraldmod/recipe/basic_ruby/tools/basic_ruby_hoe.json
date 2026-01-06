@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "###",
+    "#N#",
+    "###"
+  ],
+  "key": {
+    "#": "emeraldmod:ruby_ingot",
+    "N": "emeraldmod:basic_emerald_hoe"
+  },
+  "result": {
+    "id": "emeraldmod:basic_ruby_hoe",
+    "count": 1
+  }
+}

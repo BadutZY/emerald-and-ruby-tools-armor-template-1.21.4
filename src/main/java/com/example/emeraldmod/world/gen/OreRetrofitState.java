@@ -29,13 +29,16 @@ public class OreRetrofitState extends PersistentState {
     private static final String NBT_WORLD_NAME = "WorldName";
     private static final String NBT_DIMENSION = "Dimension";
 
-    // ✨ NEW: Progress tracking
+    // Progress tracking
     private static final String NBT_TOTAL_CHUNKS = "TotalChunks";
     private static final String NBT_PROCESSED_CHUNKS = "ProcessedChunks";
     private static final String NBT_CURRENT_DIMENSION = "CurrentDimension";
     private static final String NBT_LAST_CHECKPOINT = "LastCheckpoint";
 
-    private static final int CURRENT_VERSION = 4; // ✨ Incremented version
+    // ⭐ UPDATED: Increment version untuk force re-generate
+    // Version 4 = Ruby + Emerald ores (Nether)
+    // Version 5 = Ruby + Emerald ores (Nether) + Nether Emerald Ore
+    private static final int CURRENT_VERSION = 5; // ⭐ INCREMENTED!
 
     // State data
     private final Set<String> retrofittedChunks;
@@ -45,7 +48,7 @@ public class OreRetrofitState extends PersistentState {
     private boolean isComplete;
     private boolean inProgress;
 
-    // ✨ NEW: Progress tracking fields
+    // Progress tracking fields
     private int totalChunks;
     private int processedChunks;
     private String currentDimension;
@@ -335,15 +338,30 @@ public class OreRetrofitState extends PersistentState {
         // Load version
         state.version = nbt.getInt(NBT_VERSION);
 
-        // Check version compatibility
+        // ⭐ CHECK VERSION MISMATCH
         if (state.version != CURRENT_VERSION) {
-            EmeraldMod.LOGGER.warn("[RetrofitState] Version mismatch for world '{}' dimension '{}' (saved: {}, current: {})",
-                    worldName, dimensionName, state.version, CURRENT_VERSION);
-            EmeraldMod.LOGGER.warn("[RetrofitState] State will be reset to current version");
+            EmeraldMod.LOGGER.warn("========================================");
+            EmeraldMod.LOGGER.warn("[RetrofitState] ⚠️ VERSION MISMATCH DETECTED!");
+            EmeraldMod.LOGGER.warn("[RetrofitState] Saved version: {} | Current version: {}",
+                    state.version, CURRENT_VERSION);
+            EmeraldMod.LOGGER.warn("[RetrofitState] World: '{}' | Dimension: '{}'",
+                    worldName, dimensionName);
 
-            state.version = CURRENT_VERSION;
-            state.markDirty();
-            return state;
+            if (state.version < CURRENT_VERSION) {
+                EmeraldMod.LOGGER.warn("[RetrofitState] 🔄 MOD UPDATE DETECTED!");
+                EmeraldMod.LOGGER.warn("[RetrofitState] New ores may have been added");
+                EmeraldMod.LOGGER.warn("[RetrofitState] Use /retrofit force to re-generate");
+                EmeraldMod.LOGGER.warn("========================================");
+
+                // ⭐ OPTION 1: Auto-reset (aggressive)
+                // state.version = CURRENT_VERSION;
+                // state.markDirty();
+                // return state;
+
+                // ⭐ OPTION 2: Keep old state tapi tandai sebagai outdated
+                // Biarkan player decide via command
+                state.version = state.version; // Keep old version
+            }
         }
 
         // Load world name dan dimension
@@ -358,7 +376,7 @@ public class OreRetrofitState extends PersistentState {
         state.isComplete = nbt.getBoolean(NBT_COMPLETE);
         state.inProgress = nbt.getBoolean(NBT_IN_PROGRESS);
 
-        // ✨ NEW: Load progress tracking
+        // Load progress tracking
         if (nbt.contains(NBT_TOTAL_CHUNKS)) {
             state.totalChunks = nbt.getInt(NBT_TOTAL_CHUNKS);
         }
@@ -380,7 +398,7 @@ public class OreRetrofitState extends PersistentState {
             }
         }
 
-        // ✨ Sync processed count dengan actual chunk count
+        // Sync processed count
         if (state.processedChunks != state.retrofittedChunks.size()) {
             EmeraldMod.LOGGER.warn("[RetrofitState] Syncing processed count: {} -> {}",
                     state.processedChunks, state.retrofittedChunks.size());
@@ -391,15 +409,25 @@ public class OreRetrofitState extends PersistentState {
         String status = state.isComplete ? "COMPLETE" :
                 state.inProgress ? "IN_PROGRESS" : "NOT_STARTED";
 
-        EmeraldMod.LOGGER.info("[RetrofitState] Loaded state for world '{}' dimension '{}': {} ({}/{} chunks - {}%)",
-                worldName, dimensionName, status, state.processedChunks, state.totalChunks, state.getPercentage());
+        EmeraldMod.LOGGER.info("[RetrofitState] Loaded: world='{}' dim='{}' status={} version={}/{} chunks={}/{}",
+                worldName, dimensionName, status, state.version, CURRENT_VERSION,
+                state.processedChunks, state.totalChunks);
 
-        // ✨ Log resume info if applicable
         if (state.canResume()) {
             EmeraldMod.LOGGER.info("[RetrofitState] 🔄 CAN RESUME: {}", state.getResumeInfo());
         }
 
         return state;
+    }
+
+    // ⭐ NEW: Check if needs update
+    public boolean needsUpdate() {
+        return version < CURRENT_VERSION;
+    }
+
+    // ⭐ NEW: Get version info
+    public String getVersionInfo() {
+        return "Version " + version + " (Current: " + CURRENT_VERSION + ")";
     }
 
     // ============================================

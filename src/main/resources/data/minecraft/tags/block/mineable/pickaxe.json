@@ -7,6 +7,8 @@
     "emeraldmod:raw_ruby_block",
     "emeraldmod:nether_ruby_ore",
     "emeraldmod:ruby_debris",
-    "emeraldmod:ruby_ingot_block"
+    "emeraldmod:ruby_ingot_block",
+    "emeraldmod:nether_emerald_ore",
+    "emeraldmod:emerald_cluster_block"
   ]
 }

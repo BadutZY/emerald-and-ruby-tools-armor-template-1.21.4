@@ -80,7 +80,7 @@ public class AutoSmeltHandler {
         ORE_TO_RAW.put(Blocks.DIAMOND_ORE, new ItemStack(Blocks.DIAMOND_ORE));
         ORE_TO_RAW.put(Blocks.DEEPSLATE_DIAMOND_ORE, new ItemStack(Blocks.DEEPSLATE_DIAMOND_ORE));
 
-        // Emerald Ore (tidak ada raw emerald, langsung emerald)
+        // Emerald Ore (tidak ada raw emerald.json, langsung emerald.json)
         ORE_TO_INGOT.put(Blocks.EMERALD_ORE, new ItemStack(Items.EMERALD));
         ORE_TO_INGOT.put(Blocks.DEEPSLATE_EMERALD_ORE, new ItemStack(Items.EMERALD));
         ORE_TO_RAW.put(Blocks.EMERALD_ORE, new ItemStack(Blocks.EMERALD_ORE));
@@ -118,6 +118,7 @@ public class AutoSmeltHandler {
         // ===== VEIN MINING ONLY ORES (NO auto-smelt) =====
         VEIN_MINING_ONLY_ORES.add(ModBlocks.NETHER_RUBY_ORE);
         VEIN_MINING_ONLY_ORES.add(Blocks.NETHER_GOLD_ORE);
+        VEIN_MINING_ONLY_ORES.add(ModBlocks.NETHER_EMERALD_ORE);
     }
 
     public static void register() {
@@ -500,9 +501,19 @@ public class AutoSmeltHandler {
 
                         // Add XP (0-1 per ore)
                         if (RANDOM.nextBoolean()) {
-                            totalExperience += 1;
+                            totalExperience += 3;
                         }
-                    } else if (currentBlock == Blocks.NETHER_GOLD_ORE) {
+                    }
+                    else if (currentBlock == ModBlocks.NETHER_EMERALD_ORE) {
+                        int nuggetCount = calculateNetherEmeraldNuggetDrop(fortuneLevel);
+                        totalDrops += nuggetCount;
+                        dropItem = new ItemStack(ModItems.EMERALD_NUGGET);
+
+                        if (RANDOM.nextBoolean()) {
+                            totalExperience += 3;
+                        }
+                    }
+                    else if (currentBlock == Blocks.NETHER_GOLD_ORE) {
                         // Drop Gold Nugget (2-6 base, up to 24 with Fortune III)
                         int nuggetCount = calculateNetherGoldNuggetDrop(fortuneLevel);
                         totalDrops += nuggetCount;
@@ -629,6 +640,22 @@ public class AutoSmeltHandler {
     }
 
     /**
+     * Calculate drop count untuk Nether Ruby Ore (Ruby Scrap)
+     * Base: 2-4, affected by Fortune
+     */
+    private static int calculateNetherEmeraldNuggetDrop(int fortuneLevel) {
+        int baseCount = RANDOM.nextInt(3) + 2;
+
+        // Fortune bonus (sama seperti vanilla Fortune untuk ores)
+        if (fortuneLevel > 0) {
+            int fortuneBonus = RANDOM.nextInt(fortuneLevel + 1);
+            baseCount += fortuneBonus;
+        }
+
+        return Math.max(2, baseCount);
+    }
+
+    /**
      * Helper method untuk menambahkan drops ke total
      */
     private static void addToTotalDrops(Map<ItemStack, Integer> totalDrops, ItemStack item, int count) {
@@ -744,11 +771,11 @@ public class AutoSmeltHandler {
             }
         }
 
-        // Emerald: 1 emerald (vanilla) + Fortune
+        // Emerald: 1 emerald.json (vanilla) + Fortune
         else if (block == Blocks.EMERALD_ORE || block == Blocks.DEEPSLATE_EMERALD_ORE) {
             baseCount = 1;
 
-            // Fortune bonus untuk emerald (vanilla: +0 to +Fortune level)
+            // Fortune bonus untuk emerald.json (vanilla: +0 to +Fortune level)
             if (fortuneLevel > 0) {
                 int fortuneBonus = RANDOM.nextInt(fortuneLevel + 1);
                 baseCount += fortuneBonus;
@@ -791,7 +818,7 @@ public class AutoSmeltHandler {
         else if (block == ModBlocks.RUBY_ORE || block == ModBlocks.DEEPSLATE_RUBY_ORE) {
             baseCount = 1;
 
-            // Fortune bonus untuk ruby (sama seperti diamond/emerald)
+            // Fortune bonus untuk ruby (sama seperti diamond/emerald.json)
             if (fortuneLevel > 0) {
                 int fortuneBonus = RANDOM.nextInt(fortuneLevel + 1);
                 baseCount += fortuneBonus;
@@ -848,7 +875,7 @@ public class AutoSmeltHandler {
         else if (block == Blocks.NETHER_QUARTZ_ORE) {
             baseExp = RANDOM.nextInt(4) + 2; // 2-5
         }
-        // Ruby Ore: 3-7 XP (custom, sama seperti diamond/emerald)
+        // Ruby Ore: 3-7 XP (custom, sama seperti diamond/emerald.json)
         else if (block == ModBlocks.RUBY_ORE || block == ModBlocks.DEEPSLATE_RUBY_ORE) {
             baseExp = RANDOM.nextInt(5) + 3; // 3-7
         }

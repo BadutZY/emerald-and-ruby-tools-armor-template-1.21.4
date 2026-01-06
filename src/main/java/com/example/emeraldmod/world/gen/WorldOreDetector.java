@@ -19,51 +19,45 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Detector untuk check apakah world sudah memiliki Ruby Ores atau belum
- * Digunakan untuk menentukan apakah perlu retrofit atau tidak
+ * Detector untuk check apakah world sudah memiliki Ruby/Emerald Ores atau belum
  */
 public class WorldOreDetector {
 
-    private static final int SAMPLE_CHUNKS = 20; // Sample 20 chunks untuk check
-    private static final int MIN_ORES_FOUND = 1; // Minimal 1 ore ditemukan = world has ores
+    private static final int SAMPLE_CHUNKS = 20;
+    private static final int MIN_ORES_FOUND = 1;
 
     /**
-     * Check apakah world ini sudah memiliki Ruby Ores atau belum
-     * @return true jika world sudah punya Ruby Ores (tidak perlu retrofit)
+     * ⭐ UPDATED: Check untuk Ruby ORE Emerald Ores
      */
     public static boolean worldHasRubyOres(MinecraftServer server, ServerWorld world) {
-        EmeraldMod.LOGGER.info("[OreDetector] Checking if world has Ruby Ores...");
+        EmeraldMod.LOGGER.info("[OreDetector] Checking if world has Ruby/Emerald Ores...");
 
-        // Get world folder
         File worldDir = server.getSavePath(WorldSavePath.ROOT).toFile();
 
-        // Get region folder
         File regionDir;
         if (world.getRegistryKey() == World.OVERWORLD) {
             regionDir = new File(worldDir, "region");
         } else if (world.getRegistryKey() == World.NETHER) {
             regionDir = new File(new File(worldDir, "DIM-1"), "region");
         } else {
-            return false; // End doesn't have ruby ores
+            return false;
         }
 
         if (!regionDir.exists() || !regionDir.isDirectory()) {
             EmeraldMod.LOGGER.info("[OreDetector] Region folder not found - new world");
-            return false; // New world, no chunks yet
+            return false;
         }
 
-        // Get region files
         File[] regionFiles = regionDir.listFiles((dir, name) -> name.endsWith(".mca"));
 
         if (regionFiles == null || regionFiles.length == 0) {
             EmeraldMod.LOGGER.info("[OreDetector] No region files - new world");
-            return false; // New world
+            return false;
         }
 
         EmeraldMod.LOGGER.info("[OreDetector] Found {} region files, sampling chunks...",
                 regionFiles.length);
 
-        // Sample random chunks from region files
         List<ChunkPos> chunksToCheck = getRandomChunks(regionFiles, SAMPLE_CHUNKS);
 
         int oresFound = 0;
@@ -71,22 +65,19 @@ public class WorldOreDetector {
 
         for (ChunkPos pos : chunksToCheck) {
             try {
-                // Try to load chunk
                 WorldChunk chunk = world.getChunk(pos.x, pos.z);
 
                 if (chunk == null) {
                     continue;
                 }
 
-                // Check if this chunk has ruby ores
-                if (chunkHasRubyOres(world, chunk)) {
+                if (chunkHasModOres(world, chunk)) { // Changed method name
                     oresFound++;
-                    EmeraldMod.LOGGER.info("[OreDetector] Found Ruby Ores in chunk ({}, {})",
+                    EmeraldMod.LOGGER.info("[OreDetector] Found Mod Ores in chunk ({}, {})",
                             pos.x, pos.z);
 
-                    // Found ore = world has ores
                     if (oresFound >= MIN_ORES_FOUND) {
-                        EmeraldMod.LOGGER.info("[OreDetector] ✓ World HAS Ruby Ores (found in {} chunks)",
+                        EmeraldMod.LOGGER.info("[OreDetector] ✓ World HAS Mod Ores (found in {} chunks)",
                                 oresFound);
                         return true;
                     }
@@ -95,25 +86,20 @@ public class WorldOreDetector {
                 chunksChecked++;
 
             } catch (Exception e) {
-                // Skip chunk if error
                 continue;
             }
         }
 
-        EmeraldMod.LOGGER.info("[OreDetector] ✗ World does NOT have Ruby Ores (checked {} chunks)",
+        EmeraldMod.LOGGER.info("[OreDetector] ✗ World does NOT have Mod Ores (checked {} chunks)",
                 chunksChecked);
         return false;
     }
 
-    /**
-     * Get random chunks from region files to sample
-     */
     private static List<ChunkPos> getRandomChunks(File[] regionFiles, int maxSamples) {
         List<ChunkPos> chunks = new ArrayList<>();
         Pattern pattern = Pattern.compile("r\\.(-?\\d+)\\.(-?\\d+)\\.mca");
 
-        // Get chunks from multiple region files
-        int regionsToCheck = Math.min(regionFiles.length, 5); // Check max 5 regions
+        int regionsToCheck = Math.min(regionFiles.length, 5);
 
         for (int i = 0; i < regionsToCheck && chunks.size() < maxSamples; i++) {
             File regionFile = regionFiles[i];
@@ -123,11 +109,10 @@ public class WorldOreDetector {
                 int regionX = Integer.parseInt(matcher.group(1));
                 int regionZ = Integer.parseInt(matcher.group(2));
 
-                // Sample 4 chunks per region (corners and center)
-                chunks.add(new ChunkPos(regionX * 32, regionZ * 32)); // Top-left
-                chunks.add(new ChunkPos(regionX * 32 + 31, regionZ * 32)); // Top-right
-                chunks.add(new ChunkPos(regionX * 32, regionZ * 32 + 31)); // Bottom-left
-                chunks.add(new ChunkPos(regionX * 32 + 16, regionZ * 32 + 16)); // Center
+                chunks.add(new ChunkPos(regionX * 32, regionZ * 32));
+                chunks.add(new ChunkPos(regionX * 32 + 31, regionZ * 32));
+                chunks.add(new ChunkPos(regionX * 32, regionZ * 32 + 31));
+                chunks.add(new ChunkPos(regionX * 32 + 16, regionZ * 32 + 16));
             }
         }
 
@@ -135,9 +120,9 @@ public class WorldOreDetector {
     }
 
     /**
-     * Check if a single chunk has ruby ores
+     * ⭐ UPDATED: Check ruby ORE emerald.json ores
      */
-    private static boolean chunkHasRubyOres(ServerWorld world, WorldChunk chunk) {
+    private static boolean chunkHasModOres(ServerWorld world, WorldChunk chunk) {
         ChunkPos chunkPos = chunk.getPos();
         int startX = chunkPos.getStartX();
         int startZ = chunkPos.getStartZ();
@@ -151,7 +136,6 @@ public class WorldOreDetector {
             maxY = 320;
         }
 
-        // Sample every 4 blocks in X,Z and every 8 blocks in Y for efficiency
         for (int x = 0; x < 16; x += 4) {
             for (int z = 0; z < 16; z += 4) {
                 for (int y = minY; y < maxY; y += 8) {
@@ -160,8 +144,8 @@ public class WorldOreDetector {
                     try {
                         BlockState state = world.getBlockState(pos);
 
-                        if (isRubyOre(state)) {
-                            return true; // Found ore!
+                        if (isModOre(state)) { // Changed method name
+                            return true;
                         }
                     } catch (Exception e) {
                         continue;
@@ -174,13 +158,14 @@ public class WorldOreDetector {
     }
 
     /**
-     * Check if block is ruby ore
+     * ⭐ UPDATED: Check ruby ORE emerald.json ore
      */
-    private static boolean isRubyOre(BlockState state) {
+    private static boolean isModOre(BlockState state) {
         Block block = state.getBlock();
         return block == ModBlocks.RUBY_ORE ||
                 block == ModBlocks.DEEPSLATE_RUBY_ORE ||
                 block == ModBlocks.NETHER_RUBY_ORE ||
-                block == ModBlocks.RUBY_DEBRIS;
+                block == ModBlocks.RUBY_DEBRIS ||
+                block == ModBlocks.NETHER_EMERALD_ORE; // NEW!
     }
 }

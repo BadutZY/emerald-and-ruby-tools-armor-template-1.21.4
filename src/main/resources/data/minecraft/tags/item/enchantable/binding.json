@@ -9,6 +9,16 @@
     "emeraldmod:ruby_helmet",
     "emeraldmod:ruby_chestplate",
     "emeraldmod:ruby_leggings",
-    "emeraldmod:ruby_boots"
+    "emeraldmod:ruby_boots",
+
+    "emeraldmod:basic_emerald_helmet",
+    "emeraldmod:basic_emerald_chestplate",
+    "emeraldmod:basic_emerald_leggings",
+    "emeraldmod:basic_emerald_boots",
+
+    "emeraldmod:basic_ruby_helmet",
+    "emeraldmod:basic_ruby_chestplate",
+    "emeraldmod:basic_ruby_leggings",
+    "emeraldmod:basic_ruby_boots"
   ]
 }

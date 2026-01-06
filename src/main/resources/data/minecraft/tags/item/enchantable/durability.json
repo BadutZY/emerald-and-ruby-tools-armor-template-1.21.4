@@ -19,6 +19,26 @@
     "emeraldmod:ruby_pickaxe",
     "emeraldmod:ruby_axe",
     "emeraldmod:ruby_shovel",
-    "emeraldmod:ruby_hoe"
+    "emeraldmod:ruby_hoe",
+
+    "emeraldmod:basic_emerald_helmet",
+    "emeraldmod:basic_emerald_chestplate",
+    "emeraldmod:basic_emerald_leggings",
+    "emeraldmod:basic_emerald_boots",
+    "emeraldmod:basic_emerald_sword",
+    "emeraldmod:basic_emerald_pickaxe",
+    "emeraldmod:basic_emerald_axe",
+    "emeraldmod:basic_emerald_shovel",
+    "emeraldmod:basic_emerald_hoe",
+
+    "emeraldmod:basic_ruby_helmet",
+    "emeraldmod:basic_ruby_chestplate",
+    "emeraldmod:basic_ruby_leggings",
+    "emeraldmod:basic_ruby_boots",
+    "emeraldmod:basic_ruby_sword",
+    "emeraldmod:basic_ruby_pickaxe",
+    "emeraldmod:basic_ruby_axe",
+    "emeraldmod:basic_ruby_shovel",
+    "emeraldmod:basic_ruby_hoe"
   ]
 }

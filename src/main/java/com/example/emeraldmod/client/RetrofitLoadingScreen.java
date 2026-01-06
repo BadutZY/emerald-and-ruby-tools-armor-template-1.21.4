@@ -142,8 +142,6 @@ public class RetrofitLoadingScreen extends Screen {
         }
     }
 
-    // ... rest of render methods sama seperti sebelumnya ...
-
     private void renderMinimized(DrawContext context, int mouseX, int mouseY) {
         int x = this.width - MINI_WIDTH - MINI_MARGIN;
         int y = MINI_MARGIN;
@@ -151,7 +149,8 @@ public class RetrofitLoadingScreen extends Screen {
         context.fill(x - 2, y - 2, x + MINI_WIDTH + 2, y + MINI_HEIGHT + 2, 0xFFFFFFFF);
         context.fill(x, y, x + MINI_WIDTH, y + MINI_HEIGHT, 0xEE2a2a2a);
 
-        drawSharpText(context, "⚡ Ruby Ore Retrofit", x + 5, y + 5, 0xFFAA00, false, 1.0f);
+        // UPDATED title
+        drawSharpText(context, "⚡ Ore Retrofit", x + 5, y + 5, 0xFFAA00, false, 1.0f);
 
         if (totalChunks > 0) {
             int percentage = (processedChunks * 100) / totalChunks;
@@ -201,10 +200,11 @@ public class RetrofitLoadingScreen extends Screen {
         int centerY = this.height / 2;
 
         if (isComplete) {
-            drawSharpText(context, "✅ Ruby Ore Retrofit Complete!",
+            // UPDATED completion message
+            drawSharpText(context, "✅ Ore Retrofit Complete!",
                     centerX, centerY - 40, 0x00FF00, true, 2.0f);
 
-            drawSharpText(context, "Ruby Ores are now available throughout your world!",
+            drawSharpText(context, "Ruby & Emerald Ores are now available!",
                     centerX, centerY - 10, 0xFFFFFF, true, 1.0f);
 
             drawSharpText(context, "This includes Overworld AND Nether dimensions!",
@@ -214,7 +214,8 @@ public class RetrofitLoadingScreen extends Screen {
                     centerX, centerY + 40, 0xAAAAAA, true, 1.0f);
 
         } else {
-            drawSharpText(context, "⚡ Generating Ruby Ores",
+            // UPDATED title
+            drawSharpText(context, "⚡ Generating Mod Ores",
                     centerX, centerY - 80, 0xFFAA00, true, 2.0f);
 
             drawSharpText(context, "Processing: " + currentDimension,
@@ -227,6 +228,7 @@ public class RetrofitLoadingScreen extends Screen {
                 drawSharpText(context, progressText,
                         centerX, centerY - 25, 0xFFFFFF, true, 1.0f);
 
+                // Progress bar tetap sama
                 int barWidth = 400;
                 int barHeight = 30;
                 int barX = centerX - barWidth / 2;
@@ -254,7 +256,8 @@ public class RetrofitLoadingScreen extends Screen {
             drawSharpText(context, "Please wait - this only happens once!",
                     centerX, centerY + 75, 0x999999, true, 1.0f);
 
-            drawSharpText(context, "Adding Ruby Ores to Overworld AND Nether...",
+            // UPDATED info message
+            drawSharpText(context, "Adding Ruby & Emerald Ores to all dimensions...",
                     centerX, centerY + 95, 0x999999, true, 1.0f);
 
             drawSharpText(context, "You can minimize and play. Press 'M' to maximize back.",

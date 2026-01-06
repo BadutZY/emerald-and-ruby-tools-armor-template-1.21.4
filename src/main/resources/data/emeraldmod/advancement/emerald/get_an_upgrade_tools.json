@@ -1,0 +1,45 @@
+{
+  "parent": "emeraldmod:emerald/emerald_upgrade",
+  "criteria": {
+    "emerald_tools": {
+      "conditions": {
+        "items": [
+          {
+            "items": "emeraldmod:emerald_pickaxe"
+          },
+          {
+            "items": "emeraldmod:emerald_axe"
+          },
+          {
+            "items": "emeraldmod:emerald_sword"
+          },
+          {
+            "items": "emeraldmod:emerald_shovel"
+          },
+          {
+            "items": "emeraldmod:emerald_hoe"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": "Amazing",
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "emeraldmod:emerald_pickaxe"
+    },
+    "title": "You Get an Upgrade"
+  },
+  "requirements": [
+    [
+      "emerald_tools"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": true
+}

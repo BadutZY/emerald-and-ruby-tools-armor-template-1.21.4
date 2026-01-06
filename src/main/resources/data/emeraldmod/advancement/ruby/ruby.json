@@ -1,0 +1,18 @@
+{
+  "display": {
+    "icon": {
+      "id": "emeraldmod:ruby_block"
+    },
+    "title": "Ruby Advancement",
+    "description": "Get all rubies",
+    "background": "emeraldmod:textures/block/ruby_block.png",
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "ruby": {
+      "trigger": "minecraft:tick"
+    }
+  }
+}

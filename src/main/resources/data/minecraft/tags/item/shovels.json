@@ -1,6 +1,8 @@
 {
   "values": [
     "emeraldmod:emerald_shovel",
-    "emeraldmod:ruby_shovel"
+    "emeraldmod:ruby_shovel",
+    "emeraldmod:basic_emerald_shovel",
+    "emeraldmod:basic_ruby_shovel"
   ]
 }

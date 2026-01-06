@@ -1,0 +1,33 @@
+{
+  "parent": "emeraldmod:emerald/emerald_upgrade",
+  "criteria": {
+    "emerald_horse": {
+      "conditions": {
+        "items": [
+          {
+            "items": "emeraldmod:emerald_horse_armor"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": "Great",
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "emeraldmod:emerald_horse_armor"
+    },
+    "title": "Next Level!!!"
+  },
+  "requirements": [
+    [
+      "emerald_horse"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": true
+}

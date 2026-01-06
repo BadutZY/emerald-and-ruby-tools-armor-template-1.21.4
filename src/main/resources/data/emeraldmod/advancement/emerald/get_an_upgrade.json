@@ -1,0 +1,42 @@
+{
+  "parent": "emeraldmod:emerald/emerald_upgrade",
+  "criteria": {
+    "emerald_armor": {
+      "conditions": {
+        "items": [
+          {
+            "items": "emeraldmod:emerald_helmet"
+          },
+          {
+            "items": "emeraldmod:emerald_chestplate"
+          },
+          {
+            "items": "emeraldmod:emerald_leggings"
+          },
+          {
+            "items": "emeraldmod:emerald_boots"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": "Incredible",
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "emeraldmod:emerald_chestplate"
+    },
+    "title": "You Get an Upgrade"
+  },
+  "requirements": [
+    [
+      "emerald_armor"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": true
+}

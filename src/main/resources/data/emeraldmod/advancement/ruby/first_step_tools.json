@@ -1,0 +1,45 @@
+{
+  "parent": "emeraldmod:ruby/ruby_ore",
+  "criteria": {
+    "basic_ruby_tools": {
+      "conditions": {
+        "items": [
+          {
+            "items": "emeraldmod:basic_ruby_axe"
+          },
+          {
+            "items": "emeraldmod:basic_ruby_pickaxe"
+          },
+          {
+            "items": "emeraldmod:basic_ruby_shovel"
+          },
+          {
+            "items": "emeraldmod:basic_ruby_hoe"
+          },
+          {
+            "items": "emeraldmod:basic_ruby_sword"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": "Nice Nice",
+    "frame": "challenge",
+    "icon": {
+      "id": "emeraldmod:basic_ruby_pickaxe",
+      "count": 1
+    },
+    "title": "First step"
+  },
+  "requirements": [
+    [
+      "basic_ruby_tools"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": true
+}

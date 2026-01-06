@@ -30,9 +30,18 @@ public class ModToolMaterial {
     // 6. repair ingredient tag (TagKey<Item>)
     public static final ToolMaterial EMERALD = new ToolMaterial(
             BlockTags.INCORRECT_FOR_NETHERITE_TOOL,
-            2031,      // Durability (Diamond = 1561, Netherite = 2031)
+            2151,      // Durability (Diamond = 1561, Netherite = 2031)
             9.0f,      // Mining speed (Diamond = 8.0, Netherite = 9.0)
             4.0f,      // Attack damage bonus (Diamond = 3.0, Netherite = 4.0)
+            10,        // Enchantability (Diamond = 10, Gold = 22)
+            EMERALD_REPAIR_INGREDIENT
+    );
+
+    public static final ToolMaterial BASIC_EMERALD = new ToolMaterial(
+            BlockTags.INCORRECT_FOR_NETHERITE_TOOL,
+            2101,      // Durability (Diamond = 1561, Netherite = 2031)
+            8.0f,      // Mining speed (Diamond = 8.0, Netherite = 9.0)
+            3.0f,      // Attack damage bonus (Diamond = 3.0, Netherite = 4.0)
             10,        // Enchantability (Diamond = 10, Gold = 22)
             EMERALD_REPAIR_INGREDIENT
     );

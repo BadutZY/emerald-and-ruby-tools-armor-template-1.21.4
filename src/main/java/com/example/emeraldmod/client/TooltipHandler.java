@@ -532,7 +532,7 @@ public class TooltipHandler {
     private static void addUpgradeTooltip(List<Text> lines) {
         lines.add(Text.literal("Description:").formatted(Formatting.BLUE));
         lines.add(Text.literal("Upgrade netherite gear to").formatted(Formatting.GRAY));
-        lines.add(Text.literal("emerald tier").formatted(Formatting.GRAY));
+        lines.add(Text.literal("emerald.json tier").formatted(Formatting.GRAY));
         lines.add(Text.literal("  ").formatted(Formatting.GRAY));
         lines.add(Text.literal("Applies to:").formatted(Formatting.GRAY));
         lines.add(Text.literal(" Netherite Equipment").formatted(Formatting.BLUE));
@@ -542,7 +542,7 @@ public class TooltipHandler {
 
     private static void addUpgradeRubyTooltip(List<Text> lines) {
         lines.add(Text.literal("Description:").formatted(Formatting.BLUE));
-        lines.add(Text.literal("Upgrade emerald gear to").formatted(Formatting.GRAY));
+        lines.add(Text.literal("Upgrade emerald.json gear to").formatted(Formatting.GRAY));
         lines.add(Text.literal("ruby tier").formatted(Formatting.GRAY));
         lines.add(Text.literal("  ").formatted(Formatting.GRAY));
         lines.add(Text.literal("Applies to:").formatted(Formatting.GRAY));

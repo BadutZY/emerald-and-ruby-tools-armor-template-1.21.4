@@ -1,6 +1,8 @@
 {
   "values": [
     "emeraldmod:emerald_pickaxe",
-    "emeraldmod:ruby_pickaxe"
+    "emeraldmod:ruby_pickaxe",
+    "emeraldmod:basic_emerald_pickaxe",
+    "emeraldmod:basic_ruby_pickaxe"
   ]
 }

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "###",
+    "#N#",
+    "###"
+  ],
+  "key": {
+    "#": "emeraldmod:ruby_ingot",
+    "N": "emeraldmod:basic_emerald_leggings"
+  },
+  "result": {
+    "id": "emeraldmod:basic_ruby_leggings",
+    "count": 1
+  }
+}

@@ -81,6 +81,48 @@ public class ModItems {
                     new Item.Settings().registryKey(createRegistryKey("ruby_boots")).fireproof()));
 
     // ============================================
+    // BASIC RUBY TOOLS (UNBREAKABLE!)
+    // ============================================
+    public static final SwordItem BASIC_RUBY_SWORD = registerItem("basic_ruby_sword",
+            new RubyToolItem.RubySwordItem(RubyToolMaterial.BASIC_RUBY, 5, -1.5F,
+                    new Item.Settings().registryKey(createRegistryKey("basic_ruby_sword")).fireproof()));
+
+    public static final PickaxeItem BASIC_RUBY_PICKAXE = registerItem("basic_ruby_pickaxe",
+            new RubyToolItem.RubyPickaxeItem(RubyToolMaterial.BASIC_RUBY, 3, -1.5F,
+                    new Item.Settings().registryKey(createRegistryKey("basic_ruby_pickaxe")).fireproof()));
+
+    public static final AxeItem BASIC_RUBY_AXE = registerItem("basic_ruby_axe",
+            new RubyToolItem.RubyAxeItem(RubyToolMaterial.BASIC_RUBY, 7, -2.5F,
+                    new Item.Settings().registryKey(createRegistryKey("basic_ruby_axe")).fireproof()));
+
+    public static final ShovelItem BASIC_RUBY_SHOVEL = registerItem("basic_ruby_shovel",
+            new RubyToolItem.RubyShovelItem(RubyToolMaterial.BASIC_RUBY, 3.5F, -3.0F,
+                    new Item.Settings().registryKey(createRegistryKey("basic_ruby_shovel")).fireproof()));
+
+    public static final HoeItem BASIC_RUBY_HOE = registerItem("basic_ruby_hoe",
+            new RubyToolItem.RubyHoeItem(RubyToolMaterial.BASIC_RUBY, -1, 2.0F,
+                    new Item.Settings().registryKey(createRegistryKey("basic_ruby_hoe")).fireproof()));
+
+    // ============================================
+    // BASIC RUBY ARMOR (UNBREAKABLE!)
+    // ============================================
+    public static final RubyArmorItem BASIC_RUBY_HELMET = registerItem("basic_ruby_helmet",
+            new RubyArmorItem(RubyArmorMaterial.BASIC_RUBY_ARMOR_MATERIAL, EquipmentType.HELMET,
+                    new Item.Settings().registryKey(createRegistryKey("basic_ruby_helmet")).fireproof()));
+
+    public static final RubyArmorItem BASIC_RUBY_CHESTPLATE = registerItem("basic_ruby_chestplate",
+            new RubyArmorItem(RubyArmorMaterial.BASIC_RUBY_ARMOR_MATERIAL, EquipmentType.CHESTPLATE,
+                    new Item.Settings().registryKey(createRegistryKey("basic_ruby_chestplate")).fireproof()));
+
+    public static final RubyArmorItem BASIC_RUBY_LEGGINGS = registerItem("basic_ruby_leggings",
+            new RubyArmorItem(RubyArmorMaterial.BASIC_RUBY_ARMOR_MATERIAL, EquipmentType.LEGGINGS,
+                    new Item.Settings().registryKey(createRegistryKey("basic_ruby_leggings")).fireproof()));
+
+    public static final RubyArmorItem BASIC_RUBY_BOOTS = registerItem("basic_ruby_boots",
+            new RubyArmorItem(RubyArmorMaterial.BASIC_RUBY_ARMOR_MATERIAL, EquipmentType.BOOTS,
+                    new Item.Settings().registryKey(createRegistryKey("basic_ruby_boots")).fireproof()));
+
+    // ============================================
     // RUBY HORSE ARMOR (UNBREAKABLE!)
     // ============================================
     public static final AnimalArmorItem RUBY_HORSE_ARMOR = registerItem("ruby_horse_armor",
@@ -89,6 +131,57 @@ public class ModItems {
                     AnimalArmorItem.Type.EQUESTRIAN,
                     new Item.Settings().registryKey(createRegistryKey("ruby_horse_armor")).fireproof().maxCount(1)
             ));
+
+    // ============================================
+    // BASIC EMERALD TOOLS
+    // ============================================
+    public static final SwordItem BASIC_EMERALD_SWORD = registerItem("basic_emerald_sword",
+            new SwordItem(ModToolMaterial.BASIC_EMERALD, 4, -0.5F,
+                    new Item.Settings().registryKey(createRegistryKey("basic_emerald_sword")).fireproof()));
+
+    public static final PickaxeItem BASIC_EMERALD_PICKAXE = registerItem("basic_emerald_pickaxe",
+            new PickaxeItem(ModToolMaterial.BASIC_EMERALD, 2, -0.5F,
+                    new Item.Settings().registryKey(createRegistryKey("basic_emerald_pickaxe")).fireproof()));
+
+    public static final AxeItem BASIC_EMERALD_AXE = registerItem("basic_emerald_axe",
+            new AxeItem(ModToolMaterial.BASIC_EMERALD, 6, -1.5F,
+                    new Item.Settings().registryKey(createRegistryKey("basic_emerald_axe")).fireproof()));
+
+    public static final ShovelItem BASIC_EMERALD_SHOVEL = registerItem("basic_emerald_shovel",
+            new ShovelItem(ModToolMaterial.BASIC_EMERALD, 2.5F, -2.0F,
+                    new Item.Settings().registryKey(createRegistryKey("basic_emerald_shovel")).fireproof()));
+
+    public static final HoeItem BASIC_EMERALD_HOE = registerItem("basic_emerald_hoe",
+            new HoeItem(ModToolMaterial.BASIC_EMERALD, -1, 1.0F,
+                    new Item.Settings().registryKey(createRegistryKey("basic_emerald_hoe")).fireproof()));
+
+    // ============================================
+    // BASIC EMERALD ARMOR
+    // ============================================
+    public static final EmeraldArmorItem BASIC_EMERALD_HELMET = registerItem("basic_emerald_helmet",
+            new EmeraldArmorItem(ModArmorMaterial.BASIC_EMERALD_ARMOR_MATERIAL, EquipmentType.HELMET,
+                    new Item.Settings().registryKey(createRegistryKey("basic_emerald_helmet")).fireproof()));
+
+    public static final EmeraldArmorItem BASIC_EMERALD_CHESTPLATE = registerItem("basic_emerald_chestplate",
+            new EmeraldArmorItem(ModArmorMaterial.BASIC_EMERALD_ARMOR_MATERIAL, EquipmentType.CHESTPLATE,
+                    new Item.Settings().registryKey(createRegistryKey("basic_emerald_chestplate")).fireproof()));
+
+    public static final EmeraldArmorItem BASIC_EMERALD_LEGGINGS = registerItem("basic_emerald_leggings",
+            new EmeraldArmorItem(ModArmorMaterial.BASIC_EMERALD_ARMOR_MATERIAL, EquipmentType.LEGGINGS,
+                    new Item.Settings().registryKey(createRegistryKey("basic_emerald_leggings")).fireproof()));
+
+    public static final EmeraldArmorItem BASIC_EMERALD_BOOTS = registerItem("basic_emerald_boots",
+            new EmeraldArmorItem(ModArmorMaterial.BASIC_EMERALD_ARMOR_MATERIAL, EquipmentType.BOOTS,
+                    new Item.Settings().registryKey(createRegistryKey("basic_emerald_boots")).fireproof()));
+
+    // ============================================
+    // EMERALD ITEMS - NEW!
+    // ============================================
+    public static final Item EMERALD_NUGGET = registerItem("emerald_nugget",
+            new Item(new Item.Settings().registryKey(createRegistryKey("emerald_nugget")).fireproof()));
+
+    public static final Item EMERALD_CLUSTER = registerItem("emerald_cluster",
+            new Item(new Item.Settings().registryKey(createRegistryKey("emerald_cluster")).fireproof()));
 
     // ============================================
     // EMERALD TOOLS
@@ -173,50 +266,15 @@ public class ModItems {
         ModArmorMaterial.initialize();
         NetheriteArmorMaterial.initialize();
 
-        // Add Ruby items to Combat tab
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(entries -> {
-            entries.add(RUBY_SWORD);
-            entries.add(RUBY_AXE);
-            entries.add(RUBY_HELMET);
-            entries.add(RUBY_CHESTPLATE);
-            entries.add(RUBY_LEGGINGS);
-            entries.add(RUBY_BOOTS);
-
-            entries.add(EMERALD_SWORD);
-            entries.add(EMERALD_AXE);
-            entries.add(EMERALD_HELMET);
-            entries.add(EMERALD_CHESTPLATE);
-            entries.add(EMERALD_LEGGINGS);
-            entries.add(EMERALD_BOOTS);
-        });
-
-        // Add Ruby tools to Tools tab
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(entries -> {
-            entries.add(RUBY_PICKAXE);
-            entries.add(RUBY_SHOVEL);
-            entries.add(RUBY_HOE);
-
-            entries.add(EMERALD_PICKAXE);
-            entries.add(EMERALD_SHOVEL);
-            entries.add(EMERALD_HOE);
-        });
 
         // Add Ruby items to Ingredients tab
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> {
-            entries.add(RUBY);
-            entries.add(RAW_RUBY);
-            entries.add(RUBY_INGOT);
-            entries.add(RUBY_SCRAP);
-            entries.add(RUBY_HORSE_ARMOR);
-            entries.add(RUBY_UPGRADE_SMITHING_TEMPLATE);
-
-            entries.add(EMERALD_UPGRADE_SMITHING_TEMPLATE);
-            entries.add(EMERALD_HORSE_ARMOR);
             entries.add(NETHERITE_HORSE_ARMOR);
         });
 
         EmeraldMod.LOGGER.info("✓ Successfully registered all Ruby items (UNBREAKABLE)");
         EmeraldMod.LOGGER.info("✓ Successfully registered Ruby Scrap (Nether Drop)");
+        EmeraldMod.LOGGER.info("✓ Successfully registered Emerald Ingot (Nether Drop)");
         EmeraldMod.LOGGER.info("✓ Successfully registered all Emerald items");
         EmeraldMod.LOGGER.info("✓ Successfully registered Netherite Horse Armor");
         EmeraldMod.LOGGER.info("✓ Successfully registered Ruby Upgrade Smithing Template");

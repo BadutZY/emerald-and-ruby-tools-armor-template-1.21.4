@@ -97,8 +97,8 @@ public class RetrofitReminderWidget {
         // Background (dark)
         context.fill(x, y, x + WIDGET_WIDTH, y + WIDGET_HEIGHT, 0xEE1a1a1a);
 
-        // Title/Question
-        drawText(context, "Do you want to generate ruby ores now?",
+        // Title/Question - UPDATED
+        drawText(context, "Generate mod ores now?",
                 x + 8, y + 8, 0xFFFFFF, 0.85f);
 
         // Get keybind names

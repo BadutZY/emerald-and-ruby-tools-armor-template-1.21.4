@@ -1,0 +1,21 @@
+{
+  "display": {
+    "icon": {
+      "id": "emeraldmod:ruby_block",
+      "components": {
+        "minecraft:enchantment_glint_override": true
+      }
+    },
+    "title": "Ruby ",
+    "description": "Get all rubies",
+    "background": "emeraldmod:block/ruby_block",
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "trigger": {
+      "trigger": "minecraft:tick"
+    }
+  }
+}

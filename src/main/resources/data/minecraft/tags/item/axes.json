@@ -1,6 +1,8 @@
 {
   "values": [
     "emeraldmod:emerald_axe",
-    "emeraldmod:ruby_axe"
+    "emeraldmod:ruby_axe",
+    "emeraldmod:basic_emerald_axe",
+    "emeraldmod:basic_ruby_axe"
   ]
 }

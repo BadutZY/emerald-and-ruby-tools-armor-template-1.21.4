@@ -1,6 +1,8 @@
 {
   "values": [
     "emeraldmod:emerald_hoe",
-    "emeraldmod:ruby_hoe"
+    "emeraldmod:ruby_hoe",
+    "emeraldmod:basic_emerald_hoe",
+    "emeraldmod:basic_ruby_hoe"
   ]
 }

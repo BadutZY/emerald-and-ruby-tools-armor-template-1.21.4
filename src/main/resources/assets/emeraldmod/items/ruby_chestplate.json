@@ -92,6 +92,13 @@
           "model": "emeraldmod:item/trims/ruby/chestplate/ruby_trim"
         },
         "when": "emeraldmod:ruby_ingot"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "emeraldmod:item/trims/ruby/chestplate/emerald_trim"
+        },
+        "when": "emeraldmod:emerald_cluster"
       }
     ],
     "fallback": {

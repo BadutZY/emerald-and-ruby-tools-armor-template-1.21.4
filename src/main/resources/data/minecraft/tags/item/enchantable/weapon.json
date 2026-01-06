@@ -4,6 +4,11 @@
     "emeraldmod:emerald_sword",
     "emeraldmod:emerald_axe",
     "emeraldmod:ruby_sword",
-    "emeraldmod:ruby_axe"
+    "emeraldmod:ruby_axe",
+
+    "emeraldmod:basic_emerald_sword",
+    "emeraldmod:basic_emerald_axe",
+    "emeraldmod:basic_ruby_sword",
+    "emeraldmod:basic_ruby_axe"
   ]
 }

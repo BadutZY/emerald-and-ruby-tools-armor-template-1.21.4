@@ -29,6 +29,11 @@ public class RubyArmorMaterial {
             Identifier.of(EmeraldMod.MOD_ID, "ruby")
     );
 
+    public static final RegistryKey<EquipmentAsset> BASIC_RUBY_EQUIPMENT_ASSET = RegistryKey.of(
+            EquipmentAssetKeys.REGISTRY_KEY,
+            Identifier.of(EmeraldMod.MOD_ID, "basic_ruby")
+    );
+
     // Ruby Armor Material - SUPERIOR TO EMERALD
     // ArmorMaterial constructor parameters di 1.21.4:
     // 1. durability multiplier (int)
@@ -54,6 +59,23 @@ public class RubyArmorMaterial {
             0.4F, // Knockback resistance (lebih tinggi dari Emerald 0.3)
             RUBY_REPAIR_INGREDIENT,
             RUBY_EQUIPMENT_ASSET
+    );
+
+    public static final ArmorMaterial BASIC_RUBY_ARMOR_MATERIAL = new ArmorMaterial(
+            BASE_DURABILITY,
+            Map.of(
+                    EquipmentType.BOOTS, 5,        // Lebih tinggi dari Emerald (5)
+                    EquipmentType.LEGGINGS, 8,    // Lebih tinggi dari Emerald (8)
+                    EquipmentType.CHESTPLATE, 10,  // Lebih tinggi dari Emerald (10)
+                    EquipmentType.HELMET, 5,       // Lebih tinggi dari Emerald (5)
+                    EquipmentType.BODY, 22         // Lebih tinggi dari Emerald (22)
+            ),
+            10, // Enchantability (lebih baik dari Diamond/Emerald 10)
+            SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE,
+            5.0F, // Toughness (lebih tinggi dari Emerald 5.0)
+            0.3F, // Knockback resistance (lebih tinggi dari Emerald 0.3)
+            RUBY_REPAIR_INGREDIENT,
+            BASIC_RUBY_EQUIPMENT_ASSET
     );
 
     public static void initialize() {

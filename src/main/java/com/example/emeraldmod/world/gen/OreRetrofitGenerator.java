@@ -19,28 +19,23 @@ import net.minecraft.world.chunk.Chunk;
 public class OreRetrofitGenerator {
 
     /**
-     * ⭐ NEW: Check if chunk already has ruby ores
-     * Skip retrofit jika chunk sudah punya ruby ores
+     * ⭐ UPDATED: Check if chunk already has ruby ores OR emerald.json ores
      */
     public static boolean chunkHasRubyOres(ServerWorld world, Chunk chunk) {
         ChunkPos chunkPos = chunk.getPos();
         int startX = chunkPos.getStartX();
         int startZ = chunkPos.getStartZ();
 
-        // Use safe Y range based on dimension
-        int minY = world.getBottomY(); // -64 for overworld, 0 for nether
+        int minY = world.getBottomY();
         int maxY;
 
-        // Determine max Y based on dimension
         if (world.getRegistryKey() == net.minecraft.world.World.NETHER) {
-            maxY = 128; // Nether height limit
+            maxY = 128;
         } else {
-            maxY = 320; // Overworld height limit (1.18+)
+            maxY = 320;
         }
 
-        // Sample beberapa posisi untuk check ruby ores
-        // Tidak perlu scan semua blocks, cukup sample untuk efisiensi
-        // Sample every 4 blocks in X,Z and every 8 blocks in Y
+        // Sample untuk check ores (ruby + emerald.json)
         for (int x = 0; x < 16; x += 4) {
             for (int z = 0; z < 16; z += 4) {
                 for (int y = minY; y < maxY; y += 8) {
@@ -49,14 +44,12 @@ public class OreRetrofitGenerator {
                     try {
                         BlockState state = world.getBlockState(pos);
 
-                        if (isRubyOre(state)) {
-                            // Found ruby ore - skip this chunk
-                            EmeraldMod.LOGGER.debug("Chunk ({}, {}) already has ruby ores, skipping",
+                        if (isModOre(state)) { // Changed method name
+                            EmeraldMod.LOGGER.debug("Chunk ({}, {}) already has mod ores, skipping",
                                     chunkPos.x, chunkPos.z);
                             return true;
                         }
                     } catch (Exception e) {
-                        // Skip if error accessing block
                         continue;
                     }
                 }
@@ -67,18 +60,19 @@ public class OreRetrofitGenerator {
     }
 
     /**
-     * Check if blockstate is ruby ore
+     * ⭐ UPDATED: Check if blockstate is ruby ore OR emerald.json ore
      */
-    private static boolean isRubyOre(BlockState state) {
+    private static boolean isModOre(BlockState state) {
         Block block = state.getBlock();
         return block == ModBlocks.RUBY_ORE ||
                 block == ModBlocks.DEEPSLATE_RUBY_ORE ||
                 block == ModBlocks.NETHER_RUBY_ORE ||
-                block == ModBlocks.RUBY_DEBRIS;
+                block == ModBlocks.RUBY_DEBRIS ||
+                block == ModBlocks.NETHER_EMERALD_ORE; // NEW!
     }
 
     /**
-     * Generate Ruby ores di chunk - DIRECT BLOCK PLACEMENT
+     * Generate ores di chunk - DIRECT BLOCK PLACEMENT
      */
     public static boolean retrofitChunk(ServerWorld world, Chunk chunk) {
         ChunkPos chunkPos = chunk.getPos();
@@ -90,7 +84,6 @@ public class OreRetrofitGenerator {
                 return false;
             }
 
-            // Generate ores based on dimension
             int oresPlaced = 0;
 
             if (world.getRegistryKey() == net.minecraft.world.World.OVERWORLD) {
@@ -102,7 +95,7 @@ public class OreRetrofitGenerator {
             state.markChunkRetrofitted(chunkPos);
 
             if (oresPlaced > 0) {
-                EmeraldMod.LOGGER.debug("Retrofitted chunk ({}, {}) - Placed {} Ruby Ores",
+                EmeraldMod.LOGGER.debug("Retrofitted chunk ({}, {}) - Placed {} Ores",
                         chunkPos.x, chunkPos.z, oresPlaced);
             }
 
@@ -116,7 +109,7 @@ public class OreRetrofitGenerator {
     }
 
     /**
-     * Generate Ruby Ores di Overworld - DIRECT PLACEMENT
+     * Generate Ruby Ores di Overworld
      */
     private static int generateOverworldOres(ServerWorld world, Chunk chunk, ChunkPos chunkPos) {
         Random random = Random.create(world.getSeed() ^
@@ -128,29 +121,29 @@ public class OreRetrofitGenerator {
         for (int i = 0; i < 8; i++) {
             int x = chunkPos.getStartX() + random.nextInt(16);
             int z = chunkPos.getStartZ() + random.nextInt(16);
-            int y = world.getBottomY() + random.nextInt(128); // Y -64 to 64
+            int y = world.getBottomY() + random.nextInt(128);
 
             BlockPos pos = new BlockPos(x, y, z);
             oresPlaced += placeOreVein(world, pos, ModBlocks.RUBY_ORE, ModBlocks.DEEPSLATE_RUBY_ORE,
-                    random, 4 + random.nextInt(5)); // Vein size 4-8
+                    random, 4 + random.nextInt(5));
         }
 
-        // Ruby Ore Large - 2 attempts per chunk (larger veins)
+        // Ruby Ore Large - 2 attempts per chunk
         for (int i = 0; i < 2; i++) {
             int x = chunkPos.getStartX() + random.nextInt(16);
             int z = chunkPos.getStartZ() + random.nextInt(16);
-            int y = world.getBottomY() + random.nextInt(96); // Y -64 to 32
+            int y = world.getBottomY() + random.nextInt(96);
 
             BlockPos pos = new BlockPos(x, y, z);
             oresPlaced += placeOreVein(world, pos, ModBlocks.RUBY_ORE, ModBlocks.DEEPSLATE_RUBY_ORE,
-                    random, 8 + random.nextInt(5)); // Vein size 8-12
+                    random, 8 + random.nextInt(5));
         }
 
         return oresPlaced;
     }
 
     /**
-     * Generate Ruby Ores di Nether - DIRECT PLACEMENT
+     * ⭐ UPDATED: Generate Ruby + Emerald Ores di Nether
      */
     private static int generateNetherOres(ServerWorld world, Chunk chunk, ChunkPos chunkPos) {
         Random random = Random.create(world.getSeed() ^
@@ -162,21 +155,32 @@ public class OreRetrofitGenerator {
         for (int i = 0; i < 10; i++) {
             int x = chunkPos.getStartX() + random.nextInt(16);
             int z = chunkPos.getStartZ() + random.nextInt(16);
-            int y = 10 + random.nextInt(108); // Y 10 to 117
+            int y = 10 + random.nextInt(108);
 
             BlockPos pos = new BlockPos(x, y, z);
             oresPlaced += placeNetherOreVein(world, pos, ModBlocks.NETHER_RUBY_ORE, random,
-                    2 + random.nextInt(3)); // Vein size 2-4
+                    2 + random.nextInt(3));
         }
 
         // Ruby Debris - 5 attempts per chunk
         for (int i = 0; i < 5; i++) {
             int x = chunkPos.getStartX() + random.nextInt(16);
             int z = chunkPos.getStartZ() + random.nextInt(16);
-            int y = -35 + random.nextInt(116); // Y -35 to 80
+            int y = -35 + random.nextInt(116);
 
             BlockPos pos = new BlockPos(x, y, z);
             oresPlaced += placeNetherOreVein(world, pos, ModBlocks.RUBY_DEBRIS, random,
+                    1 + random.nextInt(3));
+        }
+
+        // ⭐ NEW: Nether Emerald Ore - 5 attempts per chunk (RARER than ruby)
+        for (int i = 0; i < 5; i++) {
+            int x = chunkPos.getStartX() + random.nextInt(16);
+            int z = chunkPos.getStartZ() + random.nextInt(16);
+            int y = 10 + random.nextInt(91); // Y 10 to 100
+
+            BlockPos pos = new BlockPos(x, y, z);
+            oresPlaced += placeNetherOreVein(world, pos, ModBlocks.NETHER_EMERALD_ORE, random,
                     1 + random.nextInt(3)); // Vein size 1-3
         }
 
@@ -184,14 +188,14 @@ public class OreRetrofitGenerator {
     }
 
     /**
-     * Place ore vein (untuk Overworld - stone/deepslate replacement)
+     * Place ore vein (Overworld)
      */
     private static int placeOreVein(ServerWorld world, BlockPos center, Block stoneOre,
                                     Block deepslateOre, Random random, int size) {
         int placed = 0;
 
         for (int i = 0; i < size; i++) {
-            int offsetX = random.nextInt(3) - 1; // -1 to 1
+            int offsetX = random.nextInt(3) - 1;
             int offsetY = random.nextInt(3) - 1;
             int offsetZ = random.nextInt(3) - 1;
 
@@ -200,17 +204,15 @@ public class OreRetrofitGenerator {
             if (canPlaceOreAt(world, pos)) {
                 BlockState existingState = world.getBlockState(pos);
 
-                // Choose ore type based on existing block
                 BlockState oreState;
                 if (existingState.isIn(BlockTags.DEEPSLATE_ORE_REPLACEABLES)) {
                     oreState = deepslateOre.getDefaultState();
                 } else if (existingState.isIn(BlockTags.STONE_ORE_REPLACEABLES)) {
                     oreState = stoneOre.getDefaultState();
                 } else {
-                    continue; // Skip if not replaceable
+                    continue;
                 }
 
-                // Place ore
                 world.setBlockState(pos, oreState, Block.NOTIFY_LISTENERS);
                 placed++;
             }
@@ -220,7 +222,7 @@ public class OreRetrofitGenerator {
     }
 
     /**
-     * Place ore vein (untuk Nether - netherrack replacement)
+     * Place ore vein (Nether)
      */
     private static int placeNetherOreVein(ServerWorld world, BlockPos center, Block ore,
                                           Random random, int size) {
@@ -236,7 +238,6 @@ public class OreRetrofitGenerator {
             if (canPlaceNetherOreAt(world, pos)) {
                 BlockState existingState = world.getBlockState(pos);
 
-                // Check if can replace (netherrack, basalt, etc)
                 if (existingState.isOf(Blocks.NETHERRACK) ||
                         existingState.isOf(Blocks.BASALT) ||
                         existingState.isOf(Blocks.BLACKSTONE)) {
@@ -250,32 +251,22 @@ public class OreRetrofitGenerator {
         return placed;
     }
 
-    /**
-     * Check if we can place ore at position (Overworld)
-     */
     private static boolean canPlaceOreAt(ServerWorld world, BlockPos pos) {
         if (!world.isChunkLoaded(pos)) {
             return false;
         }
 
         BlockState state = world.getBlockState(pos);
-
-        // Can only replace stone-like blocks
         return state.isIn(BlockTags.STONE_ORE_REPLACEABLES) ||
                 state.isIn(BlockTags.DEEPSLATE_ORE_REPLACEABLES);
     }
 
-    /**
-     * Check if we can place ore at position (Nether)
-     */
     private static boolean canPlaceNetherOreAt(ServerWorld world, BlockPos pos) {
         if (!world.isChunkLoaded(pos)) {
             return false;
         }
 
         BlockState state = world.getBlockState(pos);
-
-        // Can replace netherrack, basalt, blackstone
         return state.isOf(Blocks.NETHERRACK) ||
                 state.isOf(Blocks.BASALT) ||
                 state.isOf(Blocks.BLACKSTONE);

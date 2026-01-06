@@ -22,7 +22,7 @@ public class ModWorldGeneration {
             Identifier.of(EmeraldMod.MOD_ID, "ruby_ore_large")
     );
 
-    // Nether Ruby Ore Placed Feature (NEW!)
+    // Nether Ruby Ore Placed Features
     public static final RegistryKey<PlacedFeature> NETHER_RUBY_ORE_PLACED_KEY = RegistryKey.of(
             RegistryKeys.PLACED_FEATURE,
             Identifier.of(EmeraldMod.MOD_ID, "nether_ruby_ore")
@@ -33,8 +33,14 @@ public class ModWorldGeneration {
             Identifier.of(EmeraldMod.MOD_ID, "ruby_debris")
     );
 
+    // Nether Emerald Ore Placed Feature - NEW!
+    public static final RegistryKey<PlacedFeature> NETHER_EMERALD_ORE_PLACED_KEY = RegistryKey.of(
+            RegistryKeys.PLACED_FEATURE,
+            Identifier.of(EmeraldMod.MOD_ID, "nether_emerald_ore")
+    );
+
     public static void generateModWorldGen() {
-        EmeraldMod.LOGGER.info("Registering Ruby Ore World Generation");
+        EmeraldMod.LOGGER.info("Registering Ruby & Emerald Ore World Generation");
 
         // Add Ruby Ore to Overworld (semua biome)
         BiomeModifications.addFeature(
@@ -50,18 +56,25 @@ public class ModWorldGeneration {
                 RUBY_ORE_LARGE_PLACED_KEY
         );
 
-        // Add Nether Ruby Ore to Nether (NEW!)
+        // Add Nether Ruby Ore to Nether
         BiomeModifications.addFeature(
                 BiomeSelectors.foundInTheNether(),
                 GenerationStep.Feature.UNDERGROUND_ORES,
                 NETHER_RUBY_ORE_PLACED_KEY
         );
 
-        // Add Nether Ruby Ore to Nether (NEW!)
+        // Add Ruby Debris to Nether
         BiomeModifications.addFeature(
                 BiomeSelectors.foundInTheNether(),
                 GenerationStep.Feature.UNDERGROUND_ORES,
                 RUBY_DEBRIS_PLACED_KEY
+        );
+
+        // Add Nether Emerald Ore to Nether - NEW!
+        BiomeModifications.addFeature(
+                BiomeSelectors.foundInTheNether(),
+                GenerationStep.Feature.UNDERGROUND_ORES,
+                NETHER_EMERALD_ORE_PLACED_KEY
         );
 
         EmeraldMod.LOGGER.info("✓ Ruby Ore will generate in all Overworld biomes");
@@ -74,5 +87,11 @@ public class ModWorldGeneration {
         EmeraldMod.LOGGER.info("✓ Nether Vein Size: 2-4 ores per vein");
         EmeraldMod.LOGGER.info("✓ Nether Rarity: Similar to Nether Gold Ore");
         EmeraldMod.LOGGER.info("✓ Drops: 2-4 Ruby Scrap per ore");
+
+        EmeraldMod.LOGGER.info("✓ Nether Emerald Ore will generate in all Nether biomes");
+        EmeraldMod.LOGGER.info("✓ Generation: Y 10 to Y 100");
+        EmeraldMod.LOGGER.info("✓ Vein Size: 1-3 ores per vein (smaller than ruby)");
+        EmeraldMod.LOGGER.info("✓ Rarity: RARER than Nether Gold Ore");
+        EmeraldMod.LOGGER.info("✓ Drops: 1-2 Emerald Ingots per ore");
     }
 }

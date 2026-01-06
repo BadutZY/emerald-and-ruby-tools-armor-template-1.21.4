@@ -1,0 +1,45 @@
+{
+  "parent": "emeraldmod:ruby/ruby_upgrade",
+  "criteria": {
+    "ruby_tools": {
+      "conditions": {
+        "items": [
+          {
+            "items": "emeraldmod:ruby_axe"
+          },
+          {
+            "items": "emeraldmod:ruby_pickaxe"
+          },
+          {
+            "items": "emeraldmod:ruby_shovel"
+          },
+          {
+            "items": "emeraldmod:ruby_hoe"
+          },
+          {
+            "items": "emeraldmod:ruby_sword"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": "Nice job",
+    "frame": "challenge",
+    "icon": {
+      "id": "emeraldmod:ruby_pickaxe",
+      "count": 1
+    },
+    "title": "RubRub"
+  },
+  "requirements": [
+    [
+      "ruby_tools"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": true
+}

@@ -3,6 +3,7 @@ package com.example.emeraldmod.item;
 import com.example.emeraldmod.EmeraldMod;
 import com.example.emeraldmod.block.ModBlocks;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -17,7 +18,7 @@ public class ModItemGroups {
     // RUBY EQUIPMENT TAB (Tools, Armor, Template)
     // ============================================
     public static final ItemGroup RUBY_EQUIPMENT_GROUP = Registry.register(Registries.ITEM_GROUP,
-            Identifier.of(EmeraldMod.MOD_ID, "ruby_equipment"),
+            Identifier.of(EmeraldMod.MOD_ID, "ruby_tools"),
             FabricItemGroup.builder()
                     .icon(() -> new ItemStack(ModItems.RUBY_SWORD))
                     .displayName(Text.translatable("itemgroup.emeraldmod.ruby_equipment"))
@@ -43,6 +44,31 @@ public class ModItemGroups {
 
                         // Ruby Materials
                         entries.add(ModItems.RUBY);
+                    })
+                    .build());
+
+    // ============================================
+    // RUBY MATERIALS TAB (Ores, Blocks, Materials)
+    // ============================================
+    public static final ItemGroup RUBY_MATERIALS_GROUP = Registry.register(Registries.ITEM_GROUP,
+            Identifier.of(EmeraldMod.MOD_ID, "ruby_blocks"),
+            FabricItemGroup.builder()
+                    .icon(() -> new ItemStack(ModBlocks.RUBY_BLOCK))
+                    .displayName(Text.translatable("itemgroup.emeraldmod.ruby_materials"))
+                    .entries((displayContext, entries) -> {
+                        // Ruby Blocks
+                        entries.add(ModBlocks.RUBY_BLOCK);
+                        entries.add(ModBlocks.RUBY_INGOT_BLOCK);
+                        entries.add(ModBlocks.RAW_RUBY_BLOCK);
+
+                        // Ruby Ores
+                        entries.add(ModBlocks.RUBY_ORE);
+                        entries.add(ModBlocks.DEEPSLATE_RUBY_ORE);
+                        entries.add(ModBlocks.NETHER_RUBY_ORE);
+                        entries.add(ModBlocks.RUBY_DEBRIS);
+
+                        // Ruby Materials
+                        entries.add(ModItems.RUBY);
                         entries.add(ModItems.RAW_RUBY);
                         entries.add(ModItems.RUBY_INGOT);
                         entries.add(ModItems.RUBY_NUGGET);
@@ -51,31 +77,83 @@ public class ModItemGroups {
                     .build());
 
     // ============================================
-    // RUBY MATERIALS TAB (Ores, Blocks, Materials)
+    // EMERALD MATERIALS TAB (Ores, Blocks, Materials)
     // ============================================
-    public static final ItemGroup RUBY_MATERIALS_GROUP = Registry.register(Registries.ITEM_GROUP,
-            Identifier.of(EmeraldMod.MOD_ID, "ruby_materials"),
+    public static final ItemGroup EMERLAD_MATERIALS_GROUP = Registry.register(Registries.ITEM_GROUP,
+            Identifier.of(EmeraldMod.MOD_ID, "emerald_blocks"),
             FabricItemGroup.builder()
-                    .icon(() -> new ItemStack(ModBlocks.RUBY_BLOCK))
-                    .displayName(Text.translatable("itemgroup.emeraldmod.ruby_materials"))
+                    .icon(() -> new ItemStack(ModBlocks.EMERALD_CLUSTER_BLOCK))
+                    .displayName(Text.translatable("itemgroup.emeraldmod.emerald_materials"))
                     .entries((displayContext, entries) -> {
-                        // Ruby Ores
-                        entries.add(ModBlocks.RUBY_ORE);
-                        entries.add(ModBlocks.DEEPSLATE_RUBY_ORE);
-                        entries.add(ModBlocks.NETHER_RUBY_ORE);
+                        // Ores
+                        entries.add(Blocks.EMERALD_BLOCK);
+                        entries.add(ModBlocks.EMERALD_CLUSTER_BLOCK);
+                        entries.add(Blocks.EMERALD_ORE);
+                        entries.add(Blocks.DEEPSLATE_EMERALD_ORE);
+                        entries.add(ModBlocks.NETHER_EMERALD_ORE);
 
-                        // Ruby Blocks
-                        entries.add(ModBlocks.RUBY_BLOCK);
-                        entries.add(ModBlocks.RAW_RUBY_BLOCK);
-                        entries.add(ModBlocks.RUBY_DEBRIS);
-                        entries.add(ModBlocks.RUBY_INGOT_BLOCK);
+                        // Materials
+                        entries.add(Items.EMERALD);
+                        entries.add(ModItems.EMERALD_CLUSTER);
+                        entries.add(ModItems.EMERALD_NUGGET);
+                    })
+                    .build());
+
+    // ============================================
+    // RUBY EQUIPMENT TAB (Tools, Armor, Template)
+    // ============================================
+    public static final ItemGroup BASIC_RUBY_EQUIPMENT_GROUP = Registry.register(Registries.ITEM_GROUP,
+            Identifier.of(EmeraldMod.MOD_ID, "basic_ruby_tools"),
+            FabricItemGroup.builder()
+                    .icon(() -> new ItemStack(ModItems.BASIC_RUBY_SWORD))
+                    .displayName(Text.translatable("itemgroup.emeraldmod.basic_ruby_equipment"))
+                    .entries((displayContext, entries) -> {
+
+                        // Ruby Tools
+                        entries.add(ModItems.BASIC_RUBY_SWORD);
+                        entries.add(ModItems.BASIC_RUBY_PICKAXE);
+                        entries.add(ModItems.BASIC_RUBY_AXE);
+                        entries.add(ModItems.BASIC_RUBY_SHOVEL);
+                        entries.add(ModItems.BASIC_RUBY_HOE);
+
+                        // Ruby Armor
+                        entries.add(ModItems.BASIC_RUBY_HELMET);
+                        entries.add(ModItems.BASIC_RUBY_CHESTPLATE);
+                        entries.add(ModItems.BASIC_RUBY_LEGGINGS);
+                        entries.add(ModItems.BASIC_RUBY_BOOTS);
 
                         // Ruby Materials
-                        entries.add(ModItems.RUBY);
-                        entries.add(ModItems.RAW_RUBY);
                         entries.add(ModItems.RUBY_INGOT);
                         entries.add(ModItems.RUBY_NUGGET);
-                        entries.add(ModItems.RUBY_SCRAP);
+                    })
+                    .build());
+
+
+    // ============================================
+    // BASIC EMERALD TOOLS & ARMOR TAB
+    // ============================================
+    public static final ItemGroup BASIC_EMERALD_GROUP = Registry.register(Registries.ITEM_GROUP,
+            Identifier.of(EmeraldMod.MOD_ID, "basic_emerald_group"),
+            FabricItemGroup.builder()
+                    .icon(() -> new ItemStack(ModItems.BASIC_EMERALD_SWORD))
+                    .displayName(Text.translatable("itemgroup.emeraldmod.basic_emerald"))
+                    .entries((displayContext, entries) -> {
+                        // Emerald Tools
+                        entries.add(ModItems.BASIC_EMERALD_SWORD);
+                        entries.add(ModItems.BASIC_EMERALD_PICKAXE);
+                        entries.add(ModItems.BASIC_EMERALD_AXE);
+                        entries.add(ModItems.BASIC_EMERALD_SHOVEL);
+                        entries.add(ModItems.BASIC_EMERALD_HOE);
+
+                        // Emerald Armor
+                        entries.add(ModItems.BASIC_EMERALD_HELMET);
+                        entries.add(ModItems.BASIC_EMERALD_CHESTPLATE);
+                        entries.add(ModItems.BASIC_EMERALD_LEGGINGS);
+                        entries.add(ModItems.BASIC_EMERALD_BOOTS);
+
+                        // Emerald
+                        entries.add(ModItems.EMERALD_CLUSTER);
+                        entries.add(ModItems.EMERALD_NUGGET);
                     })
                     .build());
 
@@ -107,7 +185,7 @@ public class ModItemGroups {
                         // Emerald Horse Armor
                         entries.add(ModItems.EMERALD_HORSE_ARMOR);
 
-                        // Emerald (vanilla)
+                        // Merald Material
                         entries.add(Items.EMERALD);
                     })
                     .build());

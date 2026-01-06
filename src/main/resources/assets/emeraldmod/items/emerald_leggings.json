@@ -92,6 +92,13 @@
           "model": "emeraldmod:item/trims/emerald/leggings/ruby_trim"
         },
         "when": "emeraldmod:ruby_ingot"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "emeraldmod:item/trims/emerald/leggings/emerald_trim"
+        },
+        "when": "emeraldmod:emerald_cluster"
       }
     ],
     "fallback": {

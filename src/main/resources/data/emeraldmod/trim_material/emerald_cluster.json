@@ -1,0 +1,9 @@
+{
+  "asset_name": "emerald_cluster",
+  "description": {
+    "color": "#03AB4C",
+    "translate": "trim_material.emeraldmod.emerald_cluster"
+  },
+  "ingredient": "emeraldmod:emerald_cluster",
+  "item_model_index": 1.0
+}
