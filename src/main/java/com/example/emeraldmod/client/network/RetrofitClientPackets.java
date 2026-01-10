@@ -11,7 +11,7 @@ import net.minecraft.client.MinecraftClient;
 
 /**
  * Client-side packet handlers untuk retrofit loading screen
- * FIXED: Check world name sebelum show UI
+ * ✅ FIXED: Better dedicated server support
  */
 @Environment(EnvType.CLIENT)
 public class RetrofitClientPackets {
@@ -46,34 +46,23 @@ public class RetrofitClientPackets {
                                         return;
                                     }
 
-                                    if (client.player == null) {
-                                        EmeraldMod.LOGGER.warn("[Client] Player not ready yet, delaying...");
-                                        // Retry setelah 1 detik
-                                        new Thread(() -> {
-                                            try {
-                                                Thread.sleep(1000);
-                                                client.execute(() -> {
-                                                    EmeraldMod.LOGGER.info("[Client] Retry showing loading screen for '{}'", worldName);
-                                                    ClientWorldTracker.setRetrofitWorld(worldName);
-                                                    RetrofitLoadingScreen.show();
-                                                });
-                                            } catch (InterruptedException e) {
-                                                // Ignore
-                                            }
-                                        }).start();
-                                        return;
-                                    }
-
-                                    // ✨ KEY FIX: Set retrofit world dan check sebelum show
+                                    // ✅ KEY FIX: Set retrofit world IMMEDIATELY without validation
+                                    EmeraldMod.LOGGER.info("[Client] Setting retrofit world to '{}' (from server packet)", worldName);
                                     ClientWorldTracker.setRetrofitWorld(worldName);
 
-                                    if (ClientWorldTracker.shouldShowRetrofitUI()) {
-                                        EmeraldMod.LOGGER.info("[Client] Showing loading screen for current world '{}'", worldName);
-                                        RetrofitLoadingScreen.show();
-                                    } else {
-                                        EmeraldMod.LOGGER.warn("[Client] Not showing loading - world mismatch (current: '{}', retrofit: '{}')",
-                                                ClientWorldTracker.getCurrentWorldName(), worldName);
+                                    // ✅ Auto-detect current world if null
+                                    if (ClientWorldTracker.getCurrentWorldName() == null) {
+                                        EmeraldMod.LOGGER.info("[Client] Auto-detecting current world...");
+                                        ClientWorldTracker.autoDetectWorld();
                                     }
+
+                                    // ✅ FORCE SHOW: Show loading screen regardless of validation
+                                    // This is safe because packet came from server
+                                    EmeraldMod.LOGGER.info("[Client] Force showing loading screen for world '{}'", worldName);
+                                    RetrofitLoadingScreen.show();
+
+                                    EmeraldMod.LOGGER.info("[Client] ✅ Loading screen displayed successfully");
+
                                 } catch (Exception e) {
                                     EmeraldMod.LOGGER.error("[Client] Error showing loading screen: {}", e.getMessage());
                                     e.printStackTrace();
@@ -95,17 +84,13 @@ public class RetrofitClientPackets {
 
                             context.client().execute(() -> {
                                 try {
-                                    // ✨ KEY FIX: Only update jika world match
-                                    if (ClientWorldTracker.shouldShowRetrofitUI() &&
-                                            worldName.equals(ClientWorldTracker.getRetrofitWorldName())) {
-
+                                    // ✅ RELAXED: Update progress if retrofit world is set
+                                    if (ClientWorldTracker.getRetrofitWorldName() != null) {
                                         RetrofitLoadingScreen.updateProgress(
                                                 payload.processed(),
                                                 payload.total(),
                                                 payload.dimension()
                                         );
-                                    } else {
-                                        // Silent ignore - bukan world kita
                                     }
                                 } catch (Exception e) {
                                     // Silent fail untuk progress updates
@@ -127,16 +112,18 @@ public class RetrofitClientPackets {
 
                             context.client().execute(() -> {
                                 try {
-                                    // ✨ KEY FIX: Only complete jika world match
-                                    if (worldName.equals(ClientWorldTracker.getRetrofitWorldName())) {
-                                        EmeraldMod.LOGGER.info("[Client] Setting retrofit complete for current world '{}'", worldName);
+                                    // ✅ RELAXED: Set complete if retrofit world matches or is null
+                                    String retrofitWorld = ClientWorldTracker.getRetrofitWorldName();
+
+                                    if (retrofitWorld == null || worldName.equals(retrofitWorld)) {
+                                        EmeraldMod.LOGGER.info("[Client] Setting retrofit complete for world '{}'", worldName);
                                         RetrofitLoadingScreen.setComplete();
 
                                         // Clear retrofit world setelah complete
                                         ClientWorldTracker.clearRetrofitWorld();
                                     } else {
                                         EmeraldMod.LOGGER.warn("[Client] Ignoring complete for different world (current: '{}', completed: '{}')",
-                                                ClientWorldTracker.getCurrentWorldName(), worldName);
+                                                retrofitWorld, worldName);
                                     }
                                 } catch (Exception e) {
                                     EmeraldMod.LOGGER.error("[Client] Error setting complete: {}", e.getMessage());
@@ -151,7 +138,7 @@ public class RetrofitClientPackets {
             );
 
             handlersRegistered = true;
-            EmeraldMod.LOGGER.info("✅ Registered Retrofit Client Packet Handlers (with world checking)");
+            EmeraldMod.LOGGER.info("✅ Registered Retrofit Client Packet Handlers (server compatible)");
             EmeraldMod.LOGGER.info("  → Show Loading: {}", RetrofitPackets.SHOW_LOADING_ID);
             EmeraldMod.LOGGER.info("  → Update Progress: {}", RetrofitPackets.UPDATE_PROGRESS_ID);
             EmeraldMod.LOGGER.info("  → Complete: {}", RetrofitPackets.COMPLETE_ID);

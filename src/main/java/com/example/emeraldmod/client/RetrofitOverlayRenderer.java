@@ -12,6 +12,7 @@ import net.minecraft.client.render.RenderTickCounter;
  * Progress overlay (minimized retrofit screen)
  * - Press M to maximize
  * - Press J to hide/show (TRUE TOGGLE)
+ * ✅ FIXED: Progress capping to prevent > 100%
  */
 @Environment(EnvType.CLIENT)
 public class RetrofitOverlayRenderer {
@@ -38,7 +39,7 @@ public class RetrofitOverlayRenderer {
      */
     public static void activate() {
         isActive = true;
-        isTemporarilyHidden = false; // Reset ketika activate
+        isTemporarilyHidden = false;
         startTime = System.currentTimeMillis();
         EmeraldMod.LOGGER.info("[RetrofitOverlay] Activated - Press M to maximize, J to toggle hide");
     }
@@ -48,15 +49,16 @@ public class RetrofitOverlayRenderer {
      */
     public static void deactivate() {
         isActive = false;
-        isTemporarilyHidden = false; // Reset state
+        isTemporarilyHidden = false;
         EmeraldMod.LOGGER.info("[RetrofitOverlay] Deactivated");
     }
 
     /**
-     * Update progress
+     * ✅ FIXED: Update progress dengan capping
      */
     public static void updateProgress(int processed, int total, String dimension) {
-        processedChunks = processed;
+        // ✅ FIX: Cap processed at total
+        processedChunks = Math.min(processed, total);
         totalChunks = total;
         currentDimension = dimension;
     }
@@ -69,10 +71,10 @@ public class RetrofitOverlayRenderer {
     }
 
     /**
-     * 🔧 Set temporary hidden state (for J keybind toggle)
+     * Set temporary hidden state (for J keybind toggle)
      */
     public static void setTemporarilyHidden(boolean hidden) {
-        if (isActive) { // Only set if active
+        if (isActive) {
             isTemporarilyHidden = hidden;
             EmeraldMod.LOGGER.info("[RetrofitOverlay] Temporarily {} (J key)",
                     hidden ? "HIDDEN" : "SHOWN");
@@ -90,7 +92,6 @@ public class RetrofitOverlayRenderer {
      * Render overlay
      */
     private static void render(DrawContext context, RenderTickCounter tickCounter) {
-        // 🔧 Don't render if: not active OR temporarily hidden
         if (!isActive || isTemporarilyHidden) {
             return;
         }
@@ -117,7 +118,8 @@ public class RetrofitOverlayRenderer {
 
         // Progress
         if (totalChunks > 0) {
-            int percentage = (processedChunks * 100) / totalChunks;
+            // ✅ FIX: Cap percentage at 100%
+            int percentage = Math.min(100, (processedChunks * 100) / totalChunks);
             String progressText = percentage + "% - " + currentDimension;
             drawText(context, progressText, x + 5, y + 23, 0xFFFFFF);
 
@@ -134,8 +136,9 @@ public class RetrofitOverlayRenderer {
             context.fill(barX - 1, barY - 1, barX + barWidth + 1, barY + barHeight + 1, 0xFF444444);
             context.fill(barX, barY, barX + barWidth, barY + barHeight, 0xFF1a1a1a);
 
-            // Bar fill
-            int fillWidth = (int) ((processedChunks / (float) totalChunks) * barWidth);
+            // Bar fill - ✅ FIX: Cap at 100%
+            float fillRatio = Math.min(1.0f, processedChunks / (float) totalChunks);
+            int fillWidth = (int) (fillRatio * barWidth);
             int color = getProgressColor(percentage);
             context.fill(barX, barY, barX + fillWidth, barY + barHeight, color);
 
@@ -162,13 +165,19 @@ public class RetrofitOverlayRenderer {
         // Instruction: Hide/Show toggle
         drawTextSmall(context, "Press [" + hideKey + "] to hide", x + 5, y + 82, 0xAAAAAA);
 
-        // Time estimate
+        // Time estimate - ✅ FIX: Only show if not at 100%
         if (processedChunks > 0 && totalChunks > 0) {
-            long elapsed = (System.currentTimeMillis() - startTime) / 1000;
-            long estimated = (elapsed * totalChunks / processedChunks);
-            long remaining = Math.max(0, estimated - elapsed);
-            String timeText = "ETA: " + formatTime(remaining);
-            drawTextSmall(context, timeText, x + MINI_WIDTH - 80, y + 67, 0xAAAAAA);
+            int percentage = Math.min(100, (processedChunks * 100) / totalChunks);
+
+            if (percentage < 100) {
+                long elapsed = (System.currentTimeMillis() - startTime) / 1000;
+                long estimated = (elapsed * totalChunks / processedChunks);
+                long remaining = Math.max(0, estimated - elapsed);
+                String timeText = "ETA: " + formatTime(remaining);
+                drawTextSmall(context, timeText, x + MINI_WIDTH - 80, y + 67, 0xAAAAAA);
+            } else {
+                drawTextSmall(context, "Finalizing...", x + MINI_WIDTH - 80, y + 67, 0xFFAA00);
+            }
         }
     }
 

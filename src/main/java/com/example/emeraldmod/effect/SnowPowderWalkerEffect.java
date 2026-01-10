@@ -3,19 +3,28 @@ package com.example.emeraldmod.effect;
 import com.example.emeraldmod.EmeraldMod;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
-import net.minecraft.util.Identifier;
 
+/**
+ * Status Effect untuk Powder Snow Walker
+ * ✅ FIXED: Tanpa override methods yang tidak ada di superclass
+ */
 public class SnowPowderWalkerEffect extends StatusEffect {
 
     public SnowPowderWalkerEffect() {
         super(
-                StatusEffectCategory.BENEFICIAL, // Kategori: beneficial (biru)
-                0xE0F2F7 // Warna: light cyan/blue untuk snow effect
+                StatusEffectCategory.BENEFICIAL, // Kategori beneficial (biru)
+                0x87CEEB // Warna sky blue untuk powder snow
         );
+
+        EmeraldMod.LOGGER.info("Initialized SnowPowderWalkerEffect");
+        EmeraldMod.LOGGER.info("  - Category: BENEFICIAL");
+        EmeraldMod.LOGGER.info("  - Color: 0x87CEEB (Sky Blue)");
+        EmeraldMod.LOGGER.info("  - Icon: Will use custom sprite texture");
     }
 
-    // Method untuk mendapatkan texture path
-    public Identifier getTextureId() {
-        return Identifier.of(EmeraldMod.MOD_ID, "mob_effect/snow_powder_walker");
+    @Override
+    public boolean canApplyUpdateEffect(int duration, int amplifier) {
+        // Effect tidak memerlukan periodic update
+        return false;
     }
 }

@@ -21,7 +21,7 @@ public class HorseEntityPowderSnowMixin {
         if (entity instanceof HorseEntity horse) {
             ItemStack armorStack = horse.getBodyArmor();
 
-            // ✅ CHECK: Emerald, Ruby, OR Netherite Horse Armor
+            // CHECK: Emerald, Ruby, OR Netherite Horse Armor
             if (!armorStack.isEmpty() &&
                     (armorStack.getItem() == ModItems.EMERALD_HORSE_ARMOR ||
                             armorStack.getItem() == ModItems.RUBY_HORSE_ARMOR)) {

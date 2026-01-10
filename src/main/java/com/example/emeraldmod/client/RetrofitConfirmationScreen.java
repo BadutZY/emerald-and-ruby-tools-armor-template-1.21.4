@@ -13,6 +13,7 @@ import net.minecraft.text.Text;
 /**
  * Screen konfirmasi sebelum memulai retrofit
  * Memberikan pilihan YES/NO kepada player
+ * ✅ FIXED: Compatible dengan DecisionPayload(boolean, boolean)
  */
 @Environment(EnvType.CLIENT)
 public class RetrofitConfirmationScreen extends Screen {
@@ -84,14 +85,14 @@ public class RetrofitConfirmationScreen extends Screen {
         int centerX = this.width / 2;
         int centerY = this.height / 2;
 
-        // Title with icon - UPDATED
+        // Title with icon
         drawCenteredText(context, "💎 Ore Generation", centerX, centerY - 80, 0xFFAA00, 2.0f);
 
-        // Main question - UPDATED
+        // Main question
         drawCenteredText(context, "Do you want to generate mod ores now?",
                 centerX, centerY - 40, 0xFFFFFF, 1.5f);
 
-        // Info text - UPDATED
+        // Info text
         drawCenteredText(context, "This will add Ruby & Emerald Ores to your world",
                 centerX, centerY - 10, 0xCCCCCC, 1.0f);
 
@@ -111,8 +112,8 @@ public class RetrofitConfirmationScreen extends Screen {
     private void onYesPressed() {
         EmeraldMod.LOGGER.info("[RetrofitConfirmation] User chose YES - Starting retrofit");
 
-        // Send YES decision to server
-        RetrofitDecisionPacket.sendDecision(true);
+        // ✅ FIXED: Send YES decision to server with force=false (normal start)
+        RetrofitDecisionPacket.sendDecision(true, false);
 
         // Close confirmation screen
         this.close();
@@ -123,8 +124,8 @@ public class RetrofitConfirmationScreen extends Screen {
     private void onNoPressed() {
         EmeraldMod.LOGGER.info("[RetrofitConfirmation] User chose NO - Showing reminder widget");
 
-        // Send NO decision to server
-        RetrofitDecisionPacket.sendDecision(false);
+        // ✅ FIXED: Send NO decision to server with force=false
+        RetrofitDecisionPacket.sendDecision(false, false);
 
         // Close confirmation screen
         this.close();

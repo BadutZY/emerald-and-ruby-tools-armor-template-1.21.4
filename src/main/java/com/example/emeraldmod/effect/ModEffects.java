@@ -127,19 +127,20 @@ public class ModEffects {
         FAST_DIGGING_ENTRY = Registries.STATUS_EFFECT.getEntry(FAST_DIGGING);
         MORE_HARVEST_ENTRY = Registries.STATUS_EFFECT.getEntry(MORE_HARVEST);
 
-        EmeraldMod.LOGGER.info("âœ“ Registered Armor Effects:");
+        EmeraldMod.LOGGER.info("✅ Registered Armor Effects:");
         EmeraldMod.LOGGER.info("  - Snow Powder Walker (Boots)");
         EmeraldMod.LOGGER.info("  - Silent Step (Leggings)");
+        EmeraldMod.LOGGER.info("  - Boots Speed (Invisible Icon)"); // ⭐ NEW
         EmeraldMod.LOGGER.info("  - Custom Fire Resistance (Hidden Icon)");
 
-        EmeraldMod.LOGGER.info("âœ“ Registered Tool Effects:");
+        EmeraldMod.LOGGER.info("✅ Registered Tool Effects:");
         EmeraldMod.LOGGER.info("  - Shockwave (Sword)");
         EmeraldMod.LOGGER.info("  - Auto Smelt (Pickaxe)");
         EmeraldMod.LOGGER.info("  - Tree Chopping (Axe)");
         EmeraldMod.LOGGER.info("  - Anti-Gravity (Shovel)");
         EmeraldMod.LOGGER.info("  - Auto Replant (Hoe)");
 
-        EmeraldMod.LOGGER.info("âœ“ Registered Horse Armor Effects:");
+        EmeraldMod.LOGGER.info("✅ Registered Horse Armor Effects:");
         EmeraldMod.LOGGER.info("  - Swimming Horse");
         EmeraldMod.LOGGER.info("========================================");
 
@@ -147,6 +148,7 @@ public class ModEffects {
         EmeraldMod.LOGGER.info("Expected texture paths:");
         EmeraldMod.LOGGER.info("assets/emeraldmod/textures/mob_effect/snow_powder_walker.png");
         EmeraldMod.LOGGER.info("assets/emeraldmod/textures/mob_effect/silent_step.png");
+        EmeraldMod.LOGGER.info("assets/emeraldmod/textures/mob_effect/boots_speed.png"); // ⭐ NEW
         EmeraldMod.LOGGER.info("assets/emeraldmod/textures/mob_effect/shockwave.png");
         EmeraldMod.LOGGER.info("assets/emeraldmod/textures/mob_effect/auto_smelt.png");
         EmeraldMod.LOGGER.info("assets/emeraldmod/textures/mob_effect/tree_chopping.png");

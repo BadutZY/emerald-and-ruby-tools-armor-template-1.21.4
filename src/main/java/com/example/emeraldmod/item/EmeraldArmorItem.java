@@ -22,7 +22,4 @@ public class EmeraldArmorItem extends ArmorItem {
     public EquipmentType getEquipmentType() {
         return this.equipmentType;
     }
-
-    // Di 1.21.4, enchantability dihandle oleh material dan Item class
-    // Tidak perlu override apa-apa, cukup pastikan material memiliki enchantability yang benar
 }

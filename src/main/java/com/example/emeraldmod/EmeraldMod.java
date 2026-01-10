@@ -376,7 +376,10 @@ public class EmeraldMod implements ModInitializer {
         LOGGER.info("  → Auto-resumes from last checkpoint");
         LOGGER.info("  → Detects mod updates and notifies players");
         LOGGER.info("  → Per-world independent progress");
+
     }
+
+
 
     /**
      * ⭐ NEW: Send update notification to player
@@ -553,6 +556,9 @@ public class EmeraldMod implements ModInitializer {
         HorseArmorEffectsHandler.register();
         LOGGER.info("✅ Horse Armor Effects Handler");
 
+        HorseArmorEffectsHandler.register();
+        LOGGER.info("✅ Horse Armor Effects Handler");
+
         ToolEffectsHandler.register();
         LOGGER.info("✅ Tool Effects Handler");
 
@@ -573,9 +579,6 @@ public class EmeraldMod implements ModInitializer {
 
         AntiGravityHandler.register();
         LOGGER.info("✅ Anti-Gravity Handler");
-
-        PowderSnowHandler.register();
-        LOGGER.info("✅ Powder Snow Handler");
 
         ServerTickEvents.END_WORLD_TICK.register(AntiGravityHandler::tick);
         LOGGER.info("✅ Server Tick Events");
@@ -700,8 +703,7 @@ public class EmeraldMod implements ModInitializer {
         LOGGER.info("  - Water Breathing (Helmet)");
         LOGGER.info("  - Dolphin's Grace (Chestplate)");
         LOGGER.info("  - Fire Immunity (All Armor)");
-        LOGGER.info("  - Powder Snow Walker (Boots)");
-        LOGGER.info("  - Piglin Neutral (All Armor)");
+        LOGGER.info("  - Powder Snow Walker (Boots) - Full Speed!");
         LOGGER.info("  - Silent Step (Leggings)");
         LOGGER.info("");
 

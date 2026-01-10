@@ -478,17 +478,29 @@ public class InstantRetrofitSystem {
     private static void updateProgress(MinecraftServer server, int current, int total,
                                        String dimension, int processed, int skipped,
                                        long startTime) {
-        int percentage = total > 0 ? (current * 100) / total : 0;
+        // ✅ FIX: Cap current at total to prevent overflow
+        int cappedCurrent = Math.min(current, total);
+        int percentage = total > 0 ? (cappedCurrent * 100) / total : 0;
+
+        // ✅ FIX: Cap percentage at 100%
+        percentage = Math.min(100, percentage);
+
         long elapsed = (System.currentTimeMillis() - startTime) / 1000;
-        long estimated = total > 0 && current > 0 ? (elapsed * total / current) : 0;
+        long estimated = total > 0 && cappedCurrent > 0 ? (elapsed * total / cappedCurrent) : 0;
         long remaining = Math.max(0, estimated - elapsed);
 
         EmeraldMod.LOGGER.info("[Retrofit] Progress: {}/{} ({}%) | Processed: {} | Skipped: {} | ETA: {}s",
-                current, total, percentage, processed, skipped, remaining);
+                cappedCurrent, total, percentage, processed, skipped, remaining);
 
-        server.execute(() -> {
-            RetrofitProgressManager.updateProgress(server, current, total, dimension);
-        });
+        // ✅ FIX: Only send update if not yet complete
+        if (percentage < 100) {
+            server.execute(() -> {
+                RetrofitProgressManager.updateProgress(server, cappedCurrent, total, dimension);
+            });
+        } else {
+            // At 100%, log but don't send more updates
+            EmeraldMod.LOGGER.info("[Retrofit] Reached 100% for {}, finalizing...", dimension);
+        }
     }
 
     private static void safeSleep(long millis) {

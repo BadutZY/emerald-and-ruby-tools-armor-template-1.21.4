@@ -8,6 +8,10 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
+/**
+ * ✅ FINAL VERSION - NO WORLD VALIDATION
+ * Trusts server packets completely for better multiplayer compatibility
+ */
 @Environment(EnvType.CLIENT)
 public class RetrofitLoadingScreen extends Screen {
 
@@ -41,22 +45,19 @@ public class RetrofitLoadingScreen extends Screen {
         return instance;
     }
 
+    /**
+     * ✅ FIXED: Show without validation - trust server packet
+     */
     public static void show() {
-        // ✨ KEY FIX: Check world sebelum show
-        if (!ClientWorldTracker.shouldShowRetrofitUI()) {
-            EmeraldMod.LOGGER.warn("[RetrofitScreen] Not showing - not in retrofit world");
-            return;
-        }
-
         MinecraftClient client = MinecraftClient.getInstance();
         if (client != null) {
             RetrofitLoadingScreen screen = getInstance();
             client.execute(() -> {
-                EmeraldMod.LOGGER.info("[RetrofitScreen] Showing retrofit loading screen");
+                EmeraldMod.LOGGER.info("[RetrofitScreen] ✅ Showing retrofit loading screen");
                 client.setScreen(screen);
             });
         } else {
-            EmeraldMod.LOGGER.info("[RetrofitScreen] Cannot show loading screen - client is null");
+            EmeraldMod.LOGGER.error("[RetrofitScreen] ❌ Cannot show loading screen - client is null");
         }
     }
 
@@ -68,36 +69,45 @@ public class RetrofitLoadingScreen extends Screen {
         instance = null;
     }
 
+    /**
+     * ✅ FIXED: Update with progress capping to prevent > 100%
+     */
     public static void updateProgress(int processed, int total, String dimension) {
-        // ✨ KEY FIX: Check world sebelum update
-        if (!ClientWorldTracker.shouldShowRetrofitUI()) {
-            return;
-        }
-
-        EmeraldMod.LOGGER.debug("[RetrofitScreen] Updating progress: " + processed + "/" + total + " - " + dimension);
         if (instance != null) {
-            instance.processedChunks = processed;
+            // ✅ FIX: Cap processed to never exceed total
+            int cappedProcessed = Math.min(processed, total);
+
+            // ✅ FIX: Don't update if already at 100%
+            if (instance.processedChunks >= instance.totalChunks && instance.totalChunks > 0) {
+                EmeraldMod.LOGGER.debug("[RetrofitScreen] Already at 100%, ignoring update");
+                return;
+            }
+
+            instance.processedChunks = cappedProcessed;
             instance.totalChunks = total;
             instance.currentDimension = dimension;
 
+            EmeraldMod.LOGGER.debug("[RetrofitScreen] Progress: {}/{} ({}%) - {}",
+                    cappedProcessed, total, (cappedProcessed * 100) / Math.max(1, total), dimension);
+
             // Update overlay if active
             if (RetrofitOverlayRenderer.isActive()) {
-                RetrofitOverlayRenderer.updateProgress(processed, total, dimension);
+                RetrofitOverlayRenderer.updateProgress(cappedProcessed, total, dimension);
             }
 
             // Auto-maximize at 95%
             instance.checkAutoMaximize();
+        } else {
+            EmeraldMod.LOGGER.warn("[RetrofitScreen] Cannot update - instance is null");
         }
     }
 
+    /**
+     * ✅ FIXED: Complete without validation - trust server packet
+     */
     public static void setComplete() {
-        // ✨ KEY FIX: Check world sebelum complete
-        if (!ClientWorldTracker.shouldShowRetrofitUI()) {
-            EmeraldMod.LOGGER.warn("[RetrofitScreen] Not setting complete - not in retrofit world");
-            return;
-        }
+        EmeraldMod.LOGGER.info("[RetrofitScreen] ✅ Setting retrofit complete");
 
-        EmeraldMod.LOGGER.info("[RetrofitScreen] Setting retrofit complete");
         if (instance != null) {
             instance.isComplete = true;
             instance.isMinimized = false;
@@ -123,18 +133,16 @@ public class RetrofitLoadingScreen extends Screen {
                     // Ignore
                 }
             }).start();
+        } else {
+            EmeraldMod.LOGGER.warn("[RetrofitScreen] Cannot set complete - instance is null");
         }
     }
 
+    /**
+     * ✅ FIXED: Render without world validation
+     */
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        // ✨ KEY FIX: Double check world saat render
-        if (!ClientWorldTracker.shouldShowRetrofitUI() && !isComplete) {
-            EmeraldMod.LOGGER.warn("[RetrofitScreen] Closing - not in retrofit world anymore");
-            this.close();
-            return;
-        }
-
         if (isMinimized) {
             renderMinimized(context, mouseX, mouseY);
         } else {
@@ -149,11 +157,11 @@ public class RetrofitLoadingScreen extends Screen {
         context.fill(x - 2, y - 2, x + MINI_WIDTH + 2, y + MINI_HEIGHT + 2, 0xFFFFFFFF);
         context.fill(x, y, x + MINI_WIDTH, y + MINI_HEIGHT, 0xEE2a2a2a);
 
-        // UPDATED title
         drawSharpText(context, "⚡ Ore Retrofit", x + 5, y + 5, 0xFFAA00, false, 1.0f);
 
         if (totalChunks > 0) {
-            int percentage = (processedChunks * 100) / totalChunks;
+            // ✅ FIX: Cap percentage at 100%
+            int percentage = Math.min(100, (processedChunks * 100) / totalChunks);
             String progressText = percentage + "% - " + currentDimension;
             drawSharpText(context, progressText, x + 5, y + 22, 0xFFFFFF, false, 0.85f);
 
@@ -164,7 +172,9 @@ public class RetrofitLoadingScreen extends Screen {
 
             context.fill(barX, barY, barX + barWidth, barY + barHeight, 0xFF1a1a1a);
 
-            int fillWidth = (int) ((processedChunks / (float) totalChunks) * barWidth);
+            // ✅ FIX: Cap fill width at 100%
+            float fillRatio = Math.min(1.0f, processedChunks / (float) totalChunks);
+            int fillWidth = (int) (fillRatio * barWidth);
             int color = getProgressColor(percentage);
             context.fill(barX, barY, barX + fillWidth, barY + barHeight, color);
 
@@ -172,7 +182,7 @@ public class RetrofitLoadingScreen extends Screen {
             int textWidth = this.textRenderer.getWidth(percentText);
             drawSharpText(context, percentText, barX + (barWidth - textWidth) / 2, barY + 5, 0xFFFFFF, false, 0.9f);
 
-            if (processedChunks > 0) {
+            if (processedChunks > 0 && percentage < 100) {
                 long elapsed = (System.currentTimeMillis() - startTime) / 1000;
                 long estimated = (elapsed * totalChunks / processedChunks);
                 long remaining = Math.max(0, estimated - elapsed);
@@ -200,7 +210,6 @@ public class RetrofitLoadingScreen extends Screen {
         int centerY = this.height / 2;
 
         if (isComplete) {
-            // UPDATED completion message
             drawSharpText(context, "✅ Ore Retrofit Complete!",
                     centerX, centerY - 40, 0x00FF00, true, 2.0f);
 
@@ -214,7 +223,6 @@ public class RetrofitLoadingScreen extends Screen {
                     centerX, centerY + 40, 0xAAAAAA, true, 1.0f);
 
         } else {
-            // UPDATED title
             drawSharpText(context, "⚡ Generating Mod Ores",
                     centerX, centerY - 80, 0xFFAA00, true, 2.0f);
 
@@ -222,13 +230,15 @@ public class RetrofitLoadingScreen extends Screen {
                     centerX, centerY - 50, 0xFFFFFF, true, 1.5f);
 
             if (totalChunks > 0) {
-                int percentage = (processedChunks * 100) / totalChunks;
+                // ✅ FIX: Cap percentage at 100%
+                int percentage = Math.min(100, (processedChunks * 100) / totalChunks);
 
-                String progressText = processedChunks + " / " + totalChunks + " chunks (" + percentage + "%)";
+                // ✅ FIX: Show capped values in display
+                int displayProcessed = Math.min(processedChunks, totalChunks);
+                String progressText = displayProcessed + " / " + totalChunks + " chunks (" + percentage + "%)";
                 drawSharpText(context, progressText,
                         centerX, centerY - 25, 0xFFFFFF, true, 1.0f);
 
-                // Progress bar tetap sama
                 int barWidth = 400;
                 int barHeight = 30;
                 int barX = centerX - barWidth / 2;
@@ -237,17 +247,26 @@ public class RetrofitLoadingScreen extends Screen {
                 context.fill(barX - 2, barY - 2, barX + barWidth + 2, barY + barHeight + 2, 0xFFFFFFFF);
                 context.fill(barX, barY, barX + barWidth, barY + barHeight, 0xFF2a2a2a);
 
-                int fillWidth = (int) ((processedChunks / (float) totalChunks) * barWidth);
+                // ✅ FIX: Cap fill width at 100%
+                float fillRatio = Math.min(1.0f, processedChunks / (float) totalChunks);
+                int fillWidth = (int) (fillRatio * barWidth);
                 int color = getProgressColor(percentage);
                 context.fill(barX, barY, barX + fillWidth, barY + barHeight, color);
 
                 long elapsed = (System.currentTimeMillis() - startTime) / 1000;
-                long estimated = totalChunks > 0 ? (elapsed * totalChunks / Math.max(1, processedChunks)) : 0;
-                long remaining = Math.max(0, estimated - elapsed);
 
-                String timeText = "Elapsed: " + formatTime(elapsed) + " | ETA: " + formatTime(remaining);
-                drawSharpText(context, timeText,
-                        centerX, centerY + 45, 0xCCCCCC, true, 1.0f);
+                // ✅ FIX: Only show ETA if not at 100%
+                if (percentage < 100 && processedChunks > 0) {
+                    long estimated = (elapsed * totalChunks / processedChunks);
+                    long remaining = Math.max(0, estimated - elapsed);
+                    String timeText = "Elapsed: " + formatTime(elapsed) + " | ETA: " + formatTime(remaining);
+                    drawSharpText(context, timeText,
+                            centerX, centerY + 45, 0xCCCCCC, true, 1.0f);
+                } else if (percentage >= 100) {
+                    String timeText = "Finalizing... (" + formatTime(elapsed) + ")";
+                    drawSharpText(context, timeText,
+                            centerX, centerY + 45, 0xFFAA00, true, 1.0f);
+                }
             } else {
                 drawSharpText(context, "Scanning world...",
                         centerX, centerY - 20, 0xFFFFFF, true, 1.0f);
@@ -256,7 +275,6 @@ public class RetrofitLoadingScreen extends Screen {
             drawSharpText(context, "Please wait - this only happens once!",
                     centerX, centerY + 75, 0x999999, true, 1.0f);
 
-            // UPDATED info message
             drawSharpText(context, "Adding Ruby & Emerald Ores to all dimensions...",
                     centerX, centerY + 95, 0x999999, true, 1.0f);
 

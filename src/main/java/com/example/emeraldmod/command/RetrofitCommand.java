@@ -1,6 +1,7 @@
 package com.example.emeraldmod.command;
 
 import com.example.emeraldmod.EmeraldMod;
+import com.example.emeraldmod.network.RetrofitDecisionPacket;
 import com.example.emeraldmod.world.gen.InstantRetrofitSystem;
 import com.example.emeraldmod.world.gen.OreRetrofitGenerator;
 import com.example.emeraldmod.world.gen.OreRetrofitState;
@@ -10,6 +11,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -20,7 +22,8 @@ import net.minecraft.world.chunk.WorldChunk;
 
 /**
  * Command untuk manual retrofit chunks
- * ✅ UPDATED: Added /retrofit force for mod updates
+ * ✅ FIXED: Permission level 0 (no cheat needed)
+ * ✅ FIXED: /retrofit force shows confirmation screen first
  */
 public class RetrofitCommand {
 
@@ -28,8 +31,9 @@ public class RetrofitCommand {
                                 CommandRegistryAccess registryAccess,
                                 CommandManager.RegistrationEnvironment environment) {
 
+        // ✅ CHANGED: requires level 0 (no cheat needed)
         dispatcher.register(CommandManager.literal("emeraldmod")
-                .requires(source -> source.hasPermissionLevel(2))
+                .requires(source -> source.hasPermissionLevel(0)) // ✅ Changed from 2 to 0
                 .then(CommandManager.literal("retrofit")
                         .then(CommandManager.argument("radius", IntegerArgumentType.integer(1, 50))
                                 .executes(RetrofitCommand::retrofitArea))
@@ -45,14 +49,13 @@ public class RetrofitCommand {
                         .executes(RetrofitCommand::showRetrofitStats))
                 .then(CommandManager.literal("retrofit-reset")
                         .executes(RetrofitCommand::resetRetrofit))
-                // ⭐ NEW: Force re-generate command
                 .then(CommandManager.literal("retrofit-force")
                         .executes(RetrofitCommand::forceRetrofit))
         );
 
-        // ⭐ NEW: Shorter alias "/retrofit" commands
+        // ✅ CHANGED: Shorter alias "/retrofit" - requires level 0
         dispatcher.register(CommandManager.literal("retrofit")
-                .requires(source -> source.hasPermissionLevel(2))
+                .requires(source -> source.hasPermissionLevel(0)) // ✅ Changed from 2 to 0
                 .then(CommandManager.literal("status")
                         .executes(RetrofitCommand::retrofitStatus))
                 .then(CommandManager.literal("start")
@@ -65,7 +68,7 @@ public class RetrofitCommand {
     }
 
     // ============================================
-    // ⭐ NEW: SIMPLIFIED COMMANDS
+    // ✨ SIMPLIFIED COMMANDS
     // ============================================
 
     /**
@@ -97,7 +100,7 @@ public class RetrofitCommand {
                 String versionInfo = state.getVersionInfo();
                 boolean needsUpdate = state.needsUpdate();
 
-                source.sendFeedback(() -> Text.literal("📍 OVERWORLD")
+                source.sendFeedback(() -> Text.literal("🌍 OVERWORLD")
                         .formatted(Formatting.AQUA, Formatting.BOLD), false);
                 source.sendFeedback(() -> Text.literal("  Status: " + status)
                         .formatted(getStatusColor(state)), false);
@@ -205,23 +208,34 @@ public class RetrofitCommand {
                 return 0;
             }
 
-            source.sendFeedback(() -> Text.literal("⚡ Starting retrofit generation...")
-                    .formatted(Formatting.GOLD, Formatting.BOLD), true);
-            source.sendFeedback(() -> Text.literal("💡 Check your game screen for progress!")
-                    .formatted(Formatting.AQUA), false);
+            // ✅ FIX: Check if player is entity (for server compatibility)
+            ServerPlayerEntity player = source.getPlayer();
+            if (player != null) {
+                // Show confirmation screen to player
+                EmeraldMod.LOGGER.info("[RetrofitCommand] Sending confirmation to player: {}",
+                        player.getName().getString());
+                RetrofitDecisionPacket.askConfirmation(player);
 
-            boolean started = InstantRetrofitSystem.runInitialRetrofit(source.getServer());
-
-            if (started) {
-                source.sendFeedback(() -> Text.literal("✅ Retrofit started successfully!")
-                        .formatted(Formatting.GREEN, Formatting.BOLD), true);
-                return 1;
+                source.sendFeedback(() -> Text.literal("💬 Please confirm in your game screen")
+                        .formatted(Formatting.YELLOW), false);
             } else {
-                source.sendError(Text.literal("❌ Failed to start retrofit"));
-                source.sendFeedback(() -> Text.literal("May already be complete. Use /retrofit status")
-                        .formatted(Formatting.GRAY), false);
-                return 0;
+                // Console/command block - start directly
+                source.sendFeedback(() -> Text.literal("⚡ Starting retrofit generation...")
+                        .formatted(Formatting.GOLD, Formatting.BOLD), true);
+
+                boolean started = InstantRetrofitSystem.runInitialRetrofit(source.getServer());
+
+                if (started) {
+                    source.sendFeedback(() -> Text.literal("✅ Retrofit started successfully!")
+                            .formatted(Formatting.GREEN, Formatting.BOLD), true);
+                    return 1;
+                } else {
+                    source.sendError(Text.literal("❌ Failed to start retrofit"));
+                    return 0;
+                }
             }
+
+            return 1;
         } catch (Exception e) {
             source.sendError(Text.literal("Error starting retrofit: " + e.getMessage()));
             EmeraldMod.LOGGER.error("Retrofit start error", e);
@@ -230,7 +244,7 @@ public class RetrofitCommand {
     }
 
     /**
-     * ⭐ NEW: /retrofit force - Force re-generate (for mod updates)
+     * ⭐ FIXED: /retrofit force - Show confirmation screen FIRST, then reset & start
      */
     private static int forceRetrofit(CommandContext<ServerCommandSource> context) {
         ServerCommandSource source = context.getSource();
@@ -238,59 +252,63 @@ public class RetrofitCommand {
         try {
             String worldName = source.getServer().getSaveProperties().getLevelName();
 
-            // Show warning header
-            source.sendFeedback(() -> Text.literal("========================================")
-                    .formatted(Formatting.RED), false);
-            source.sendFeedback(() -> Text.literal("   FORCE RE-GENERATE")
-                    .formatted(Formatting.RED, Formatting.BOLD), false);
-            source.sendFeedback(() -> Text.literal("========================================")
-                    .formatted(Formatting.RED), false);
+            // Check if already running
+            if (InstantRetrofitSystem.isRetrofitRunning(worldName)) {
+                source.sendError(Text.literal("⚠️  Retrofit is already running!"));
+                return 0;
+            }
 
-            source.sendFeedback(() -> Text.literal("⚠️  This will re-generate ALL ores!")
-                    .formatted(Formatting.YELLOW, Formatting.BOLD), true);
-            source.sendFeedback(() -> Text.literal(""), false);
+            // ✅ FIX: Check if player is entity (for server compatibility)
+            ServerPlayerEntity player = source.getPlayer();
 
-            source.sendFeedback(() -> Text.literal("Use this command when:")
-                    .formatted(Formatting.WHITE), false);
-            source.sendFeedback(() -> Text.literal("  • Mod was updated with new ores")
-                    .formatted(Formatting.GRAY), false);
-            source.sendFeedback(() -> Text.literal("  • You want to add missing ores")
-                    .formatted(Formatting.GRAY), false);
-            source.sendFeedback(() -> Text.literal("  • Retrofit was incomplete")
-                    .formatted(Formatting.GRAY), false);
-            source.sendFeedback(() -> Text.literal(""), false);
+            if (player != null) {
+                // ✅ NEW: Send force confirmation request to client
+                EmeraldMod.LOGGER.info("[RetrofitCommand] Sending FORCE confirmation to player: {}",
+                        player.getName().getString());
 
-            source.sendFeedback(() -> Text.literal("⏳ Resetting retrofit state...")
-                    .formatted(Formatting.YELLOW), false);
+                // Send special "force" confirmation (will reset before starting)
+                RetrofitDecisionPacket.askForceConfirmation(player);
 
-            // Reset retrofit state
-            InstantRetrofitSystem.resetRetrofitStatus(source.getServer());
+                source.sendFeedback(() -> Text.literal("⚠️  Force re-generation requested")
+                        .formatted(Formatting.YELLOW, Formatting.BOLD), false);
+                source.sendFeedback(() -> Text.literal("💬 Please confirm in your game screen")
+                        .formatted(Formatting.YELLOW), false);
 
-            // Wait a moment for cleanup
-            Thread.sleep(1000);
-
-            source.sendFeedback(() -> Text.literal("⚡ Starting forced retrofit...")
-                    .formatted(Formatting.GOLD, Formatting.BOLD), true);
-            source.sendFeedback(() -> Text.literal("💡 Check your game screen for progress!")
-                    .formatted(Formatting.AQUA), false);
-
-            // Start retrofit
-            boolean started = InstantRetrofitSystem.runInitialRetrofit(source.getServer());
-
-            if (started) {
-                source.sendFeedback(() -> Text.literal(""), false);
-                source.sendFeedback(() -> Text.literal("✅ Force retrofit started!")
-                        .formatted(Formatting.GREEN, Formatting.BOLD), true);
-                source.sendFeedback(() -> Text.literal("New ores will be added to all chunks")
-                        .formatted(Formatting.AQUA), false);
-                source.sendFeedback(() -> Text.literal("Including newly added Nether Emerald Ore!")
-                        .formatted(Formatting.GREEN), false);
-                source.sendFeedback(() -> Text.literal("========================================")
-                        .formatted(Formatting.GREEN), false);
                 return 1;
             } else {
-                source.sendError(Text.literal("❌ Failed to start forced retrofit"));
-                return 0;
+                // Console/command block - execute directly with warning
+                source.sendFeedback(() -> Text.literal("========================================")
+                        .formatted(Formatting.RED), false);
+                source.sendFeedback(() -> Text.literal("   FORCE RE-GENERATE")
+                        .formatted(Formatting.RED, Formatting.BOLD), false);
+                source.sendFeedback(() -> Text.literal("========================================")
+                        .formatted(Formatting.RED), false);
+
+                source.sendFeedback(() -> Text.literal("⚠️  This will re-generate ALL ores!")
+                        .formatted(Formatting.YELLOW, Formatting.BOLD), true);
+                source.sendFeedback(() -> Text.literal("⏳ Resetting retrofit state...")
+                        .formatted(Formatting.YELLOW), false);
+
+                // Reset retrofit state
+                InstantRetrofitSystem.resetRetrofitStatus(source.getServer());
+
+                // Wait a moment for cleanup
+                Thread.sleep(1000);
+
+                source.sendFeedback(() -> Text.literal("⚡ Starting forced retrofit...")
+                        .formatted(Formatting.GOLD, Formatting.BOLD), true);
+
+                // Start retrofit
+                boolean started = InstantRetrofitSystem.runInitialRetrofit(source.getServer());
+
+                if (started) {
+                    source.sendFeedback(() -> Text.literal("✅ Force retrofit started!")
+                            .formatted(Formatting.GREEN, Formatting.BOLD), true);
+                    return 1;
+                } else {
+                    source.sendError(Text.literal("❌ Failed to start forced retrofit"));
+                    return 0;
+                }
             }
         } catch (Exception e) {
             source.sendError(Text.literal("Error during force retrofit: " + e.getMessage()));
@@ -300,12 +318,9 @@ public class RetrofitCommand {
     }
 
     // ============================================
-    // EXISTING COMMANDS (unchanged)
+    // EXISTING COMMANDS (unchanged but permission fixed)
     // ============================================
 
-    /**
-     * Verify ores di sekitar player (count blocks)
-     */
     private static int verifyOres(CommandContext<ServerCommandSource> context) {
         ServerCommandSource source = context.getSource();
         ServerWorld world = source.getWorld();
@@ -319,7 +334,7 @@ public class RetrofitCommand {
         int deepslateRubyOreCount = 0;
         int netherRubyOreCount = 0;
         int rubyDebrisCount = 0;
-        int netherEmeraldOreCount = 0; // ⭐ NEW!
+        int netherEmeraldOreCount = 0;
 
         int scanRadius = 50;
 
@@ -340,7 +355,7 @@ public class RetrofitCommand {
                         } else if (state.getBlock() == com.example.emeraldmod.block.ModBlocks.RUBY_DEBRIS) {
                             rubyDebrisCount++;
                         } else if (state.getBlock() == com.example.emeraldmod.block.ModBlocks.NETHER_EMERALD_ORE) {
-                            netherEmeraldOreCount++; // ⭐ NEW!
+                            netherEmeraldOreCount++;
                         }
                     } catch (Exception e) {
                         // Skip
@@ -372,7 +387,7 @@ public class RetrofitCommand {
         source.sendFeedback(() -> Text.literal("Ruby Debris: " + finalRubyDebrisCount)
                 .formatted(Formatting.AQUA), false);
         source.sendFeedback(() -> Text.literal("Nether Emerald Ore: " + finalNetherEmeraldOreCount)
-                .formatted(Formatting.GREEN), false); // ⭐ NEW!
+                .formatted(Formatting.GREEN), false);
         source.sendFeedback(() -> Text.literal("Total: " + finalTotalOres + " Ores found")
                 .formatted(finalTotalOres > 0 ? Formatting.GREEN : Formatting.RED), false);
 
@@ -384,9 +399,6 @@ public class RetrofitCommand {
         return totalOres;
     }
 
-    /**
-     * Retrofit chunk di posisi player sekarang (instant)
-     */
     private static int retrofitHere(CommandContext<ServerCommandSource> context) {
         ServerCommandSource source = context.getSource();
         ServerWorld world = source.getWorld();
@@ -430,9 +442,6 @@ public class RetrofitCommand {
         return 1;
     }
 
-    /**
-     * Retrofit ALL existing chunks (manual trigger)
-     */
     private static int retrofitAllExisting(CommandContext<ServerCommandSource> context) {
         ServerCommandSource source = context.getSource();
         String worldName = source.getServer().getSaveProperties().getLevelName();
@@ -440,25 +449,19 @@ public class RetrofitCommand {
         if (InstantRetrofitSystem.isRetrofitRunning(worldName)) {
             source.sendFeedback(() -> Text.literal("⚠ Retrofit is already running for this world!")
                     .formatted(Formatting.YELLOW), false);
-            source.sendFeedback(() -> Text.literal("Check your game screen for progress")
-                    .formatted(Formatting.GRAY), false);
             return 0;
         }
 
         if (InstantRetrofitSystem.isRetrofitComplete(source.getServer())) {
             source.sendFeedback(() -> Text.literal("⚠ Retrofit already complete for this world!")
                     .formatted(Formatting.YELLOW), false);
-            source.sendFeedback(() -> Text.literal("Use /retrofit force to re-generate (for mod updates)")
+            source.sendFeedback(() -> Text.literal("Use /retrofit force to re-generate")
                     .formatted(Formatting.AQUA), false);
             return 0;
         }
 
         source.sendFeedback(() -> Text.literal("⚡ Starting Ore Generation...")
                 .formatted(Formatting.YELLOW), true);
-        source.sendFeedback(() -> Text.literal("💡 Check your game screen for progress!")
-                .formatted(Formatting.AQUA), false);
-        source.sendFeedback(() -> Text.literal("You can minimize the screen and continue playing")
-                .formatted(Formatting.GRAY), false);
 
         boolean started = InstantRetrofitSystem.runInitialRetrofit(source.getServer());
 
@@ -539,7 +542,7 @@ public class RetrofitCommand {
     }
 
     private static int showRetrofitStats(CommandContext<ServerCommandSource> context) {
-        return retrofitStatus(context); // Use new status command
+        return retrofitStatus(context);
     }
 
     private static int resetRetrofit(CommandContext<ServerCommandSource> context) {

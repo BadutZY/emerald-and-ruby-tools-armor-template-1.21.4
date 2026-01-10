@@ -8,7 +8,7 @@ import net.minecraft.client.MinecraftClient;
 
 /**
  * Client-side initialization for Emerald & Ruby Mod
- * ✅ FIXED: Proper cleanup ketika disconnect dan world change + State reset
+ * ✅ FIXED: Added RetrofitForceConfirmationScreen registration
  */
 public class EmeraldModClient implements ClientModInitializer {
 
@@ -66,9 +66,9 @@ public class EmeraldModClient implements ClientModInitializer {
         ModKeybinds.register();
         EmeraldMod.LOGGER.info("✅ Toggle Keybinds (V, B) with State Sync");
 
-        // Retrofit keybinds (M for maximize, N for generate now)
+        // Retrofit keybinds (M for maximize, N for generate now, J for toggle hide)
         RetrofitKeybind.register();
-        EmeraldMod.LOGGER.info("✅ Retrofit Keybinds (M, N)");
+        EmeraldMod.LOGGER.info("✅ Retrofit Keybinds (M, N, J)");
     }
 
     /**
@@ -81,9 +81,13 @@ public class EmeraldModClient implements ClientModInitializer {
         RubyOreScanningScreen.getInstance();
         EmeraldMod.LOGGER.info("✅ Ruby Ore Scanning Screen");
 
-        // Retrofit confirmation screen
+        // Retrofit confirmation screen (normal)
         RetrofitConfirmationScreen.getInstance();
         EmeraldMod.LOGGER.info("✅ Retrofit Confirmation Screen");
+
+        // ✅ NEW: Retrofit FORCE confirmation screen
+        RetrofitForceConfirmationScreen.getInstance();
+        EmeraldMod.LOGGER.info("✅ Retrofit Force Confirmation Screen");
 
         // Retrofit loading screen
         RetrofitLoadingScreen.getInstance();
@@ -122,9 +126,24 @@ public class EmeraldModClient implements ClientModInitializer {
 
         // Track ketika join server/world
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            if (client.getServer() != null) {
-                String worldName = client.getServer().getSaveProperties().getLevelName();
+            // ✅ FIXED: Better world detection for dedicated servers
+            String worldName = null;
 
+            if (client.getServer() != null) {
+                // Integrated server (singleplayer/LAN)
+                worldName = client.getServer().getSaveProperties().getLevelName();
+                EmeraldMod.LOGGER.info("[Client] Joining integrated server world: {}", worldName);
+            } else if (client.getCurrentServerEntry() != null) {
+                // Dedicated server with saved entry
+                worldName = client.getCurrentServerEntry().address;
+                EmeraldMod.LOGGER.info("[Client] Joining dedicated server: {}", worldName);
+            } else {
+                // Direct connect or other
+                worldName = "multiplayer_server";
+                EmeraldMod.LOGGER.info("[Client] Joining multiplayer server (generic)");
+            }
+
+            if (worldName != null) {
                 EmeraldMod.LOGGER.info("[Client] ========================================");
                 EmeraldMod.LOGGER.info("[Client] Joining world: {}", worldName);
                 EmeraldMod.LOGGER.info("[Client] ========================================");
@@ -163,8 +182,18 @@ public class EmeraldModClient implements ClientModInitializer {
 
         // Track setiap tick untuk detect world changes
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            // ✅ FIXED: Better world detection
+            String currentWorld = null;
+
             if (client.getServer() != null) {
-                String currentWorld = client.getServer().getSaveProperties().getLevelName();
+                currentWorld = client.getServer().getSaveProperties().getLevelName();
+            } else if (client.getCurrentServerEntry() != null) {
+                currentWorld = client.getCurrentServerEntry().address;
+            } else if (client.getNetworkHandler() != null) {
+                currentWorld = "multiplayer_server";
+            }
+
+            if (currentWorld != null) {
                 String trackedWorld = ClientWorldTracker.getCurrentWorldName();
 
                 // Detect world change
@@ -198,6 +227,7 @@ public class EmeraldModClient implements ClientModInitializer {
             RubyOreScanningScreen.hide();
             RetrofitLoadingScreen.hide();
             RetrofitConfirmationScreen.hide();
+            RetrofitForceConfirmationScreen.hide(); // ✅ NEW
             RetrofitOverlayRenderer.deactivate();
             RetrofitReminderWidget.hide();
 
@@ -222,6 +252,7 @@ public class EmeraldModClient implements ClientModInitializer {
         EmeraldMod.LOGGER.info("  - [B] Toggle Armor Effects");
         EmeraldMod.LOGGER.info("  - [M] Maximize Retrofit Screen");
         EmeraldMod.LOGGER.info("  - [N] Generate Now (from widget)");
+        EmeraldMod.LOGGER.info("  - [J] Toggle Hide Widgets");
         EmeraldMod.LOGGER.info("  - Customizable in Controls menu");
         EmeraldMod.LOGGER.info("");
 
@@ -229,6 +260,7 @@ public class EmeraldModClient implements ClientModInitializer {
         EmeraldMod.LOGGER.info("🖥️ CLIENT UI:");
         EmeraldMod.LOGGER.info("  - Ruby Ore Scanning Screen 🔍");
         EmeraldMod.LOGGER.info("  - Retrofit Confirmation Dialog");
+        EmeraldMod.LOGGER.info("  - Retrofit Force Confirmation Dialog ✨");
         EmeraldMod.LOGGER.info("  - Retrofit Loading Screen");
         EmeraldMod.LOGGER.info("  - Retrofit Reminder Widget");
         EmeraldMod.LOGGER.info("  - Status Tooltips");
