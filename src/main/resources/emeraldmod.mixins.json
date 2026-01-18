@@ -3,6 +3,7 @@
 	"package": "com.example.emeraldmod.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
+		"EndermanAngerMixin",
 		"EntityPowderSnowMixin",
 		"FallingBlockEntityMixin",
 		"FallingBlockMixin",
