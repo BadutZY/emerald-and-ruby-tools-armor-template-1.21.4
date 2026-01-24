@@ -6,8 +6,8 @@
 
 ![title](https://cdn.modrinth.com/data/cached_images/e13eede26c07874217207b9e37a2449616997ab2.png)
 
- # Armor and Tools
-  
+# Armor and Tools
+
 ![ps](https://cdn.modrinth.com/data/cached_images/22bc3b74a095f1860e0c826130a5b775016e49b3.png)
 
 ### Basic Emerald and Emerald
@@ -111,7 +111,7 @@ Armor Effect [B]
 
 ### Ruby Shovel
 
-  **Anti-Gravity + Fast Digging**
+**Anti-Gravity + Fast Digging**
 
 ![rshovel](https://cdn.modrinth.com/data/cached_images/0bc6535724b49f7574de64f8345d1b2866dd9f7b.gif)
 
@@ -130,6 +130,12 @@ Armor Effect [B]
 ![rhorse](https://cdn.modrinth.com/data/cached_images/2224ce96af8294bd8cb025ca4d94c5cfa1bc69e6.gif)
 
 </details>
+
+### New Item
+
+**Apple and Totem**
+
+![Replace this with a description](https://cdn.modrinth.com/data/cached_images/6b9d0cea901338583df12cbb912dc959bac397ba.png)
 
 **I highly recommend you to use the [REI](https://modrinth.com/mod/rei) mod**
 
