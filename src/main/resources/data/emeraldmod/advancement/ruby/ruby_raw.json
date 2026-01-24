@@ -1,11 +1,11 @@
 {
-  "parent": "emeraldmod:emerald/emerald",
+  "parent": "emeraldmod:ruby/ruby",
   "criteria": {
-    "emerald": {
+    "raw_ruby": {
       "conditions": {
         "items": [
           {
-            "items": "minecraft:emerald"
+            "items": "emeraldmod:raw_ruby"
           }
         ]
       },
@@ -16,13 +16,13 @@
     "description": "Keep going",
     "icon": {
       "count": 1,
-      "id": "minecraft:emerald"
+      "id": "emeraldmod:raw_ruby"
     },
-    "title":  "Emerald"
+    "title":  "Raw Ruby"
   },
   "requirements": [
     [
-      "emerald"
+      "raw_ruby"
     ]
   ],
   "sends_telemetry_event": true

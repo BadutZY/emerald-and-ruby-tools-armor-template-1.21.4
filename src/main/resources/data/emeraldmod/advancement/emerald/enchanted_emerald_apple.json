@@ -1,0 +1,33 @@
+{
+  "parent": "emeraldmod:emerald/emerald_apple",
+  "criteria": {
+    "enchanted_emerald_apple": {
+      "conditions": {
+        "items": [
+          {
+            "items": "emeraldmod:enchanted_emerald_apple"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": "Well Well Well",
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "emeraldmod:enchanted_emerald_apple"
+    },
+    "title": "Enchanted Emerald Apple"
+  },
+  "requirements": [
+    [
+      "enchanted_emerald_apple"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": true
+}

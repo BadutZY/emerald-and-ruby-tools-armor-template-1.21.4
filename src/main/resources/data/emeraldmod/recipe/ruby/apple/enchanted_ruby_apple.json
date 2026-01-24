@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "#E#",
+    "###"
+  ],
+  "key": {
+    "#": "emeraldmod:ruby_block",
+    "E": "emeraldmod:ruby_apple"
+  },
+  "result": {
+    "id": "emeraldmod:enchanted_ruby_apple",
+    "count": 1
+  }
+}

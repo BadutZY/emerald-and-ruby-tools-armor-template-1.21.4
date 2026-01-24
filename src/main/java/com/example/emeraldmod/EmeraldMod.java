@@ -580,6 +580,9 @@ public class EmeraldMod implements ModInitializer {
         AntiGravityHandler.register();
         LOGGER.info("✅ Anti-Gravity Handler");
 
+        TotemDeathHandler.register();
+        LOGGER.info("✅ Totem Death Handler");
+
         ServerTickEvents.END_WORLD_TICK.register(AntiGravityHandler::tick);
         LOGGER.info("✅ Server Tick Events");
     }
@@ -713,6 +716,13 @@ public class EmeraldMod implements ModInitializer {
         LOGGER.info("  - Tree Chopping (Axe)");
         LOGGER.info("  - Anti-Gravity (Shovel)");
         LOGGER.info("  - Auto-Replant (Hoe)");
+        LOGGER.info("");
+
+        LOGGER.info("💚 TOTEM FEATURES:");
+        LOGGER.info("  - Emerald Totem: 3 lives");
+        LOGGER.info("  - Ruby Totem: 5 lives");
+        LOGGER.info("  - Multi-use system");
+        LOGGER.info("  - Durability bar indicator");
         LOGGER.info("");
 
         LOGGER.info("========================================");

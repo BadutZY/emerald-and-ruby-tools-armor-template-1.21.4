@@ -246,6 +246,41 @@ public class ModItems {
             ));
 
     // ============================================
+    // TOTEMS OF UNDYING (NEW!)
+    // ============================================
+    public static final Item EMERALD_TOTEM = registerItem("emerald_totem",
+            new EmeraldTotemItem(new Item.Settings()
+                    .registryKey(createRegistryKey("emerald_totem"))
+                    .maxCount(16)
+                    .fireproof()));
+
+    public static final Item RUBY_TOTEM = registerItem("ruby_totem",
+            new RubyTotemItem(new Item.Settings()
+                    .registryKey(createRegistryKey("ruby_totem"))
+                    .maxCount(16)
+                    .fireproof()));
+
+    public static final Item EMERALD_APPLE = registerItem("emerald_apple",
+            new EmeraldAppleItem(new Item.Settings()
+                    .registryKey(createRegistryKey("emerald_apple"))
+                    .fireproof()));
+
+    public static final Item ENCHANTED_EMERALD_APPLE = registerItem("enchanted_emerald_apple",
+            new EnchantedEmeraldAppleItem(new Item.Settings()
+                    .registryKey(createRegistryKey("enchanted_emerald_apple"))
+                    .fireproof()));
+
+    public static final Item RUBY_APPLE = registerItem("ruby_apple",
+            new RubyAppleItem(new Item.Settings()
+                    .registryKey(createRegistryKey("ruby_apple"))
+                    .fireproof()));
+
+    public static final Item ENCHANTED_RUBY_APPLE = registerItem("enchanted_ruby_apple",
+            new EnchantedRubyAppleItem(new Item.Settings()
+                    .registryKey(createRegistryKey("enchanted_ruby_apple"))
+                    .fireproof()));
+
+    // ============================================
     // SMITHING TEMPLATES
     // ============================================
     public static final Item EMERALD_UPGRADE_SMITHING_TEMPLATE = registerItem(
@@ -278,5 +313,7 @@ public class ModItems {
         EmeraldMod.LOGGER.info("✓ Successfully registered all Emerald items");
         EmeraldMod.LOGGER.info("✓ Successfully registered Netherite Horse Armor");
         EmeraldMod.LOGGER.info("✓ Successfully registered Ruby Upgrade Smithing Template");
+        EmeraldMod.LOGGER.info("✓ Successfully registered Emerald Totem (3 uses)");
+        EmeraldMod.LOGGER.info("✓ Successfully registered Ruby Totem (5 uses)");
     }
 }

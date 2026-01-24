@@ -44,6 +44,13 @@ public class ModItemGroups {
 
                         // Ruby Materials
                         entries.add(ModItems.RUBY);
+
+                        // Ruby Totem
+                        entries.add(ModItems.RUBY_TOTEM);
+
+                        //Ruby Apples
+                        entries.add(ModItems.RUBY_APPLE);
+                        entries.add(ModItems.ENCHANTED_RUBY_APPLE);
                     })
                     .build());
 
@@ -187,6 +194,13 @@ public class ModItemGroups {
 
                         // Merald Material
                         entries.add(Items.EMERALD);
+
+                        // Emerald Totem
+                        entries.add(ModItems.EMERALD_TOTEM);
+
+                        // Emerald Apples
+                        entries.add(ModItems.EMERALD_APPLE);
+                        entries.add(ModItems.ENCHANTED_EMERALD_APPLE);
                     })
                     .build());
 

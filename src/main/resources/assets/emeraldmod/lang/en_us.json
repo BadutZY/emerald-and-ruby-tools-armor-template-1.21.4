@@ -124,6 +124,16 @@
   "item.emeraldmod.emerald_upgrade_smithing_template.tooltip": "§6Emerald Upgrade\n§9Ingredients",
   "item.emeraldmod.emerald_upgrade_smithing_template.tooltip.shift": "§7Use in Smithing Table§r\n§7to upgrade diamond gear§r\n§7to emerald tier§r\n§7• Applies to:§r\n§7  §aTools & Armor§r\n§7• Grants special§r\n§7  abilities§r\n§7• Increases durability§r\n§7  & stats",
 
+  "item.emeraldmod.emerald_totem": "Emerald Totem of Undying",
+  "item.emeraldmod.ruby_totem": "Ruby Totem of Undying",
+
+  "item.emeraldmod.emerald_apple": "Emerald Apple",
+  "item.emeraldmod.enchanted_emerald_apple": "Enchanted Emerald Apple",
+  "item.emeraldmod.ruby_apple": "Ruby Apple",
+  "item.emeraldmod.enchanted_ruby_apple": "Enchanted Ruby Apple",
+
+  "item.emeraldmod.emerald_elytra": "Emerald Elytra",
+
   "item.emeraldmod.basic_ruby_sword": "Basic Ruby Sword",
   "item.emeraldmod.basic_ruby_pickaxe": "Basic Ruby Pickaxe",
   "item.emeraldmod.basic_ruby_axe": "Basic Ruby Axe",

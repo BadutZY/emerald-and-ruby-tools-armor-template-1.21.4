@@ -1,11 +1,11 @@
 {
-  "parent": "emeraldmod:emerald/emerald",
+  "parent": "emeraldmod:emerald/emerald_ore",
   "criteria": {
-    "emerald": {
+    "emerald_apple": {
       "conditions": {
         "items": [
           {
-            "items": "minecraft:emerald"
+            "items": "emeraldmod:emerald_apple"
           }
         ]
       },
@@ -13,16 +13,18 @@
     }
   },
   "display": {
-    "description": "Keep going",
+    "description": "Well Well",
     "icon": {
       "count": 1,
-      "id": "minecraft:emerald"
+      "id": "emeraldmod:emerald_apple"
     },
-    "title":  "Emerald"
+    "title": {
+      "translate": "Emerald Apple"
+    }
   },
   "requirements": [
     [
-      "emerald"
+      "emerald_apple"
     ]
   ],
   "sends_telemetry_event": true
