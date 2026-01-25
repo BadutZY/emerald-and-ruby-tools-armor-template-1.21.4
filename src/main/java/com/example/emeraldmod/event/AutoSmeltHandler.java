@@ -10,6 +10,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -17,6 +18,7 @@ import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.*;
@@ -68,37 +70,37 @@ public class AutoSmeltHandler {
         ORE_TO_INGOT.put(Blocks.ANCIENT_DEBRIS, new ItemStack(Items.NETHERITE_SCRAP));
         ORE_TO_RAW.put(Blocks.ANCIENT_DEBRIS, new ItemStack(Blocks.ANCIENT_DEBRIS));
 
-        // Coal Ore (tidak ada raw coal, langsung coal)
+        // Coal Ore
         ORE_TO_INGOT.put(Blocks.COAL_ORE, new ItemStack(Items.COAL));
         ORE_TO_INGOT.put(Blocks.DEEPSLATE_COAL_ORE, new ItemStack(Items.COAL));
         ORE_TO_RAW.put(Blocks.COAL_ORE, new ItemStack(Blocks.COAL_ORE));
         ORE_TO_RAW.put(Blocks.DEEPSLATE_COAL_ORE, new ItemStack(Blocks.DEEPSLATE_COAL_ORE));
 
-        // Diamond Ore (tidak ada raw diamond, langsung diamond)
+        // Diamond Ore
         ORE_TO_INGOT.put(Blocks.DIAMOND_ORE, new ItemStack(Items.DIAMOND));
         ORE_TO_INGOT.put(Blocks.DEEPSLATE_DIAMOND_ORE, new ItemStack(Items.DIAMOND));
         ORE_TO_RAW.put(Blocks.DIAMOND_ORE, new ItemStack(Blocks.DIAMOND_ORE));
         ORE_TO_RAW.put(Blocks.DEEPSLATE_DIAMOND_ORE, new ItemStack(Blocks.DEEPSLATE_DIAMOND_ORE));
 
-        // Emerald Ore (tidak ada raw emerald.json, langsung emerald.json)
+        // Emerald Ore
         ORE_TO_INGOT.put(Blocks.EMERALD_ORE, new ItemStack(Items.EMERALD));
         ORE_TO_INGOT.put(Blocks.DEEPSLATE_EMERALD_ORE, new ItemStack(Items.EMERALD));
         ORE_TO_RAW.put(Blocks.EMERALD_ORE, new ItemStack(Blocks.EMERALD_ORE));
         ORE_TO_RAW.put(Blocks.DEEPSLATE_EMERALD_ORE, new ItemStack(Blocks.DEEPSLATE_EMERALD_ORE));
 
-        // Lapis Ore (tidak ada raw lapis, langsung lapis)
+        // Lapis Ore
         ORE_TO_INGOT.put(Blocks.LAPIS_ORE, new ItemStack(Items.LAPIS_LAZULI));
         ORE_TO_INGOT.put(Blocks.DEEPSLATE_LAPIS_ORE, new ItemStack(Items.LAPIS_LAZULI));
         ORE_TO_RAW.put(Blocks.LAPIS_ORE, new ItemStack(Blocks.LAPIS_ORE));
         ORE_TO_RAW.put(Blocks.DEEPSLATE_LAPIS_ORE, new ItemStack(Blocks.DEEPSLATE_LAPIS_ORE));
 
-        // Redstone Ore (tidak ada raw redstone, langsung redstone)
+        // Redstone Ore
         ORE_TO_INGOT.put(Blocks.REDSTONE_ORE, new ItemStack(Items.REDSTONE));
         ORE_TO_INGOT.put(Blocks.DEEPSLATE_REDSTONE_ORE, new ItemStack(Items.REDSTONE));
         ORE_TO_RAW.put(Blocks.REDSTONE_ORE, new ItemStack(Blocks.REDSTONE_ORE));
         ORE_TO_RAW.put(Blocks.DEEPSLATE_REDSTONE_ORE, new ItemStack(Blocks.DEEPSLATE_REDSTONE_ORE));
 
-        // Nether Quartz Ore (tidak ada raw quartz, langsung quartz)
+        // Nether Quartz Ore
         ORE_TO_INGOT.put(Blocks.NETHER_QUARTZ_ORE, new ItemStack(Items.QUARTZ));
         ORE_TO_RAW.put(Blocks.NETHER_QUARTZ_ORE, new ItemStack(Blocks.NETHER_QUARTZ_ORE));
 
@@ -181,6 +183,7 @@ public class AutoSmeltHandler {
     /**
      * Handle single block auto-smelt (Emerald Pickaxe)
      * Supports Fortune & Silk Touch
+     * ✅ FIXED: Items dan XP drop seperti vanilla, bukan langsung ke inventory
      */
     private static void handleSingleBlockSmelt(World world, PlayerEntity player, BlockPos pos, BlockState state, ItemStack tool) {
         if (world.isClient) return;
@@ -219,49 +222,46 @@ public class AutoSmeltHandler {
 
         dropItem.setCount(dropCount);
 
-        // Remove block WITHOUT triggering sound/particles
-        serverWorld.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+        // ✅ FIXED: Remove block dan biarkan vanilla handle break sound
+        serverWorld.removeBlock(pos, false);
 
-        // Play break sound manually ONCE
-        serverWorld.playSound(
-                null,
-                pos,
-                state.getSoundGroup().getBreakSound(),
-                SoundCategory.BLOCKS,
-                (state.getSoundGroup().getVolume() + 1.0F) / 2.0F,
-                state.getSoundGroup().getPitch() * 0.8F
-        );
-
-        // Spawn item entity
-        ItemEntity itemEntity = new ItemEntity(
-                serverWorld,
+        // ✅ FIXED: Spawn item di posisi block dengan random offset seperti vanilla
+        Vec3d dropPos = new Vec3d(
                 pos.getX() + 0.5,
                 pos.getY() + 0.5,
-                pos.getZ() + 0.5,
+                pos.getZ() + 0.5
+        );
+
+        ItemEntity itemEntity = new ItemEntity(
+                serverWorld,
+                dropPos.x,
+                dropPos.y,
+                dropPos.z,
                 dropItem
         );
 
-        itemEntity.setVelocity(
-                (RANDOM.nextDouble() - 0.5) * 0.1,
-                0.2,
-                (RANDOM.nextDouble() - 0.5) * 0.1
-        );
+        // ✅ FIXED: Set velocity lebih dekat seperti vanilla (reduced spread)
+        double velocityX = (RANDOM.nextDouble() - 0.5) * 0.1; // -0.05 to 0.05
+        double velocityY = RANDOM.nextDouble() * 0.1 + 0.15;  // 0.15 to 0.25
+        double velocityZ = (RANDOM.nextDouble() - 0.5) * 0.1; // -0.05 to 0.05
 
+        itemEntity.setVelocity(velocityX, velocityY, velocityZ);
         serverWorld.spawnEntity(itemEntity);
 
-        // Add experience (only if not Silk Touch)
+        // ✅ FIXED: Spawn XP orbs seperti vanilla (tidak langsung ke player)
         if (experience > 0) {
-            player.addExperience(experience);
+            ExperienceOrbEntity.spawn(serverWorld, dropPos, experience);
         }
 
         // Damage tool (1 durability per block)
         tool.damage(1, player, net.minecraft.entity.EquipmentSlot.MAINHAND);
 
-        EmeraldMod.LOGGER.debug("Single block {}: {} -> {} x{} (Fortune {}, Silk Touch {})",
+        EmeraldMod.LOGGER.debug("Single block {}: {} -> {} x{} + {} XP (Fortune {}, Silk Touch {})",
                 silkTouchLevel > 0 ? "mined" : "auto-smelt",
                 block.getName().getString(),
                 dropItem.getItem().getName().getString(),
                 dropCount,
+                experience,
                 fortuneLevel,
                 silkTouchLevel);
     }
@@ -269,6 +269,7 @@ public class AutoSmeltHandler {
     /**
      * Handle vein mining dengan auto-smelt (Ruby Pickaxe untuk ore biasa)
      * Supports Fortune & Silk Touch
+     * ✅ FIXED: Items dan XP drop seperti vanilla, sound hanya sekali
      */
     private static void handleVeinMining(World world, PlayerEntity player, BlockPos startPos, BlockState startState, ItemStack tool) {
         if (world.isClient) return;
@@ -339,8 +340,8 @@ public class AutoSmeltHandler {
                 // Tambahkan ke total drops
                 addToTotalDrops(totalDrops, dropItem, dropCount);
 
-                // Remove block silently (no sound/particles)
-                serverWorld.setBlockState(currentPos, Blocks.AIR.getDefaultState(), 3);
+                // ✅ FIXED: Remove block tanpa play sound (nanti play sekali saja)
+                serverWorld.removeBlock(currentPos, false);
 
                 // Cari ore di sekitar block ini
                 for (BlockPos neighborPos : getNeighborPositions(currentPos)) {
@@ -360,7 +361,7 @@ public class AutoSmeltHandler {
             }
         }
 
-        // Play break sound ONCE di posisi awal
+        // ✅ FIXED: Play break sound SEKALI SAJA di posisi awal
         serverWorld.playSound(
                 null,
                 startPos,
@@ -370,7 +371,13 @@ public class AutoSmeltHandler {
                 startState.getSoundGroup().getPitch() * 0.8F
         );
 
-        // Drop semua items yang terkumpul di posisi awal
+        // ✅ FIXED: Drop semua items di posisi awal dengan random spread
+        Vec3d dropCenter = new Vec3d(
+                startPos.getX() + 0.5,
+                startPos.getY() + 0.5,
+                startPos.getZ() + 0.5
+        );
+
         if (!totalDrops.isEmpty()) {
             for (Map.Entry<ItemStack, Integer> entry : totalDrops.entrySet()) {
                 ItemStack itemToDrop = entry.getKey().copy();
@@ -383,30 +390,34 @@ public class AutoSmeltHandler {
                     ItemStack dropStack = itemToDrop.copy();
                     dropStack.setCount(stackSize);
 
-                    // Spawn item entity
+                    // ✅ FIXED: Spawn dengan random offset lebih dekat (reduced spread)
+                    double offsetX = (RANDOM.nextDouble() - 0.5) * 0.2; // ±0.1 block
+                    double offsetZ = (RANDOM.nextDouble() - 0.5) * 0.2; // ±0.1 block
+
                     ItemEntity itemEntity = new ItemEntity(
                             serverWorld,
-                            startPos.getX() + 0.5,
-                            startPos.getY() + 0.5,
-                            startPos.getZ() + 0.5,
+                            dropCenter.x + offsetX,
+                            dropCenter.y,
+                            dropCenter.z + offsetZ,
                             dropStack
                     );
 
-                    itemEntity.setVelocity(
-                            (RANDOM.nextDouble() - 0.5) * 0.1,
-                            0.2,
-                            (RANDOM.nextDouble() - 0.5) * 0.1
-                    );
+                    // ✅ FIXED: Velocity lebih dekat seperti vanilla
+                    double velocityX = (RANDOM.nextDouble() - 0.5) * 0.1; // -0.05 to 0.05
+                    double velocityY = RANDOM.nextDouble() * 0.1 + 0.15;  // 0.15 to 0.25
+                    double velocityZ = (RANDOM.nextDouble() - 0.5) * 0.1; // -0.05 to 0.05
 
+                    itemEntity.setVelocity(velocityX, velocityY, velocityZ);
                     serverWorld.spawnEntity(itemEntity);
+
                     totalCount -= stackSize;
                 }
             }
         }
 
-        // Add experience (only if not Silk Touch)
+        // ✅ FIXED: Spawn XP orbs di posisi awal (tidak langsung ke player)
         if (totalExperience > 0) {
-            player.addExperience(totalExperience);
+            ExperienceOrbEntity.spawn(serverWorld, dropCenter, totalExperience);
         }
 
         // Damage tool berdasarkan jumlah ore yang di-mine
@@ -415,9 +426,10 @@ public class AutoSmeltHandler {
             tool.damage(durabilityDamage, player, net.minecraft.entity.EquipmentSlot.MAINHAND);
         }
 
-        EmeraldMod.LOGGER.info("Vein mining completed: {} {} ores mined (Fortune {}, Silk Touch {})",
+        EmeraldMod.LOGGER.info("Vein mining completed: {} {} ores mined + {} XP (Fortune {}, Silk Touch {})",
                 totalOresMined,
                 targetOre.getName().getString(),
+                totalExperience,
                 fortuneLevel,
                 silkTouchLevel);
     }
@@ -425,6 +437,7 @@ public class AutoSmeltHandler {
     /**
      * Handle vein mining TANPA auto-smelt (Ruby Pickaxe untuk Nether Ruby Ore & Nether Gold Ore)
      * Supports Fortune & Silk Touch
+     * ✅ FIXED: Items dan XP drop seperti vanilla, sound hanya sekali
      */
     private static void handleVeinMiningNoSmelt(World world, PlayerEntity player, BlockPos startPos, BlockState startState, ItemStack tool) {
         if (world.isClient) return;
@@ -475,31 +488,37 @@ public class AutoSmeltHandler {
                 // Process ore ini
                 totalOresMined++;
 
-                // Silk Touch: drop ore block
+                // Silk Touch: drop ore block langsung
                 if (silkTouchLevel > 0) {
+                    // ✅ FIXED: Drop lebih dekat seperti vanilla
+                    Vec3d dropPos = new Vec3d(
+                            currentPos.getX() + 0.5 + (RANDOM.nextDouble() - 0.5) * 0.1,
+                            currentPos.getY() + 0.5,
+                            currentPos.getZ() + 0.5 + (RANDOM.nextDouble() - 0.5) * 0.1
+                    );
+
                     ItemStack blockDrop = new ItemStack(currentBlock);
                     ItemEntity itemEntity = new ItemEntity(
                             serverWorld,
-                            currentPos.getX() + 0.5,
-                            currentPos.getY() + 0.5,
-                            currentPos.getZ() + 0.5,
+                            dropPos.x,
+                            dropPos.y,
+                            dropPos.z,
                             blockDrop
                     );
-                    itemEntity.setVelocity(
-                            (RANDOM.nextDouble() - 0.5) * 0.1,
-                            0.2,
-                            (RANDOM.nextDouble() - 0.5) * 0.1
-                    );
+
+                    double velocityX = (RANDOM.nextDouble() - 0.5) * 0.1; // -0.05 to 0.05
+                    double velocityY = RANDOM.nextDouble() * 0.1 + 0.15;  // 0.15 to 0.25
+                    double velocityZ = (RANDOM.nextDouble() - 0.5) * 0.1; // -0.05 to 0.05
+
+                    itemEntity.setVelocity(velocityX, velocityY, velocityZ);
                     serverWorld.spawnEntity(itemEntity);
                 } else {
                     // Calculate drops untuk specific ore
                     if (currentBlock == ModBlocks.NETHER_RUBY_ORE) {
-                        // Drop Ruby Scrap (2-4 base, affected by Fortune)
                         int scrapCount = calculateNetherRubyScrapDrop(fortuneLevel);
                         totalDrops += scrapCount;
                         dropItem = new ItemStack(ModItems.RUBY_NUGGET);
 
-                        // Add XP (0-1 per ore)
                         if (RANDOM.nextBoolean()) {
                             totalExperience += 3;
                         }
@@ -514,17 +533,14 @@ public class AutoSmeltHandler {
                         }
                     }
                     else if (currentBlock == Blocks.NETHER_GOLD_ORE) {
-                        // Drop Gold Nugget (2-6 base, up to 24 with Fortune III)
                         int nuggetCount = calculateNetherGoldNuggetDrop(fortuneLevel);
                         totalDrops += nuggetCount;
                         dropItem = new ItemStack(Items.GOLD_NUGGET);
-
-                        // No XP for Nether Gold Ore (vanilla behavior)
                     }
                 }
 
-                // Remove block silently
-                serverWorld.setBlockState(currentPos, Blocks.AIR.getDefaultState(), 3);
+                // ✅ FIXED: Remove block tanpa sound
+                serverWorld.removeBlock(currentPos, false);
 
                 // Cari ore di sekitar block ini
                 for (BlockPos neighborPos : getNeighborPositions(currentPos)) {
@@ -544,7 +560,7 @@ public class AutoSmeltHandler {
             }
         }
 
-        // Play break sound ONCE di posisi awal
+        // ✅ FIXED: Play break sound SEKALI SAJA
         serverWorld.playSound(
                 null,
                 startPos,
@@ -554,7 +570,13 @@ public class AutoSmeltHandler {
                 startState.getSoundGroup().getPitch() * 0.8F
         );
 
-        // Drop all items (jika tidak Silk Touch)
+        // ✅ FIXED: Drop all items di posisi awal dengan random spread
+        Vec3d dropCenter = new Vec3d(
+                startPos.getX() + 0.5,
+                startPos.getY() + 0.5,
+                startPos.getZ() + 0.5
+        );
+
         if (totalDrops > 0 && dropItem != null) {
             int maxStackSize = dropItem.getMaxCount();
 
@@ -563,29 +585,31 @@ public class AutoSmeltHandler {
                 ItemStack dropStack = dropItem.copy();
                 dropStack.setCount(stackSize);
 
-                // Spawn item entity di posisi awal
+                // ✅ FIXED: Random offset lebih dekat (reduced spread)
+                double offsetX = (RANDOM.nextDouble() - 0.5) * 0.2; // ±0.1 block
+                double offsetZ = (RANDOM.nextDouble() - 0.5) * 0.2; // ±0.1 block
+
                 ItemEntity itemEntity = new ItemEntity(
                         serverWorld,
-                        startPos.getX() + 0.5,
-                        startPos.getY() + 0.5,
-                        startPos.getZ() + 0.5,
+                        dropCenter.x + offsetX,
+                        dropCenter.y,
+                        dropCenter.z + offsetZ,
                         dropStack
                 );
 
-                itemEntity.setVelocity(
-                        (RANDOM.nextDouble() - 0.5) * 0.1,
-                        0.2,
-                        (RANDOM.nextDouble() - 0.5) * 0.1
-                );
+                double velocityX = (RANDOM.nextDouble() - 0.5) * 0.1; // -0.05 to 0.05
+                double velocityY = RANDOM.nextDouble() * 0.1 + 0.15;  // 0.15 to 0.25
+                double velocityZ = (RANDOM.nextDouble() - 0.5) * 0.1; // -0.05 to 0.05
 
+                itemEntity.setVelocity(velocityX, velocityY, velocityZ);
                 serverWorld.spawnEntity(itemEntity);
                 totalDrops -= stackSize;
             }
         }
 
-        // Add experience (only if not Silk Touch)
+        // ✅ FIXED: Spawn XP orbs di posisi awal
         if (totalExperience > 0) {
-            player.addExperience(totalExperience);
+            ExperienceOrbEntity.spawn(serverWorld, dropCenter, totalExperience);
         }
 
         // Damage tool berdasarkan jumlah ore yang di-mine
@@ -594,9 +618,10 @@ public class AutoSmeltHandler {
             tool.damage(durabilityDamage, player, net.minecraft.entity.EquipmentSlot.MAINHAND);
         }
 
-        EmeraldMod.LOGGER.info("Vein mining (NO SMELT) completed: {} {} ores mined (Fortune {}, Silk Touch {})",
+        EmeraldMod.LOGGER.info("Vein mining (NO SMELT) completed: {} {} ores + {} XP (Fortune {}, Silk Touch {})",
                 totalOresMined,
                 targetOre.getName().getString(),
+                totalExperience,
                 fortuneLevel,
                 silkTouchLevel);
     }
@@ -606,10 +631,8 @@ public class AutoSmeltHandler {
      * Base: 2-4, affected by Fortune
      */
     private static int calculateNetherRubyScrapDrop(int fortuneLevel) {
-        // Base drop: 2-4 Ruby Scrap
-        int baseCount = RANDOM.nextInt(3) + 2; // 2, 3, atau 4
+        int baseCount = RANDOM.nextInt(3) + 2; // 2-4
 
-        // Fortune bonus (sama seperti vanilla Fortune untuk ores)
         if (fortuneLevel > 0) {
             int fortuneBonus = RANDOM.nextInt(fortuneLevel + 1);
             baseCount += fortuneBonus;
@@ -623,30 +646,24 @@ public class AutoSmeltHandler {
      * Base: 2-6, up to 24 with Fortune III (vanilla behavior)
      */
     private static int calculateNetherGoldNuggetDrop(int fortuneLevel) {
-        // Base drop: 2-6 Gold Nuggets (vanilla)
         int baseCount = RANDOM.nextInt(5) + 2; // 2-6
 
-        // Fortune bonus (vanilla: multiplicative scaling)
         if (fortuneLevel > 0) {
-            // Fortune I: 2-10 (avg 6)
-            // Fortune II: 2-14 (avg 8)
-            // Fortune III: 2-24 (avg 10)
             int maxBonus = fortuneLevel * 4;
             int fortuneBonus = RANDOM.nextInt(maxBonus + 1);
             baseCount += fortuneBonus;
         }
 
-        return Math.max(2, baseCount); // Minimum 2 nuggets
+        return Math.max(2, baseCount);
     }
 
     /**
-     * Calculate drop count untuk Nether Ruby Ore (Ruby Scrap)
+     * Calculate drop count untuk Nether Emerald Ore (Emerald Nugget)
      * Base: 2-4, affected by Fortune
      */
     private static int calculateNetherEmeraldNuggetDrop(int fortuneLevel) {
-        int baseCount = RANDOM.nextInt(3) + 2;
+        int baseCount = RANDOM.nextInt(3) + 2; // 2-4
 
-        // Fortune bonus (sama seperti vanilla Fortune untuk ores)
         if (fortuneLevel > 0) {
             int fortuneBonus = RANDOM.nextInt(fortuneLevel + 1);
             baseCount += fortuneBonus;
@@ -704,121 +721,108 @@ public class AutoSmeltHandler {
     private static int calculateDropCount(Block block, int fortuneLevel) {
         int baseCount = 1;
 
-        // Copper Ore: 2-5 raw copper base (vanilla: 2-5)
+        // Copper Ore: 2-5 raw copper base
         if (block == Blocks.COPPER_ORE || block == Blocks.DEEPSLATE_COPPER_ORE) {
             baseCount = RANDOM.nextInt(4) + 2; // 2-5
 
-            // Fortune bonus untuk copper (vanilla behavior)
             if (fortuneLevel > 0) {
-                // Fortune dapat menambah sampai Fortune level
                 int fortuneBonus = RANDOM.nextInt(fortuneLevel + 1);
                 baseCount += fortuneBonus;
             }
         }
 
-        //Ancient Debris: 1 scrap
+        // Ancient Debris: 1 scrap
         else if (block == Blocks.ANCIENT_DEBRIS || block == ModBlocks.RUBY_DEBRIS) {
             baseCount = 1;
 
-            // Fortune bonus
             if (fortuneLevel > 0) {
                 int fortuneBonus = RANDOM.nextInt(fortuneLevel + 1);
                 baseCount += fortuneBonus;
             }
         }
 
-        // Iron Ore: 1 iron ingot base (custom) + Fortune
+        // Iron Ore: 1 iron ingot
         else if (block == Blocks.IRON_ORE || block == Blocks.DEEPSLATE_IRON_ORE) {
             baseCount = 1;
 
-            // Fortune bonus
             if (fortuneLevel > 0) {
                 int fortuneBonus = RANDOM.nextInt(fortuneLevel + 1);
                 baseCount += fortuneBonus;
             }
         }
 
-        //  Gold Ore: 1 gold ingot base (custom) + Fortune
+        // Gold Ore: 1 gold ingot
         else if (block == Blocks.GOLD_ORE || block == Blocks.DEEPSLATE_GOLD_ORE) {
             baseCount = 1;
 
-            // Fortune bonus
             if (fortuneLevel > 0) {
                 int fortuneBonus = RANDOM.nextInt(fortuneLevel + 1);
                 baseCount += fortuneBonus;
             }
         }
 
-        // Coal: 1 coal (vanilla) + Fortune
+        // Coal: 1 coal
         else if (block == Blocks.COAL_ORE || block == Blocks.DEEPSLATE_COAL_ORE) {
             baseCount = 1;
 
-            // Fortune bonus untuk coal (vanilla: +0 to +Fortune level)
             if (fortuneLevel > 0) {
                 int fortuneBonus = RANDOM.nextInt(fortuneLevel + 1);
                 baseCount += fortuneBonus;
             }
         }
 
-        // Diamond: 1 diamond (vanilla) + Fortune
+        // Diamond: 1 diamond
         else if (block == Blocks.DIAMOND_ORE || block == Blocks.DEEPSLATE_DIAMOND_ORE) {
             baseCount = 1;
 
-            // Fortune bonus untuk diamond (vanilla: +0 to +Fortune level)
             if (fortuneLevel > 0) {
                 int fortuneBonus = RANDOM.nextInt(fortuneLevel + 1);
                 baseCount += fortuneBonus;
             }
         }
 
-        // Emerald: 1 emerald.json (vanilla) + Fortune
+        // Emerald: 1 emerald
         else if (block == Blocks.EMERALD_ORE || block == Blocks.DEEPSLATE_EMERALD_ORE) {
             baseCount = 1;
 
-            // Fortune bonus untuk emerald.json (vanilla: +0 to +Fortune level)
             if (fortuneLevel > 0) {
                 int fortuneBonus = RANDOM.nextInt(fortuneLevel + 1);
                 baseCount += fortuneBonus;
             }
         }
 
-        // Lapis: 4-9 lapis base (vanilla) + Fortune
+        // Lapis: 4-9 lapis base
         else if (block == Blocks.LAPIS_ORE || block == Blocks.DEEPSLATE_LAPIS_ORE) {
             baseCount = RANDOM.nextInt(6) + 4; // 4-9
 
-            // Fortune bonus untuk lapis (vanilla: multiplicative)
             if (fortuneLevel > 0) {
-                // Fortune I: 4-15, Fortune II: 4-21, Fortune III: 4-27
                 baseCount += RANDOM.nextInt((fortuneLevel + 1) * 3);
             }
         }
 
-        // Redstone: 4-5 redstone base (vanilla) + Fortune
+        // Redstone: 4-5 redstone base
         else if (block == Blocks.REDSTONE_ORE || block == Blocks.DEEPSLATE_REDSTONE_ORE) {
             baseCount = RANDOM.nextInt(2) + 4; // 4-5
 
-            // Fortune bonus untuk redstone (vanilla: +0 to +Fortune level)
             if (fortuneLevel > 0) {
                 baseCount += RANDOM.nextInt(fortuneLevel + 1);
             }
         }
 
-        // Nether Quartz: 1 quartz (vanilla) + Fortune
+        // Nether Quartz: 1 quartz
         else if (block == Blocks.NETHER_QUARTZ_ORE) {
             baseCount = 1;
 
-            // Fortune bonus untuk quartz (vanilla: +0 to +Fortune level)
             if (fortuneLevel > 0) {
                 int fortuneBonus = RANDOM.nextInt(fortuneLevel + 1);
                 baseCount += fortuneBonus;
             }
         }
 
-        // Ruby Ore: 1 ruby ingot base (custom) + Fortune
+        // Ruby Ore: 1 ruby ingot
         else if (block == ModBlocks.RUBY_ORE || block == ModBlocks.DEEPSLATE_RUBY_ORE) {
             baseCount = 1;
 
-            // Fortune bonus untuk ruby (sama seperti diamond/emerald.json)
             if (fortuneLevel > 0) {
                 int fortuneBonus = RANDOM.nextInt(fortuneLevel + 1);
                 baseCount += fortuneBonus;
@@ -835,53 +839,53 @@ public class AutoSmeltHandler {
     private static int calculateExperience(Block block, int dropCount) {
         int baseExp = 0;
 
-        // Copper Ore: 0-1 XP per ore (vanilla)
+        // Copper Ore: 0-1 XP
         if (block == Blocks.COPPER_ORE || block == Blocks.DEEPSLATE_COPPER_ORE) {
             baseExp = RANDOM.nextBoolean() ? 1 : 0;
         }
-        // Iron Ore: 0-1 XP per ore (vanilla)
+        // Iron Ore: 0-1 XP
         else if (block == Blocks.IRON_ORE || block == Blocks.DEEPSLATE_IRON_ORE) {
             baseExp = RANDOM.nextBoolean() ? 1 : 0;
         }
-        // Gold Ore: 0-1 XP per ore (vanilla)
+        // Gold Ore: 0-1 XP
         else if (block == Blocks.GOLD_ORE || block == Blocks.DEEPSLATE_GOLD_ORE) {
             baseExp = RANDOM.nextBoolean() ? 1 : 0;
         }
-        // Ancient Debris: 0-2 XP (vanilla)
+        // Ancient Debris: 0-2 XP
         else if (block == Blocks.ANCIENT_DEBRIS) {
-            baseExp = RANDOM.nextInt(3); // 0, 1, atau 2
+            baseExp = RANDOM.nextInt(3); // 0, 1, or 2
         }
-        // Coal Ore: 0-2 XP (vanilla)
+        // Coal Ore: 0-2 XP
         else if (block == Blocks.COAL_ORE || block == Blocks.DEEPSLATE_COAL_ORE) {
-            baseExp = RANDOM.nextInt(3); // 0, 1, atau 2
+            baseExp = RANDOM.nextInt(3); // 0, 1, or 2
         }
-        // Diamond Ore: 3-7 XP (vanilla)
+        // Diamond Ore: 3-7 XP
         else if (block == Blocks.DIAMOND_ORE || block == Blocks.DEEPSLATE_DIAMOND_ORE) {
             baseExp = RANDOM.nextInt(5) + 3; // 3-7
         }
-        // Emerald Ore: 3-7 XP (vanilla)
+        // Emerald Ore: 3-7 XP
         else if (block == Blocks.EMERALD_ORE || block == Blocks.DEEPSLATE_EMERALD_ORE) {
             baseExp = RANDOM.nextInt(5) + 3; // 3-7
         }
-        // Lapis Ore: 2-5 XP (vanilla)
+        // Lapis Ore: 2-5 XP
         else if (block == Blocks.LAPIS_ORE || block == Blocks.DEEPSLATE_LAPIS_ORE) {
             baseExp = RANDOM.nextInt(4) + 2; // 2-5
         }
-        // Redstone Ore: 1-5 XP (vanilla)
+        // Redstone Ore: 1-5 XP
         else if (block == Blocks.REDSTONE_ORE || block == Blocks.DEEPSLATE_REDSTONE_ORE) {
             baseExp = RANDOM.nextInt(5) + 1; // 1-5
         }
-        // Nether Quartz Ore: 2-5 XP (vanilla)
+        // Nether Quartz Ore: 2-5 XP
         else if (block == Blocks.NETHER_QUARTZ_ORE) {
             baseExp = RANDOM.nextInt(4) + 2; // 2-5
         }
-        // Ruby Ore: 3-7 XP (custom, sama seperti diamond/emerald.json)
+        // Ruby Ore: 3-7 XP
         else if (block == ModBlocks.RUBY_ORE || block == ModBlocks.DEEPSLATE_RUBY_ORE) {
             baseExp = RANDOM.nextInt(5) + 3; // 3-7
         }
-        // Ruby Debris: 0-2 XP (custom, sama seperti Ancient Debris)
+        // Ruby Debris: 0-2 XP
         else if (block == ModBlocks.RUBY_DEBRIS) {
-            baseExp = RANDOM.nextInt(3); // 0, 1, atau 2
+            baseExp = RANDOM.nextInt(3); // 0, 1, or 2
         }
 
         return baseExp;
