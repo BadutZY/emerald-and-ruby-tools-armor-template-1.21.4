@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "#G#",
+    "###"
+  ],
+  "key": {
+    "#": "minecraft:emerald",
+    "G": "minecraft:golden_carrot"
+  },
+  "result": {
+    "id": "emeraldmod:emerald_carrot",
+    "count": 1
+  }
+}

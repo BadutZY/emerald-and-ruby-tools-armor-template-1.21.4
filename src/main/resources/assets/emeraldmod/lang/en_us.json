@@ -6,6 +6,7 @@
   "itemgroup.emeraldmod.basic_emerald": "Basic Emerald Tools & Armor",
   "itemgroup.emeraldmod.basic_ruby_equipment": "Basic Ruby Tools & Armor",
   "itemgroup.emeraldmod.emerald_materials": "Emerald Blocks & Ores",
+  "itemgroup.emeraldmod.foods": "Emerald & Ruby Foods",
 
   "item.emeraldmod.ruby": "Ruby",
   "item.emeraldmod.raw_ruby": "Raw Ruby",
@@ -131,6 +132,8 @@
   "item.emeraldmod.enchanted_emerald_apple": "Enchanted Emerald Apple",
   "item.emeraldmod.ruby_apple": "Ruby Apple",
   "item.emeraldmod.enchanted_ruby_apple": "Enchanted Ruby Apple",
+  "item.emeraldmod.emerald_carrot": "Emerald Carrot",
+  "item.emeraldmod.ruby_carrot": "Ruby Carrot",
 
   "item.emeraldmod.emerald_elytra": "Emerald Elytra",
 

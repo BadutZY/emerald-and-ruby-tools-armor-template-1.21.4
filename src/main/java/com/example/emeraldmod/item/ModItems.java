@@ -2,6 +2,7 @@ package com.example.emeraldmod.item;
 
 import com.example.emeraldmod.EmeraldMod;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.component.type.FoodComponent;
 import net.minecraft.item.*;
 import net.minecraft.item.equipment.EquipmentType;
 import net.minecraft.registry.Registries;
@@ -140,19 +141,19 @@ public class ModItems {
                     new Item.Settings().registryKey(createRegistryKey("basic_emerald_sword")).fireproof()));
 
     public static final PickaxeItem BASIC_EMERALD_PICKAXE = registerItem("basic_emerald_pickaxe",
-            new PickaxeItem(ModToolMaterial.BASIC_EMERALD, 2, -0.5F,
+            new PickaxeItem(ModToolMaterial.BASIC_EMERALD, 2, -1.5F,
                     new Item.Settings().registryKey(createRegistryKey("basic_emerald_pickaxe")).fireproof()));
 
     public static final AxeItem BASIC_EMERALD_AXE = registerItem("basic_emerald_axe",
-            new AxeItem(ModToolMaterial.BASIC_EMERALD, 6, -1.5F,
+            new AxeItem(ModToolMaterial.BASIC_EMERALD, 6, -2.5F,
                     new Item.Settings().registryKey(createRegistryKey("basic_emerald_axe")).fireproof()));
 
     public static final ShovelItem BASIC_EMERALD_SHOVEL = registerItem("basic_emerald_shovel",
-            new ShovelItem(ModToolMaterial.BASIC_EMERALD, 2.5F, -2.0F,
+            new ShovelItem(ModToolMaterial.BASIC_EMERALD, 2.5F, -3.0F,
                     new Item.Settings().registryKey(createRegistryKey("basic_emerald_shovel")).fireproof()));
 
     public static final HoeItem BASIC_EMERALD_HOE = registerItem("basic_emerald_hoe",
-            new HoeItem(ModToolMaterial.BASIC_EMERALD, -1, 1.0F,
+            new HoeItem(ModToolMaterial.BASIC_EMERALD, -2, 1.0F,
                     new Item.Settings().registryKey(createRegistryKey("basic_emerald_hoe")).fireproof()));
 
     // ============================================
@@ -175,7 +176,7 @@ public class ModItems {
                     new Item.Settings().registryKey(createRegistryKey("basic_emerald_boots")).fireproof()));
 
     // ============================================
-    // EMERALD ITEMS - NEW!
+    // EMERALD ITEMS
     // ============================================
     public static final Item EMERALD_NUGGET = registerItem("emerald_nugget",
             new Item(new Item.Settings().registryKey(createRegistryKey("emerald_nugget")).fireproof()));
@@ -281,6 +282,27 @@ public class ModItems {
                     .fireproof()));
 
     // ============================================
+    // CARROTS (NEW!)
+    // ============================================
+    public static final Item EMERALD_CARROT = registerItem("emerald_carrot",
+            new Item(new Item.Settings()
+                    .registryKey(createRegistryKey("emerald_carrot"))
+                    .food(new FoodComponent.Builder()
+                            .nutrition(14)
+                            .saturationModifier(0.58f)  // 14 × 0.57 × 2 ≈ 16 saturation (8 bars in AppleSkin)
+                            .build())
+                    .fireproof()));
+
+    public static final Item RUBY_CARROT = registerItem("ruby_carrot",
+            new Item(new Item.Settings()
+                    .registryKey(createRegistryKey("ruby_carrot"))
+                    .food(new FoodComponent.Builder()
+                            .nutrition(20)
+                            .saturationModifier(0.5f)  // 20 × 0.5 × 2 = 20 saturation (10 bars in AppleSkin - FULL!)
+                            .build())
+                    .fireproof()));
+
+    // ============================================
     // SMITHING TEMPLATES
     // ============================================
     public static final Item EMERALD_UPGRADE_SMITHING_TEMPLATE = registerItem(
@@ -315,5 +337,7 @@ public class ModItems {
         EmeraldMod.LOGGER.info("✓ Successfully registered Ruby Upgrade Smithing Template");
         EmeraldMod.LOGGER.info("✓ Successfully registered Emerald Totem (3 uses)");
         EmeraldMod.LOGGER.info("✓ Successfully registered Ruby Totem (5 uses)");
+        EmeraldMod.LOGGER.info("✓ Successfully registered Emerald Carrot (14 hunger, 14.5 saturation)");
+        EmeraldMod.LOGGER.info("✓ Successfully registered Ruby Carrot (20 hunger, 20 saturation)");
     }
 }

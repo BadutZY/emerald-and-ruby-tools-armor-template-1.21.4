@@ -133,9 +133,11 @@ Armor Effect [B]
 
 ### New Item
 
-**Apple and Totem**
+**Apple, Carrot and Totem**
 
 ![Replace this with a description](https://cdn.modrinth.com/data/cached_images/6b9d0cea901338583df12cbb912dc959bac397ba.png)
+
+![carrot](https://cdn.modrinth.com/data/cached_images/bea18d9edf29ee1f4530d38a359f16c6d9431501.png)
 
 **I highly recommend you to use the [REI](https://modrinth.com/mod/rei) mod**
 

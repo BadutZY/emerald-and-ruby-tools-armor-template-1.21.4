@@ -47,10 +47,6 @@ public class ModItemGroups {
 
                         // Ruby Totem
                         entries.add(ModItems.RUBY_TOTEM);
-
-                        //Ruby Apples
-                        entries.add(ModItems.RUBY_APPLE);
-                        entries.add(ModItems.ENCHANTED_RUBY_APPLE);
                     })
                     .build());
 
@@ -107,7 +103,7 @@ public class ModItemGroups {
                     .build());
 
     // ============================================
-    // RUBY EQUIPMENT TAB (Tools, Armor, Template)
+    // BASIC RUBY EQUIPMENT TAB (Tools, Armor)
     // ============================================
     public static final ItemGroup BASIC_RUBY_EQUIPMENT_GROUP = Registry.register(Registries.ITEM_GROUP,
             Identifier.of(EmeraldMod.MOD_ID, "basic_ruby_tools"),
@@ -192,15 +188,38 @@ public class ModItemGroups {
                         // Emerald Horse Armor
                         entries.add(ModItems.EMERALD_HORSE_ARMOR);
 
-                        // Merald Material
+                        // Emerald Material
                         entries.add(Items.EMERALD);
 
                         // Emerald Totem
                         entries.add(ModItems.EMERALD_TOTEM);
+                    })
+                    .build());
+
+    // ============================================
+    // FOODS TAB
+    // ============================================
+    public static final ItemGroup RUBY_EMERALD_FOOD = Registry.register(Registries.ITEM_GROUP,
+            Identifier.of(EmeraldMod.MOD_ID, "foods_group"),
+            FabricItemGroup.builder()
+                    .icon(() -> new ItemStack(ModItems.RUBY_CARROT))
+                    .displayName(Text.translatable("itemgroup.emeraldmod.foods"))
+                    .entries((displayContext, entries) -> {
 
                         // Emerald Apples
                         entries.add(ModItems.EMERALD_APPLE);
                         entries.add(ModItems.ENCHANTED_EMERALD_APPLE);
+
+                        // Emerald Carrot
+                        entries.add(ModItems.EMERALD_CARROT);
+
+                        //Ruby Apples
+                        entries.add(ModItems.RUBY_APPLE);
+                        entries.add(ModItems.ENCHANTED_RUBY_APPLE);
+
+                        // Ruby Carrot
+                        entries.add(ModItems.RUBY_CARROT);
+
                     })
                     .build());
 
@@ -250,5 +269,6 @@ public class ModItemGroups {
         EmeraldMod.LOGGER.info("✓ Registered Ruby Materials Group (Ores, Blocks, Materials)");
         EmeraldMod.LOGGER.info("✓ Registered Emerald Tools & Armor Group");
         EmeraldMod.LOGGER.info("✓ Registered Netherite Tools & Armor Group");
+        EmeraldMod.LOGGER.info("✓ Registered Emerald Carrot & Ruby Carrot in Item Groups");
     }
 }
