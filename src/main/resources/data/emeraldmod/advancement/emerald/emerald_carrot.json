@@ -1,0 +1,31 @@
+{
+  "parent": "emeraldmod:emerald/emerald_ore",
+  "criteria": {
+    "emerald_carrot": {
+      "conditions": {
+        "items": [
+          {
+            "items": "emeraldmod:emerald_carrot"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": "Eat!!",
+    "icon": {
+      "count": 1,
+      "id": "emeraldmod:emerald_carrot"
+    },
+    "title": {
+      "translate": "Emerald Carrot"
+    }
+  },
+  "requirements": [
+    [
+      "emerald_carrot"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

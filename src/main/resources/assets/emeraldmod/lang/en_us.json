@@ -150,6 +150,12 @@
   "item.emeraldmod.ruby_upgrade_smithing_template": "§eRuby Upgrade",
   "item.emeraldmod.ruby_upgrade_smithing_template.description": "§eRuby Upgrade",
 
+  "enchantment.emeraldmod.infinite_durability": "Infinite Durability",
+  "enchantment.emeraldmod.infinite_durability.desc": "Prevents the item from taking any durability damage",
+  "enchantment.emeraldmod.infinite_durability.warning": "Cannot be applied to Basic Ruby or Ruby items",
+  "item.emeraldmod.infinite_durability_book": "Enchanted Book (Infinite Durability)",
+  "itemgroup.emeraldmod.enchanted_books": "Enchanted Books",
+
   "upgrade_template.emeraldmod.ruby_upgrade.applies_to": "Emerald Equipment",
   "upgrade_template.emeraldmod.ruby_upgrade.ingredients": "Ruby",
   "upgrade_template.emeraldmod.ruby_upgrade.base_slot_description": "Add emerald armor, weapon, or tool",

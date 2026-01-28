@@ -1,0 +1,31 @@
+{
+  "parent": "emeraldmod:ruby/you_got_ruby",
+  "criteria": {
+    "ruby_carrot": {
+      "conditions": {
+        "items": [
+          {
+            "items": "emeraldmod:ruby_carrot"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": "Eat More!!",
+    "icon": {
+      "count": 1,
+      "id": "emeraldmod:ruby_carrot"
+    },
+    "title": {
+      "translate": "Ruby Carrot"
+    }
+  },
+  "requirements": [
+    [
+      "ruby_carrot"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
