@@ -1,82 +1,91 @@
 package com.example.emeraldmod.item;
 
 import com.example.emeraldmod.EmeraldMod;
-import net.minecraft.item.Item;
-import net.minecraft.item.equipment.ArmorMaterial;
-import net.minecraft.item.equipment.EquipmentAsset;
-import net.minecraft.item.equipment.EquipmentAssetKeys;
-import net.minecraft.item.equipment.EquipmentType;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ArmorMaterial;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 
-import java.util.Map;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.function.Supplier;
 
 public class RubyArmorMaterial {
-    // Set base durability ke 1 karena kita akan override di item class
-    // Ini untuk menghindari durability bar yang sangat panjang
-    public static final int BASE_DURABILITY = 1;
+    public static final RegistryEntry<ArmorMaterial> RUBY_ARMOR_MATERIAL;
+    public static final RegistryEntry<ArmorMaterial> BASIC_RUBY_ARMOR_MATERIAL;
 
-    public static final TagKey<Item> RUBY_REPAIR_INGREDIENT = TagKey.of(
-            RegistryKeys.ITEM,
-            Identifier.of(EmeraldMod.MOD_ID, "ruby_repair_ingredient")
-    );
+    static {
+        RUBY_ARMOR_MATERIAL = register("ruby",
+                Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+                    map.put(ArmorItem.Type.HELMET, 11);
+                    map.put(ArmorItem.Type.CHESTPLATE, 16);
+                    map.put(ArmorItem.Type.LEGGINGS, 15);
+                    map.put(ArmorItem.Type.BOOTS, 13);
+                    map.put(ArmorItem.Type.BODY, 16);
+                }),
+                Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+                    map.put(ArmorItem.Type.BOOTS, 6);
+                    map.put(ArmorItem.Type.LEGGINGS, 10);
+                    map.put(ArmorItem.Type.CHESTPLATE, 12);
+                    map.put(ArmorItem.Type.HELMET, 6);
+                    map.put(ArmorItem.Type.BODY, 25);
+                }),
+                15,
+                SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE,
+                6.0F,
+                0.4F,
+                () -> Ingredient.ofItems(ModItems.RUBY)
+        );
 
-    public static final RegistryKey<EquipmentAsset> RUBY_EQUIPMENT_ASSET = RegistryKey.of(
-            EquipmentAssetKeys.REGISTRY_KEY,
-            Identifier.of(EmeraldMod.MOD_ID, "ruby")
-    );
+        BASIC_RUBY_ARMOR_MATERIAL = register("basic_ruby",
+                Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+                    map.put(ArmorItem.Type.HELMET, 11);
+                    map.put(ArmorItem.Type.CHESTPLATE, 16);
+                    map.put(ArmorItem.Type.LEGGINGS, 15);
+                    map.put(ArmorItem.Type.BOOTS, 13);
+                    map.put(ArmorItem.Type.BODY, 16);
+                }),
+                Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+                    map.put(ArmorItem.Type.BOOTS, 5);
+                    map.put(ArmorItem.Type.LEGGINGS, 8);
+                    map.put(ArmorItem.Type.CHESTPLATE, 10);
+                    map.put(ArmorItem.Type.HELMET, 5);
+                    map.put(ArmorItem.Type.BODY, 22);
+                }),
+                10,
+                SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE,
+                5.0F,
+                0.3F,
+                () -> Ingredient.ofItems(ModItems.RUBY)
+        );
+    }
 
-    public static final RegistryKey<EquipmentAsset> BASIC_RUBY_EQUIPMENT_ASSET = RegistryKey.of(
-            EquipmentAssetKeys.REGISTRY_KEY,
-            Identifier.of(EmeraldMod.MOD_ID, "basic_ruby")
-    );
+    private static RegistryEntry<ArmorMaterial> register(
+            String id,
+            EnumMap<ArmorItem.Type, Integer> durability,
+            EnumMap<ArmorItem.Type, Integer> defense,
+            int enchantability,
+            RegistryEntry<SoundEvent> equipSound,
+            float toughness,
+            float knockbackResistance,
+            Supplier<Ingredient> repairIngredient
+    ) {
+        List<ArmorMaterial.Layer> layers = List.of(
+                new ArmorMaterial.Layer(Identifier.of(EmeraldMod.MOD_ID, id))
+        );
 
-    // Ruby Armor Material - SUPERIOR TO EMERALD
-    // ArmorMaterial constructor parameters di 1.21.4:
-    // 1. durability multiplier (int)
-    // 2. protection values (Map<EquipmentType, Integer>)
-    // 3. enchantability (int)
-    // 4. equip sound (RegistryEntry<SoundEvent>)
-    // 5. toughness (float)
-    // 6. knockback resistance (float)
-    // 7. repair ingredient tag (TagKey<Item>)
-    // 8. equipment asset (RegistryKey<EquipmentAsset>)
-    public static final ArmorMaterial RUBY_ARMOR_MATERIAL = new ArmorMaterial(
-            BASE_DURABILITY,
-            Map.of(
-                    EquipmentType.BOOTS, 6,        // Lebih tinggi dari Emerald (5)
-                    EquipmentType.LEGGINGS, 10,    // Lebih tinggi dari Emerald (8)
-                    EquipmentType.CHESTPLATE, 12,  // Lebih tinggi dari Emerald (10)
-                    EquipmentType.HELMET, 6,       // Lebih tinggi dari Emerald (5)
-                    EquipmentType.BODY, 25         // Lebih tinggi dari Emerald (22)
-            ),
-            15, // Enchantability (lebih baik dari Diamond/Emerald 10)
-            SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE,
-            6.0F, // Toughness (lebih tinggi dari Emerald 5.0)
-            0.4F, // Knockback resistance (lebih tinggi dari Emerald 0.3)
-            RUBY_REPAIR_INGREDIENT,
-            RUBY_EQUIPMENT_ASSET
-    );
-
-    public static final ArmorMaterial BASIC_RUBY_ARMOR_MATERIAL = new ArmorMaterial(
-            BASE_DURABILITY,
-            Map.of(
-                    EquipmentType.BOOTS, 5,        // Lebih tinggi dari Emerald (5)
-                    EquipmentType.LEGGINGS, 8,    // Lebih tinggi dari Emerald (8)
-                    EquipmentType.CHESTPLATE, 10,  // Lebih tinggi dari Emerald (10)
-                    EquipmentType.HELMET, 5,       // Lebih tinggi dari Emerald (5)
-                    EquipmentType.BODY, 22         // Lebih tinggi dari Emerald (22)
-            ),
-            10, // Enchantability (lebih baik dari Diamond/Emerald 10)
-            SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE,
-            5.0F, // Toughness (lebih tinggi dari Emerald 5.0)
-            0.3F, // Knockback resistance (lebih tinggi dari Emerald 0.3)
-            RUBY_REPAIR_INGREDIENT,
-            BASIC_RUBY_EQUIPMENT_ASSET
-    );
+        return Registry.registerReference(
+                Registries.ARMOR_MATERIAL,
+                Identifier.of(EmeraldMod.MOD_ID, id),
+                new ArmorMaterial(durability, enchantability, equipSound, repairIngredient, layers, toughness, knockbackResistance)
+        );
+    }
 
     public static void initialize() {
         EmeraldMod.LOGGER.info("Initializing Ruby Armor Materials");

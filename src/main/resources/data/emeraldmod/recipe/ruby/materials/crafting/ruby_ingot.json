@@ -7,7 +7,9 @@
     "###"
   ],
   "key": {
-    "#": "emeraldmod:ruby_nugget"
+    "#": {
+      "item": "emeraldmod:ruby_nugget"
+    }
   },
   "result": {
     "id": "emeraldmod:ruby_ingot",

@@ -1,6 +1,8 @@
 {
   "type": "minecraft:smelting",
-  "ingredient": "emeraldmod:ruby_debris",
+  "ingredient": {
+    "item": "emeraldmod:ruby_debris"
+  },
   "result": {
     "id": "emeraldmod:ruby_scrap"
   },

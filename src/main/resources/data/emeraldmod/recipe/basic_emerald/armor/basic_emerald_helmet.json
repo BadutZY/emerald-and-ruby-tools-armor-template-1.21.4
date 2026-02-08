@@ -7,8 +7,12 @@
     "###"
   ],
   "key": {
-    "#": "emeraldmod:emerald_cluster",
-    "N": "minecraft:netherite_helmet"
+    "#": {
+      "item": "emeraldmod:emerald_cluster"
+    },
+    "N": {
+      "item": "minecraft:netherite_helmet"
+    }
   },
   "result": {
     "id": "emeraldmod:basic_emerald_helmet",

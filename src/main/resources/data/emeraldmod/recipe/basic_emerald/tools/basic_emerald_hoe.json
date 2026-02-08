@@ -7,8 +7,12 @@
     "###"
   ],
   "key": {
-    "#": "emeraldmod:emerald_cluster",
-    "N": "minecraft:netherite_hoe"
+    "#": {
+      "item": "emeraldmod:emerald_cluster"
+    },
+    "N": {
+      "item": "minecraft:netherite_hoe"
+    }
   },
   "result": {
     "id": "emeraldmod:basic_emerald_hoe",

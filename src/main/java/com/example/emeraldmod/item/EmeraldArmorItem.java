@@ -2,24 +2,23 @@ package com.example.emeraldmod.item;
 
 import com.example.emeraldmod.EmeraldMod;
 import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.equipment.ArmorMaterial;
-import net.minecraft.item.equipment.EquipmentType;
+import net.minecraft.item.ArmorMaterial;
+import net.minecraft.registry.entry.RegistryEntry;
 
 public class EmeraldArmorItem extends ArmorItem {
-    private final EquipmentType equipmentType;
+    private final ArmorItem.Type armorType;
 
-    public EmeraldArmorItem(ArmorMaterial material, EquipmentType type, Settings settings) {
-        super(material, type, settings);
-        this.equipmentType = type;
+    public EmeraldArmorItem(RegistryEntry<ArmorMaterial> material, ArmorItem.Type type, Settings settings) {
+        // ✅ FIX: super() harus di statement pertama, gunakan inline expression
+        super(material, type, settings.maxDamage(type.getMaxDamage(material.value().defense().getOrDefault(type, 0))));
+        this.armorType = type;
 
-        // DEBUG: Log creation
         EmeraldMod.LOGGER.info("Creating EmeraldArmorItem: " + type.getName());
-        EmeraldMod.LOGGER.info("  - Equipment Type: " + type.getName());
-        EmeraldMod.LOGGER.info("  - Expected Max Damage: " + type.getMaxDamage(40));
+        EmeraldMod.LOGGER.info("  - Armor Type: " + type.getName());
+        EmeraldMod.LOGGER.info("  - Max Damage: " + type.getMaxDamage(material.value().defense().getOrDefault(type, 0)));
     }
 
-    public EquipmentType getEquipmentType() {
-        return this.equipmentType;
+    public ArmorItem.Type getArmorType() {
+        return this.armorType;
     }
 }

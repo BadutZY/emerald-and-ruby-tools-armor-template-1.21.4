@@ -30,7 +30,7 @@ public class ModBlocks {
     private static void registerBlockItem(String name, Block block) {
         RegistryKey<Item> itemKey = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(EmeraldMod.MOD_ID, name));
         Registry.register(Registries.ITEM, Identifier.of(EmeraldMod.MOD_ID, name),
-                new BlockItem(block, new Item.Settings().registryKey(itemKey).useBlockPrefixedTranslationKey()));
+                new BlockItem(block, new Item.Settings()));
     }
 
     // ============================================
@@ -42,7 +42,6 @@ public class ModBlocks {
             new ExperienceDroppingBlock(
                     UniformIntProvider.create(3, 7),
                     AbstractBlock.Settings.create()
-                            .registryKey(createRegistryKey("ruby_ore"))
                             .strength(3.0f, 3.0f)
                             .requiresTool()
                             .sounds(BlockSoundGroup.STONE)
@@ -53,7 +52,6 @@ public class ModBlocks {
             new ExperienceDroppingBlock(
                     UniformIntProvider.create(3, 7),
                     AbstractBlock.Settings.create()
-                            .registryKey(createRegistryKey("deepslate_ruby_ore"))
                             .strength(4.5f, 3.0f)
                             .requiresTool()
                             .sounds(BlockSoundGroup.DEEPSLATE)
@@ -64,7 +62,6 @@ public class ModBlocks {
             new ExperienceDroppingBlock(
                     UniformIntProvider.create(0, 1),
                     AbstractBlock.Settings.create()
-                            .registryKey(createRegistryKey("nether_ruby_ore"))
                             .strength(3.0f, 3.0f)
                             .requiresTool()
                             .sounds(BlockSoundGroup.NETHER_GOLD_ORE)
@@ -73,7 +70,6 @@ public class ModBlocks {
     // Ruby Block - drops itself
     public static final Block RUBY_BLOCK = registerBlock("ruby_block",
             new Block(AbstractBlock.Settings.create()
-                    .registryKey(createRegistryKey("ruby_block"))
                     .strength(5.0f, 6.0f)
                     .requiresTool()
                     .sounds(BlockSoundGroup.METAL)
@@ -82,7 +78,6 @@ public class ModBlocks {
     // Raw Ruby Block - drops itself
     public static final Block RAW_RUBY_BLOCK = registerBlock("raw_ruby_block",
             new Block(AbstractBlock.Settings.create()
-                    .registryKey(createRegistryKey("raw_ruby_block"))
                     .strength(5.0f, 6.0f)
                     .requiresTool()
                     .sounds(BlockSoundGroup.STONE)
@@ -91,7 +86,6 @@ public class ModBlocks {
     // Ruby Scrap Block - NEW! (seperti Ancient Debris)
     public static final Block RUBY_DEBRIS = registerBlock("ruby_debris",
             new Block(AbstractBlock.Settings.create()
-                    .registryKey(createRegistryKey("ruby_debris"))
                     .strength(5.0f, 6.0f)
                     .requiresTool()
                     .sounds(BlockSoundGroup.ANCIENT_DEBRIS)
@@ -100,7 +94,6 @@ public class ModBlocks {
     // Ruby Ingot Block - NEW! (seperti metal block lainnya)
     public static final Block RUBY_INGOT_BLOCK = registerBlock("ruby_ingot_block",
             new Block(AbstractBlock.Settings.create()
-                    .registryKey(createRegistryKey("ruby_ingot_block"))
                     .strength(5.0f, 6.0f)
                     .requiresTool()
                     .sounds(BlockSoundGroup.METAL)
@@ -109,7 +102,6 @@ public class ModBlocks {
     // Ruby Ingot Block - NEW! (seperti metal block lainnya)
     public static final Block EMERALD_CLUSTER_BLOCK = registerBlock("emerald_cluster_block",
             new Block(AbstractBlock.Settings.create()
-                    .registryKey(createRegistryKey("emerald_cluster_block"))
                     .strength(5.0f, 6.0f)
                     .requiresTool()
                     .sounds(BlockSoundGroup.METAL)
@@ -127,7 +119,6 @@ public class ModBlocks {
             new ExperienceDroppingBlock(
                     UniformIntProvider.create(1, 2), // XP: 1-2 (less than ruby)
                     AbstractBlock.Settings.create()
-                            .registryKey(createRegistryKey("nether_emerald_ore"))
                             .strength(3.0f, 3.0f) // Same as Nether Gold Ore
                             .requiresTool()
                             .sounds(BlockSoundGroup.NETHER_GOLD_ORE)

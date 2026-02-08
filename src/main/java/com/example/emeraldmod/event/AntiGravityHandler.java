@@ -132,7 +132,7 @@ public class AntiGravityHandler {
         List<BlockPos> positions = get3x3Positions(centerPos, breakDirection);
 
         int fortuneLevel = EnchantmentHelper.getLevel(
-                world.getRegistryManager().getOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
+                world.getRegistryManager().getWrapperOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
                         .getOrThrow(Enchantments.FORTUNE),
                 shovel
         );

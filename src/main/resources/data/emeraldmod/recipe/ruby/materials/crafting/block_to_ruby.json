@@ -5,7 +5,9 @@
     "#"
   ],
   "key": {
-    "#": "emeraldmod:ruby_block"
+    "#": {
+      "item": "emeraldmod:ruby_block"
+    }
   },
   "result": {
     "id": "emeraldmod:ruby",

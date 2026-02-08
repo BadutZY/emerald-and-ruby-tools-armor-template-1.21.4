@@ -7,8 +7,12 @@
     "###"
   ],
   "key": {
-    "#": "emeraldmod:emerald_cluster",
-    "N": "minecraft:netherite_sword"
+    "#": {
+      "item": "emeraldmod:emerald_cluster"
+    },
+    "N": {
+      "item": "minecraft:netherite_sword"
+    }
   },
   "result": {
     "id": "emeraldmod:basic_emerald_sword",

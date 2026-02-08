@@ -19,7 +19,7 @@ public record ToggleEffectPacket(EffectType effectType, boolean enabled) impleme
     public static final PacketCodec<RegistryByteBuf, ToggleEffectPacket> CODEC = PacketCodec.tuple(
             PacketCodecs.STRING.xmap(EffectType::valueOf, EffectType::name),
             ToggleEffectPacket::effectType,
-            PacketCodecs.BOOLEAN,
+            PacketCodecs.BOOL,
             ToggleEffectPacket::enabled,
             ToggleEffectPacket::new
     );

@@ -60,7 +60,7 @@ public class ScanningPackets {
         public static final CustomPayload.Id<ScanCompletePayload> ID = new CustomPayload.Id<>(SCAN_COMPLETE_ID);
         public static final PacketCodec<RegistryByteBuf, ScanCompletePayload> CODEC = PacketCodec.tuple(
                 PacketCodecs.STRING, ScanCompletePayload::worldName,
-                PacketCodecs.BOOLEAN, ScanCompletePayload::hasOres,
+                PacketCodecs.BOOL, ScanCompletePayload::hasOres,
                 ScanCompletePayload::new
         );
 

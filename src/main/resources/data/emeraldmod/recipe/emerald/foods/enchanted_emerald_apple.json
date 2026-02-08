@@ -6,8 +6,12 @@
     "###"
   ],
   "key": {
-    "#": "minecraft:emerald",
-    "E": "emeraldmod:emerald_apple"
+    "#": {
+      "item": "minecraft:emerald"
+    },
+    "E": {
+      "item": "emeraldmod:emerald_apple"
+    }
   },
   "result": {
     "id": "emeraldmod:enchanted_emerald_apple",

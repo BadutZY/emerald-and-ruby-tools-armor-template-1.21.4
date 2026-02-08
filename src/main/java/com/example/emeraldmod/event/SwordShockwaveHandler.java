@@ -106,7 +106,7 @@ public class SwordShockwaveHandler {
             if (serverWorld != null) {
                 // Apply massive direct damage
                 DamageSource damageSource = world.getDamageSources().playerAttack(player);
-                target.damage(serverWorld, damageSource, LIGHTNING_DIRECT_DAMAGE);
+                target.damage(damageSource, LIGHTNING_DIRECT_DAMAGE);
 
                 // Trigger lightning strike
                 triggerLightningStrike(player, serverWorld, target);
@@ -132,7 +132,7 @@ public class SwordShockwaveHandler {
 
             if (serverWorld != null) {
                 DamageSource damageSource = world.getDamageSources().playerAttack(player);
-                target.damage(serverWorld, damageSource, bonusDamage);
+                target.damage(damageSource, bonusDamage);
 
                 spawnDirectHitParticles(serverWorld, target.getPos());
 
@@ -190,7 +190,7 @@ public class SwordShockwaveHandler {
             float aoeDamage = Math.max(2.0f, LIGHTNING_AOE_DAMAGE * distanceFactor);
 
             DamageSource damageSource = world.getDamageSources().lightningBolt();
-            livingEntity.damage(world, damageSource, aoeDamage);
+            livingEntity.damage(damageSource, aoeDamage);
 
             // Lightning chain particles
             spawnLightningChainParticles(world, targetPos, livingEntity.getPos());
@@ -233,7 +233,7 @@ public class SwordShockwaveHandler {
             float aoeDamage = Math.max(1.0f, SHOCKWAVE_BASE_DAMAGE * distanceFactor);
 
             DamageSource damageSource = world.getDamageSources().playerAttack(player);
-            livingEntity.damage(serverWorld, damageSource, aoeDamage);
+            livingEntity.damage(damageSource, aoeDamage);
 
             applyRadialKnockback(livingEntity, playerPos, SHOCKWAVE_KNOCKBACK * distanceFactor);
             spawnHitParticles(serverWorld, livingEntity.getPos());

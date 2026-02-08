@@ -7,8 +7,12 @@
     "###"
   ],
   "key": {
-    "#": "emeraldmod:emerald_cluster",
-    "N": "minecraft:netherite_pickaxe"
+    "#": {
+      "item": "emeraldmod:emerald_cluster"
+    },
+    "N": {
+      "item": "minecraft:netherite_pickaxe"
+    }
   },
   "result": {
     "id": "emeraldmod:basic_emerald_pickaxe",

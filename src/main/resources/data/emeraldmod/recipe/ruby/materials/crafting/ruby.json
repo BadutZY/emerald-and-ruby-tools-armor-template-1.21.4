@@ -6,8 +6,12 @@
     "EE"
   ],
   "key": {
-    "#": "emeraldmod:ruby_ingot",
-    "E": "emeraldmod:ruby_scrap"
+    "#": {
+      "item": "emeraldmod:ruby_ingot"
+    },
+    "E": {
+      "item": "emeraldmod:ruby_scrap"
+    }
   },
   "result": {
     "id": "emeraldmod:ruby",

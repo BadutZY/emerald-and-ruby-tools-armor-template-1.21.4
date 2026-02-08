@@ -7,10 +7,18 @@
     "DDD"
   ],
   "key": {
-    "G": "minecraft:netherite_ingot",
-    "D": "minecraft:diamond",
-    "L": "minecraft:netherite_upgrade_smithing_template",
-    "E": "minecraft:emerald"
+    "G": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "L": {
+      "item": "minecraft:netherite_upgrade_smithing_template"
+    },
+    "E": {
+      "item": "minecraft:emerald"
+    }
   },
   "result": {
     "id": "emeraldmod:emerald_upgrade_smithing_template",

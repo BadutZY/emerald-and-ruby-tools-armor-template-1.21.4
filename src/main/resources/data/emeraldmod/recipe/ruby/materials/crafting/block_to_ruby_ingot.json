@@ -5,7 +5,9 @@
     "#"
   ],
   "key": {
-    "#": "emeraldmod:ruby_ingot_block"
+    "#": {
+      "item": "emeraldmod:ruby_ingot_block"
+    }
   },
   "result": {
     "id": "emeraldmod:ruby_ingot",

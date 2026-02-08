@@ -7,8 +7,12 @@
     "###"
   ],
   "key": {
-    "#": "emeraldmod:emerald_cluster",
-    "N": "minecraft:netherite_leggings"
+    "#": {
+      "item": "emeraldmod:emerald_cluster"
+    },
+    "N": {
+      "item": "minecraft:netherite_leggings"
+    }
   },
   "result": {
     "id": "emeraldmod:basic_emerald_leggings",

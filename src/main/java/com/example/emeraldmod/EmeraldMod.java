@@ -556,9 +556,6 @@ public class EmeraldMod implements ModInitializer {
         HorseArmorEffectsHandler.register();
         LOGGER.info("✅ Horse Armor Effects Handler");
 
-        HorseArmorEffectsHandler.register();
-        LOGGER.info("✅ Horse Armor Effects Handler");
-
         ToolEffectsHandler.register();
         LOGGER.info("✅ Tool Effects Handler");
 

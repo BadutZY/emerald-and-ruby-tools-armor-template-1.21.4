@@ -147,7 +147,7 @@ public class TreeChoppingHandler {
         int lowestY = startPos.getY();
 
         int fortuneLevel = EnchantmentHelper.getLevel(
-                world.getRegistryManager().getOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
+                serverWorld.getRegistryManager().getWrapperOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
                         .getOrThrow(Enchantments.FORTUNE),
                 axe
         );

@@ -6,8 +6,12 @@
     "###"
   ],
   "key": {
-    "#": "emeraldmod:ruby",
-    "E": "emeraldmod:ruby_apple"
+    "#": {
+      "item": "emeraldmod:ruby"
+    },
+    "E": {
+      "item": "emeraldmod:ruby_apple"
+    }
   },
   "result": {
     "id": "emeraldmod:enchanted_ruby_apple",

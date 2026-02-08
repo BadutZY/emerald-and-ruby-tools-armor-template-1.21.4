@@ -193,13 +193,13 @@ public class AutoSmeltHandler {
 
         // Get enchantment levels
         int fortuneLevel = EnchantmentHelper.getLevel(
-                world.getRegistryManager().getOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
+                world.getRegistryManager().getWrapperOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
                         .getOrThrow(Enchantments.FORTUNE),
                 tool
         );
 
         int silkTouchLevel = EnchantmentHelper.getLevel(
-                world.getRegistryManager().getOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
+                world.getRegistryManager().getWrapperOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
                         .getOrThrow(Enchantments.SILK_TOUCH),
                 tool
         );
@@ -293,13 +293,13 @@ public class AutoSmeltHandler {
 
         // Get enchantment levels
         int fortuneLevel = EnchantmentHelper.getLevel(
-                world.getRegistryManager().getOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
+                world.getRegistryManager().getWrapperOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
                         .getOrThrow(Enchantments.FORTUNE),
                 tool
         );
 
         int silkTouchLevel = EnchantmentHelper.getLevel(
-                world.getRegistryManager().getOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
+                world.getRegistryManager().getWrapperOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
                         .getOrThrow(Enchantments.SILK_TOUCH),
                 tool
         );
@@ -458,13 +458,13 @@ public class AutoSmeltHandler {
 
         // Get enchantment levels
         int fortuneLevel = EnchantmentHelper.getLevel(
-                world.getRegistryManager().getOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
+                world.getRegistryManager().getWrapperOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
                         .getOrThrow(Enchantments.FORTUNE),
                 tool
         );
 
         int silkTouchLevel = EnchantmentHelper.getLevel(
-                world.getRegistryManager().getOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
+                world.getRegistryManager().getWrapperOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
                         .getOrThrow(Enchantments.SILK_TOUCH),
                 tool
         );

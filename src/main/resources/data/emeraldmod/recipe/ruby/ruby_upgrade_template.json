@@ -7,10 +7,18 @@
     "GGG"
   ],
   "key": {
-    "G": "minecraft:netherite_ingot",
-    "D": "emeraldmod:ruby",
-    "L": "emeraldmod:emerald_upgrade_smithing_template",
-    "E": "minecraft:emerald"
+    "G": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "D": {
+      "item": "emeraldmod:ruby"
+    },
+    "L": {
+      "item": "emeraldmod:emerald_upgrade_smithing_template"
+    },
+    "E": {
+      "item": "minecraft:emerald"
+    }
   },
   "result": {
     "id": "emeraldmod:ruby_upgrade_smithing_template",

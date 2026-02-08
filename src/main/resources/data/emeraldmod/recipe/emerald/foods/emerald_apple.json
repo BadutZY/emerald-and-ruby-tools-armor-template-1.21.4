@@ -6,8 +6,12 @@
     "###"
   ],
   "key": {
-    "#": "minecraft:emerald",
-    "G": "minecraft:golden_apple"
+    "#": {
+      "item": "minecraft:emerald"
+    },
+    "G": {
+      "item": "minecraft:golden_apple"
+    }
   },
   "result": {
     "id": "emeraldmod:emerald_apple",

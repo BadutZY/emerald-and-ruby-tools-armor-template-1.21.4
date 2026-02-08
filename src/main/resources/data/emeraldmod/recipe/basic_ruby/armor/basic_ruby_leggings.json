@@ -7,8 +7,12 @@
     "###"
   ],
   "key": {
-    "#": "emeraldmod:ruby_ingot",
-    "N": "emeraldmod:basic_emerald_leggings"
+    "#": {
+      "item": "emeraldmod:ruby_ingot"
+    },
+    "N": {
+      "item": "emeraldmod:basic_emerald_leggings"
+    }
   },
   "result": {
     "id": "emeraldmod:basic_ruby_leggings",

@@ -7,8 +7,12 @@
     "###"
   ],
   "key": {
-    "#": "emeraldmod:ruby_ingot",
-    "N": "emeraldmod:basic_emerald_sword"
+    "#": {
+      "item": "emeraldmod:ruby_ingot"
+    },
+    "N": {
+      "item": "emeraldmod:basic_emerald_sword"
+    }
   },
   "result": {
     "id": "emeraldmod:basic_ruby_sword",

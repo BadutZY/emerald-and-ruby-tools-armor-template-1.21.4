@@ -7,7 +7,9 @@
     "###"
   ],
   "key": {
-    "#": "emeraldmod:emerald_cluster"
+    "#": {
+      "item": "emeraldmod:emerald_cluster"
+    }
   },
   "result": {
     "id": "emeraldmod:emerald_cluster_block",

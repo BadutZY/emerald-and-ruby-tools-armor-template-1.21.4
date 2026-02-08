@@ -6,7 +6,9 @@
     "##"
   ],
   "key": {
-    "#": "emeraldmod:emerald_nugget"
+    "#": {
+      "item": "emeraldmod:emerald_nugget"
+    }
   },
   "result": {
     "id": "emeraldmod:emerald_cluster",

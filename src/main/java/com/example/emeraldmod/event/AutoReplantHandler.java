@@ -172,7 +172,7 @@ public class AutoReplantHandler {
         if (!crop.isMature(state)) return false;
 
         int fortuneLevel = EnchantmentHelper.getLevel(
-                world.getRegistryManager().getOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
+                world.getRegistryManager().getWrapperOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
                         .getOrThrow(Enchantments.FORTUNE), hoe);
 
         // Get drops
@@ -208,7 +208,7 @@ public class AutoReplantHandler {
         if (age < 3) return false;
 
         int fortuneLevel = EnchantmentHelper.getLevel(
-                world.getRegistryManager().getOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
+                world.getRegistryManager().getWrapperOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
                         .getOrThrow(Enchantments.FORTUNE), hoe);
 
         java.util.List<ItemStack> drops = Block.getDroppedStacks(state, world, pos, null, player, hoe);
@@ -271,7 +271,7 @@ public class AutoReplantHandler {
     private static boolean handleGourdBlock(ServerWorld world, PlayerEntity player, BlockPos pos,
                                             BlockState state, Block block, ItemStack hoe) {
         int fortuneLevel = EnchantmentHelper.getLevel(
-                world.getRegistryManager().getOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
+                world.getRegistryManager().getWrapperOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
                         .getOrThrow(Enchantments.FORTUNE), hoe);
 
         java.util.List<ItemStack> drops = Block.getDroppedStacks(state, world, pos, null, player, hoe);
@@ -304,7 +304,7 @@ public class AutoReplantHandler {
         if (age < 2) return false;
 
         int fortuneLevel = EnchantmentHelper.getLevel(
-                world.getRegistryManager().getOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
+                world.getRegistryManager().getWrapperOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
                         .getOrThrow(Enchantments.FORTUNE), hoe);
 
         java.util.List<ItemStack> drops = Block.getDroppedStacks(state, world, pos, null, player, hoe);
@@ -336,7 +336,7 @@ public class AutoReplantHandler {
         if (age < 2) return false;
 
         int fortuneLevel = EnchantmentHelper.getLevel(
-                world.getRegistryManager().getOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
+                world.getRegistryManager().getWrapperOrThrow(net.minecraft.registry.RegistryKeys.ENCHANTMENT)
                         .getOrThrow(Enchantments.FORTUNE), hoe);
 
         java.util.List<ItemStack> drops = Block.getDroppedStacks(state, world, pos, null, player, hoe);

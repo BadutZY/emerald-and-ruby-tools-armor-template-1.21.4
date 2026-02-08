@@ -1,49 +1,69 @@
 package com.example.emeraldmod.item;
 
 import com.example.emeraldmod.EmeraldMod;
-import net.minecraft.item.Item;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Items;
-import net.minecraft.item.equipment.ArmorMaterial;
-import net.minecraft.item.equipment.EquipmentAsset;
-import net.minecraft.item.equipment.EquipmentAssetKeys;
-import net.minecraft.item.equipment.EquipmentType;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 
-import java.util.Map;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.function.Supplier;
 
 public class NetheriteArmorMaterial {
-    // Netherite durability multiplier base (sama seperti vanilla)
-    public static final int BASE_DURABILITY = 37;
+    public static final RegistryEntry<ArmorMaterial> NETHERITE_HORSE_ARMOR_MATERIAL;
 
-    // Tag untuk repair ingredient (Netherite Ingot)
-    public static final TagKey<Item> NETHERITE_REPAIR_INGREDIENT = TagKey.of(
-            RegistryKeys.ITEM,
-            Identifier.of("minecraft", "netherite_ingots")
-    );
+    static {
+        NETHERITE_HORSE_ARMOR_MATERIAL = register("netherite",
+                Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+                    map.put(ArmorItem.Type.HELMET, 407);
+                    map.put(ArmorItem.Type.CHESTPLATE, 592);
+                    map.put(ArmorItem.Type.LEGGINGS, 555);
+                    map.put(ArmorItem.Type.BOOTS, 481);
+                    map.put(ArmorItem.Type.BODY, 592);
+                }),
+                Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+                    map.put(ArmorItem.Type.BOOTS, 3);
+                    map.put(ArmorItem.Type.LEGGINGS, 6);
+                    map.put(ArmorItem.Type.CHESTPLATE, 8);
+                    map.put(ArmorItem.Type.HELMET, 3);
+                    map.put(ArmorItem.Type.BODY, 19);
+                }),
+                15,
+                SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE,
+                3.0F,
+                0.1F,
+                () -> Ingredient.ofItems(Items.NETHERITE_INGOT)
+        );
+    }
 
-    // Equipment asset untuk horse armor
-    public static final RegistryKey<EquipmentAsset> NETHERITE_EQUIPMENT_ASSET = RegistryKey.of(
-            EquipmentAssetKeys.REGISTRY_KEY,
-            Identifier.of(EmeraldMod.MOD_ID, "netherite")
-    );
+    private static RegistryEntry<ArmorMaterial> register(
+            String id,
+            EnumMap<ArmorItem.Type, Integer> durability,
+            EnumMap<ArmorItem.Type, Integer> defense,
+            int enchantability,
+            RegistryEntry<SoundEvent> equipSound,
+            float toughness,
+            float knockbackResistance,
+            Supplier<Ingredient> repairIngredient
+    ) {
+        List<ArmorMaterial.Layer> layers = List.of(
+                new ArmorMaterial.Layer(Identifier.of(EmeraldMod.MOD_ID, id))
+        );
 
-    // Netherite Horse Armor Material (vanilla stats)
-    public static final ArmorMaterial NETHERITE_HORSE_ARMOR_MATERIAL = new ArmorMaterial(
-            BASE_DURABILITY,
-            Map.of(
-                    EquipmentType.BODY, 19  // Horse armor protection value (vanilla netherite equivalent)
-            ),
-            15, // Enchantability (sama dengan netherite vanilla)
-            SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE,
-            3.0F, // Toughness (sama dengan netherite vanilla)
-            0.1F, // Knockback resistance (sama dengan netherite vanilla)
-            NETHERITE_REPAIR_INGREDIENT,
-            NETHERITE_EQUIPMENT_ASSET
-    );
+        return Registry.registerReference(
+                Registries.ARMOR_MATERIAL,
+                Identifier.of(EmeraldMod.MOD_ID, id),
+                new ArmorMaterial(durability, enchantability, equipSound, repairIngredient, layers, toughness, knockbackResistance)
+        );
+    }
 
     public static void initialize() {
         EmeraldMod.LOGGER.info("Initializing Netherite Horse Armor Material (Vanilla Stats)");

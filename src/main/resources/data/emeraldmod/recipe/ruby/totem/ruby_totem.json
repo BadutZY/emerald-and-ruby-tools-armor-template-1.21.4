@@ -6,9 +6,15 @@
     " E "
   ],
   "key": {
-    "e": "emeraldmod:ruby_ingot",
-    "E": "emeraldmod:ruby",
-    "M": "emeraldmod:emerald_totem"
+    "e": {
+      "item": "emeraldmod:ruby_ingot"
+    },
+    "E": {
+      "item": "emeraldmod:ruby"
+    },
+    "M": {
+      "item": "emeraldmod:emerald_totem"
+    }
   },
   "result": {
     "id": "emeraldmod:ruby_totem",

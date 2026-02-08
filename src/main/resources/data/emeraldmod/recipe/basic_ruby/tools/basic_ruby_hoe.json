@@ -7,8 +7,12 @@
     "###"
   ],
   "key": {
-    "#": "emeraldmod:ruby_ingot",
-    "N": "emeraldmod:basic_emerald_hoe"
+    "#": {
+      "item": "emeraldmod:ruby_ingot"
+    },
+    "N": {
+      "item": "emeraldmod:basic_emerald_hoe"
+    }
   },
   "result": {
     "id": "emeraldmod:basic_ruby_hoe",

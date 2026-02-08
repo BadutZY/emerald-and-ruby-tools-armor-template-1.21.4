@@ -10,6 +10,7 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.passive.HorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -20,16 +21,12 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Handler untuk armor effects
- * ✅ UPDATED: Snow Powder Walker icon ALWAYS VISIBLE
- *
- * SIMPLE SOLUTION:
- * - Icon ALWAYS apply ketika wearing boots (tidak peduli effect ON/OFF)
- * - Functionality tetap toggleable dengan mixin check boots directly
+ * ⭐ FINAL FIX v3: Effect HANYA ada saat wearing armor DAN TIDAK naik kuda
+ * ✅ COMPLETE SEPARATION: Skip ALL logic saat riding horse dengan mod armor
+ * ✅ Horse handler punya FULL CONTROL saat riding
  */
 public class ArmorEffectsHandler {
 
-    private static final Map<UUID, Boolean> previousArmorState = new HashMap<>();
     private static final Map<UUID, Boolean> previousNegativeImmunityState = new HashMap<>();
 
     public static void register() {
@@ -38,97 +35,124 @@ public class ArmorEffectsHandler {
 
             for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
                 UUID playerUuid = player.getUuid();
-                boolean currentState = stateManager.isArmorEnabled(playerUuid);
 
-                if (currentState) {
-                    // ✅ Effect ON: Apply armor effects
+                // ⭐ CRITICAL FIX: Skip SEMUA logic jika sedang naik kuda dengan mod armor
+                // Biar HorseArmorEffectsHandler yang FULL CONTROL
+                if (isRidingHorseWithModArmor(player)) {
+                    // DO NOTHING - Horse handler will manage everything
+                    continue;
+                }
+
+                boolean armorEffectEnabled = stateManager.isArmorEnabled(playerUuid);
+
+                if (armorEffectEnabled) {
+                    // ✅ Effect ON: Apply effects based on current armor
                     boolean hasRubyArmor = hasAnyRubyArmor(player);
                     Boolean previousNegativeImmunity = previousNegativeImmunityState.get(playerUuid);
 
-                    // Remove negative effects BEFORE applying armor effects
+                    // Clear negative effects when first equipping Ruby Armor
                     if (hasRubyArmor && (previousNegativeImmunity == null || !previousNegativeImmunity)) {
                         removeAllNegativeEffects(player);
                         EmeraldMod.LOGGER.info("Cleared all negative effects from player {} (Negative Immunity activated)",
                                 player.getName().getString());
                     }
 
-                    // Apply armor effects
+                    // Apply armor effects (only when NOT riding)
                     applyArmorEffects(player);
 
-                    // EXTRA SAFETY: Always remove negative effects every tick if has Ruby Armor
+                    // Continuously remove negative effects if has Ruby Armor
                     if (hasRubyArmor) {
                         removeAllNegativeEffects(player);
                     }
 
-                    // Update state
                     previousNegativeImmunityState.put(playerUuid, hasRubyArmor);
                 } else {
-                    // ✅ Effect OFF: Remove toggleable effects only
-                    removeToggleableArmorEffects(player);
+                    // ✅ Effect OFF: Remove ALL armor effects EXCEPT SNOW_POWDER_WALKER
+                    removeAllArmorEffects(player);
 
-                    // ⭐ KEEP Snow Powder Walker icon visible (apply visual-only)
-                    applySnowWalkerIconOnly(player);
+                    // ⭐ ALWAYS ensure SNOW_POWDER_WALKER active if wearing boots (even when toggle OFF)
+                    applySnowWalkerOnly(player);
 
-                    // Reset negative immunity state
                     previousNegativeImmunityState.put(playerUuid, false);
                 }
-
-                previousArmorState.put(playerUuid, currentState);
             }
         });
 
-        EmeraldMod.LOGGER.info("✅ Registered Armor Effects Handler (Emerald + Ruby Armor ONLY - Toggleable)");
-        EmeraldMod.LOGGER.info("  - Helmet: Water Breathing");
-        EmeraldMod.LOGGER.info("  - Chestplate: Dolphin's Grace");
-        EmeraldMod.LOGGER.info("  - Leggings: Silent Step");
-        EmeraldMod.LOGGER.info("  - Boots: Powder Snow Walker (ICON ALWAYS VISIBLE)");
-        EmeraldMod.LOGGER.info("  - All Armor: Fire Resistance");
-        EmeraldMod.LOGGER.info("  - Ruby Armor: Negative Effect Immunity");
-        EmeraldMod.LOGGER.info("  - Basic armor: NO effects");
-        EmeraldMod.LOGGER.info("  ⭐ Snow Powder Walker icon will remain visible even when armor effect OFF");
+        EmeraldMod.LOGGER.info("✅ Registered Armor Effects Handler (FINAL FIX v3)");
+        EmeraldMod.LOGGER.info("  ⭐ Effects ONLY when wearing armor AND NOT riding");
+        EmeraldMod.LOGGER.info("  ⭐ COMPLETE SKIP when riding horse");
+        EmeraldMod.LOGGER.info("  ⭐ Horse handler has FULL CONTROL when riding");
+        EmeraldMod.LOGGER.info("  ⭐ NO MORE GLITCH - Clean separation of concerns");
     }
 
+    /**
+     * ⭐ Check if player is riding horse with mod armor
+     */
+    private static boolean isRidingHorseWithModArmor(PlayerEntity player) {
+        if (!player.hasVehicle()) return false;
+
+        if (player.getVehicle() instanceof HorseEntity horse) {
+            ItemStack horseArmor = horse.getBodyArmor();
+            return !horseArmor.isEmpty() &&
+                    (horseArmor.getItem() == ModItems.EMERALD_HORSE_ARMOR ||
+                            horseArmor.getItem() == ModItems.RUBY_HORSE_ARMOR);
+        }
+
+        return false;
+    }
+
+    /**
+     * ⭐ Apply armor effects (ONLY called when NOT riding horse)
+     */
     private static void applyArmorEffects(PlayerEntity player) {
-        // ===== HELMET: Water Breathing (Emerald OR Ruby - NON-BASIC) =====
+        // ===== HELMET: Water Breathing =====
         ItemStack helmet = player.getEquippedStack(EquipmentSlot.HEAD);
         Item helmetItem = helmet.getItem();
+
         if (helmetItem == ModItems.EMERALD_HELMET || helmetItem == ModItems.RUBY_HELMET) {
-            if (!hasInfiniteEffect(player, StatusEffects.WATER_BREATHING)) {
+            if (!player.hasStatusEffect(StatusEffects.WATER_BREATHING)) {
                 player.addStatusEffect(new StatusEffectInstance(
                         StatusEffects.WATER_BREATHING,
-                        StatusEffectInstance.INFINITE, 0, false, false, true
+                        StatusEffectInstance.INFINITE,
+                        0, false, false, true
                 ));
             }
         } else {
-            if (player.hasStatusEffect(StatusEffects.WATER_BREATHING)) {
+            StatusEffectInstance currentEffect = player.getStatusEffect(StatusEffects.WATER_BREATHING);
+            if (currentEffect != null && isArmorEffect(currentEffect, 0)) {
                 player.removeStatusEffect(StatusEffects.WATER_BREATHING);
             }
         }
 
-        // ===== CHESTPLATE: Dolphin's Grace (Emerald OR Ruby - NON-BASIC) =====
+        // ===== CHESTPLATE: Dolphin's Grace =====
         ItemStack chestplate = player.getEquippedStack(EquipmentSlot.CHEST);
         Item chestplateItem = chestplate.getItem();
+
         if (chestplateItem == ModItems.EMERALD_CHESTPLATE || chestplateItem == ModItems.RUBY_CHESTPLATE) {
-            if (!hasInfiniteEffect(player, StatusEffects.DOLPHINS_GRACE)) {
+            if (!player.hasStatusEffect(StatusEffects.DOLPHINS_GRACE)) {
                 player.addStatusEffect(new StatusEffectInstance(
                         StatusEffects.DOLPHINS_GRACE,
-                        StatusEffectInstance.INFINITE, 0, false, false, true
+                        StatusEffectInstance.INFINITE,
+                        0, false, false, true
                 ));
             }
         } else {
-            if (player.hasStatusEffect(StatusEffects.DOLPHINS_GRACE)) {
+            StatusEffectInstance currentEffect = player.getStatusEffect(StatusEffects.DOLPHINS_GRACE);
+            if (currentEffect != null && isArmorEffect(currentEffect, 0)) {
                 player.removeStatusEffect(StatusEffects.DOLPHINS_GRACE);
             }
         }
 
-        // ===== LEGGINGS: Silent Step (Emerald OR Ruby - NON-BASIC) =====
+        // ===== LEGGINGS: Silent Step =====
         ItemStack leggings = player.getEquippedStack(EquipmentSlot.LEGS);
         Item leggingsItem = leggings.getItem();
+
         if (leggingsItem == ModItems.EMERALD_LEGGINGS || leggingsItem == ModItems.RUBY_LEGGINGS) {
-            if (!hasInfiniteEffect(player, ModEffects.SILENT_STEP_ENTRY)) {
+            if (!player.hasStatusEffect(ModEffects.SILENT_STEP_ENTRY)) {
                 player.addStatusEffect(new StatusEffectInstance(
                         ModEffects.SILENT_STEP_ENTRY,
-                        StatusEffectInstance.INFINITE, 0, false, false, true
+                        StatusEffectInstance.INFINITE,
+                        0, false, false, true
                 ));
             }
         } else {
@@ -137,22 +161,16 @@ public class ArmorEffectsHandler {
             }
         }
 
-        // ===== BOOTS: Powder Snow Walker (Emerald OR Ruby - NON-BASIC) =====
-        // ⭐ ALWAYS apply with showIcon = TRUE
+        // ===== BOOTS: Powder Snow Walker =====
         ItemStack boots = player.getEquippedStack(EquipmentSlot.FEET);
         Item bootsItem = boots.getItem();
 
-        boolean isModBoots = (bootsItem == ModItems.EMERALD_BOOTS || bootsItem == ModItems.RUBY_BOOTS);
-
-        if (isModBoots) {
-            if (!hasInfiniteEffect(player, ModEffects.SNOW_POWDER_WALKER_ENTRY)) {
+        if (bootsItem == ModItems.EMERALD_BOOTS || bootsItem == ModItems.RUBY_BOOTS) {
+            if (!player.hasStatusEffect(ModEffects.SNOW_POWDER_WALKER_ENTRY)) {
                 player.addStatusEffect(new StatusEffectInstance(
                         ModEffects.SNOW_POWDER_WALKER_ENTRY,
                         StatusEffectInstance.INFINITE,
-                        0,      // amplifier
-                        false,  // ambient
-                        false,  // showParticles
-                        true    // ⭐ showIcon - ALWAYS TRUE!
+                        0, false, false, true
                 ));
             }
         } else {
@@ -161,30 +179,34 @@ public class ArmorEffectsHandler {
             }
         }
 
-        // ===== FIRE RESISTANCE: Any Emerald OR Ruby Armor (NON-BASIC) =====
+        // ===== FIRE RESISTANCE: Any Mod Armor =====
         if (hasAnyModArmor(player)) {
-            if (!hasInfiniteEffect(player, StatusEffects.FIRE_RESISTANCE)) {
+            if (!player.hasStatusEffect(StatusEffects.FIRE_RESISTANCE)) {
                 player.addStatusEffect(new StatusEffectInstance(
                         StatusEffects.FIRE_RESISTANCE,
-                        StatusEffectInstance.INFINITE, 0, false, false, true
+                        StatusEffectInstance.INFINITE,
+                        0, false, false, true
                 ));
             }
 
+            // Extinguish fire
             if (player.isOnFire()) {
                 player.setFireTicks(0);
             }
         } else {
-            if (player.hasStatusEffect(StatusEffects.FIRE_RESISTANCE)) {
+            StatusEffectInstance currentEffect = player.getStatusEffect(StatusEffects.FIRE_RESISTANCE);
+            if (currentEffect != null && isArmorEffect(currentEffect, 0)) {
                 player.removeStatusEffect(StatusEffects.FIRE_RESISTANCE);
             }
         }
 
-        // ===== NEGATIVE IMMUNITY: Any Ruby Armor (NON-BASIC) =====
+        // ===== NEGATIVE IMMUNITY: Ruby Armor Only =====
         if (hasAnyRubyArmor(player)) {
-            if (!hasInfiniteEffect(player, ModEffects.NEGATIVE_IMMUNITY_ENTRY)) {
+            if (!player.hasStatusEffect(ModEffects.NEGATIVE_IMMUNITY_ENTRY)) {
                 player.addStatusEffect(new StatusEffectInstance(
                         ModEffects.NEGATIVE_IMMUNITY_ENTRY,
-                        StatusEffectInstance.INFINITE, 0, false, false, true
+                        StatusEffectInstance.INFINITE,
+                        0, false, false, true
                 ));
             }
         } else {
@@ -195,29 +217,29 @@ public class ArmorEffectsHandler {
     }
 
     /**
-     * ⭐ NEW: Apply Snow Powder Walker icon ONLY (visual indicator ketika effect OFF)
+     * ⭐ Detect if effect is from armor
      */
-    private static void applySnowWalkerIconOnly(PlayerEntity player) {
+    private static boolean isArmorEffect(StatusEffectInstance effect, int expectedAmplifier) {
+        return (effect.isDurationBelow(0) || effect.getDuration() == StatusEffectInstance.INFINITE)
+                && effect.getAmplifier() == expectedAmplifier;
+    }
+
+    /**
+     * ⭐ Apply SNOW_POWDER_WALKER only (when toggle OFF but wearing boots)
+     */
+    private static void applySnowWalkerOnly(PlayerEntity player) {
         ItemStack boots = player.getEquippedStack(EquipmentSlot.FEET);
         Item bootsItem = boots.getItem();
 
-        boolean isModBoots = (bootsItem == ModItems.EMERALD_BOOTS || bootsItem == ModItems.RUBY_BOOTS);
-
-        if (isModBoots) {
-            // Apply effect ONLY untuk show icon
-            // Functionality sudah di-handle oleh mixin (check boots directly)
-            if (!hasInfiniteEffect(player, ModEffects.SNOW_POWDER_WALKER_ENTRY)) {
+        if (bootsItem == ModItems.EMERALD_BOOTS || bootsItem == ModItems.RUBY_BOOTS) {
+            if (!player.hasStatusEffect(ModEffects.SNOW_POWDER_WALKER_ENTRY)) {
                 player.addStatusEffect(new StatusEffectInstance(
                         ModEffects.SNOW_POWDER_WALKER_ENTRY,
                         StatusEffectInstance.INFINITE,
-                        0,      // amplifier
-                        false,  // ambient
-                        false,  // showParticles
-                        true    // ⭐ showIcon - ALWAYS TRUE!
+                        0, false, false, true
                 ));
             }
         } else {
-            // Not wearing boots → remove icon
             if (player.hasStatusEffect(ModEffects.SNOW_POWDER_WALKER_ENTRY)) {
                 player.removeStatusEffect(ModEffects.SNOW_POWDER_WALKER_ENTRY);
             }
@@ -225,38 +247,37 @@ public class ArmorEffectsHandler {
     }
 
     /**
-     * ✅ Remove toggleable armor effects (semua kecuali Snow Powder Walker)
+     * ⭐ Remove ALL armor effects when armor effect disabled
      */
-    private static void removeToggleableArmorEffects(PlayerEntity player) {
-        // Remove ability effects
-        if (player.hasStatusEffect(StatusEffects.WATER_BREATHING)) {
+    private static void removeAllArmorEffects(PlayerEntity player) {
+        // Remove vanilla effects (only if they're armor effects)
+        StatusEffectInstance waterBreathing = player.getStatusEffect(StatusEffects.WATER_BREATHING);
+        if (waterBreathing != null && isArmorEffect(waterBreathing, 0)) {
             player.removeStatusEffect(StatusEffects.WATER_BREATHING);
         }
-        if (player.hasStatusEffect(StatusEffects.DOLPHINS_GRACE)) {
+
+        StatusEffectInstance dolphinsGrace = player.getStatusEffect(StatusEffects.DOLPHINS_GRACE);
+        if (dolphinsGrace != null && isArmorEffect(dolphinsGrace, 0)) {
             player.removeStatusEffect(StatusEffects.DOLPHINS_GRACE);
         }
-        if (player.hasStatusEffect(StatusEffects.FIRE_RESISTANCE)) {
+
+        StatusEffectInstance fireResistance = player.getStatusEffect(StatusEffects.FIRE_RESISTANCE);
+        if (fireResistance != null && isArmorEffect(fireResistance, 0)) {
             player.removeStatusEffect(StatusEffects.FIRE_RESISTANCE);
         }
+
+        // Remove custom effects (always safe to remove as they're mod-only)
         if (player.hasStatusEffect(ModEffects.SILENT_STEP_ENTRY)) {
             player.removeStatusEffect(ModEffects.SILENT_STEP_ENTRY);
         }
+
         if (player.hasStatusEffect(ModEffects.NEGATIVE_IMMUNITY_ENTRY)) {
             player.removeStatusEffect(ModEffects.NEGATIVE_IMMUNITY_ENTRY);
-        }
-
-        // ⭐ NOTE: Snow Powder Walker NOT removed - icon tetap visible
-        // Functionality di-handle oleh mixin yang check boots directly
-
-        // Clear fire ticks
-        if (player.getFireTicks() > 0) {
-            player.setFireTicks(0);
         }
     }
 
     /**
-     * Remove all negative effects from player
-     * Only removes HARMFUL effects, leaves BENEFICIAL effects intact
+     * Remove all negative effects (for Ruby Armor)
      */
     private static void removeAllNegativeEffects(PlayerEntity player) {
         java.util.List<net.minecraft.registry.entry.RegistryEntry<StatusEffect>> effectsToRemove =
@@ -275,9 +296,6 @@ public class ArmorEffectsHandler {
         }
     }
 
-    /**
-     * Check if player is wearing ANY Ruby armor piece (NON-BASIC only)
-     */
     private static boolean hasAnyRubyArmor(PlayerEntity player) {
         for (ItemStack armorStack : player.getArmorItems()) {
             Item armorItem = armorStack.getItem();
@@ -291,14 +309,10 @@ public class ArmorEffectsHandler {
         return false;
     }
 
-    /**
-     * Check if player is wearing ANY mod armor (NON-BASIC only)
-     */
     private static boolean hasAnyModArmor(PlayerEntity player) {
         for (ItemStack armorStack : player.getArmorItems()) {
             Item armorItem = armorStack.getItem();
 
-            // Check non-Basic Emerald Armor
             if (armorItem == ModItems.EMERALD_HELMET ||
                     armorItem == ModItems.EMERALD_CHESTPLATE ||
                     armorItem == ModItems.EMERALD_LEGGINGS ||
@@ -306,7 +320,6 @@ public class ArmorEffectsHandler {
                 return true;
             }
 
-            // Check non-Basic Ruby Armor
             if (armorItem == ModItems.RUBY_HELMET ||
                     armorItem == ModItems.RUBY_CHESTPLATE ||
                     armorItem == ModItems.RUBY_LEGGINGS ||
@@ -317,14 +330,7 @@ public class ArmorEffectsHandler {
         return false;
     }
 
-    private static boolean hasInfiniteEffect(PlayerEntity player, net.minecraft.registry.entry.RegistryEntry<net.minecraft.entity.effect.StatusEffect> effect) {
-        StatusEffectInstance instance = player.getStatusEffect(effect);
-        if (instance == null) return false;
-        return instance.isDurationBelow(0) || instance.getDuration() == StatusEffectInstance.INFINITE;
-    }
-
     public static void clearPlayerState(UUID playerUuid) {
-        previousArmorState.remove(playerUuid);
         previousNegativeImmunityState.remove(playerUuid);
     }
 }

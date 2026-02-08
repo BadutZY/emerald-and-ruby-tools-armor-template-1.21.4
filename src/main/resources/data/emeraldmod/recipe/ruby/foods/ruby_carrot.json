@@ -6,8 +6,12 @@
     "###"
   ],
   "key": {
-    "#": "emeraldmod:ruby",
-    "E": "emeraldmod:emerald_carrot"
+    "#": {
+      "item": "emeraldmod:ruby"
+    },
+    "E": {
+      "item": "emeraldmod:emerald_carrot"
+    }
   },
   "result": {
     "id": "emeraldmod:ruby_carrot",

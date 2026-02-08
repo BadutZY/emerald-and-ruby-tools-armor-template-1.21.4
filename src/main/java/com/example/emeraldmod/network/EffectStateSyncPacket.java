@@ -18,9 +18,9 @@ public record EffectStateSyncPacket(boolean toolsEnabled, boolean armorEnabled) 
             new CustomPayload.Id<>(Identifier.of(EmeraldMod.MOD_ID, "effect_state_sync"));
 
     public static final PacketCodec<RegistryByteBuf, EffectStateSyncPacket> CODEC = PacketCodec.tuple(
-            PacketCodecs.BOOLEAN,
+            PacketCodecs.BOOL,
             EffectStateSyncPacket::toolsEnabled,
-            PacketCodecs.BOOLEAN,
+            PacketCodecs.BOOL,
             EffectStateSyncPacket::armorEnabled,
             EffectStateSyncPacket::new
     );
