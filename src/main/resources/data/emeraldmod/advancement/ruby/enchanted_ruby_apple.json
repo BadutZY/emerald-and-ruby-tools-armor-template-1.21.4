@@ -14,20 +14,18 @@
   },
   "display": {
     "description": "Well Well Well",
-    "frame": "challenge",
     "icon": {
       "count": 1,
       "id": "emeraldmod:enchanted_ruby_apple"
     },
-    "title": "Enchanted Ruby Apple"
+    "title": {
+      "translate": "Enchanted Ruby Apple"
+    }
   },
   "requirements": [
     [
       "enchanted_ruby_apple"
     ]
   ],
-  "rewards": {
-    "experience": 100
-  },
   "sends_telemetry_event": true
 }

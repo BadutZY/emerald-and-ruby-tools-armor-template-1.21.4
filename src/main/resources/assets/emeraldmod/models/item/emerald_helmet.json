@@ -1,5 +1,73 @@
 {
   "parent": "minecraft:item/generated",
+  "overrides": [
+    {
+      "model": "emeraldmod:item/trims/emerald/helmet/quartz_trim",
+      "predicate": {
+        "trim_type": 0.1
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/emerald/helmet/iron_trim",
+      "predicate": {
+        "trim_type": 0.2
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/emerald/helmet/netherite_trim",
+      "predicate": {
+        "trim_type": 0.3
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/emerald/helmet/redstone_trim",
+      "predicate": {
+        "trim_type": 0.4
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/emerald/helmet/copper_trim",
+      "predicate": {
+        "trim_type": 0.5
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/emerald/helmet/gold_trim",
+      "predicate": {
+        "trim_type": 0.6
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/emerald/helmet/emerald_trim",
+      "predicate": {
+        "trim_type": 0.7
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/emerald/helmet/diamond_trim",
+      "predicate": {
+        "trim_type": 0.8
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/emerald/helmet/lapis_trim",
+      "predicate": {
+        "trim_type": 0.9
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/emerald/helmet/amethyst_trim",
+      "predicate": {
+        "trim_type": 1.0
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/emerald/helmet/ruby_trim",
+      "predicate": {
+        "trim_type": 1.1
+      }
+    }
+  ],
   "textures": {
     "layer0": "emeraldmod:item/emerald_helmet"
   }

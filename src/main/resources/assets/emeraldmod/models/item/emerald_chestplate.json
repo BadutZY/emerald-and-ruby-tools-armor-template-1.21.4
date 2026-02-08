@@ -1,5 +1,73 @@
 {
   "parent": "minecraft:item/generated",
+  "overrides": [
+    {
+      "model": "emeraldmod:item/trims/emerald/chestplate/quartz_trim",
+      "predicate": {
+        "trim_type": 0.1
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/emerald/chestplate/iron_trim",
+      "predicate": {
+        "trim_type": 0.2
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/emerald/chestplate/netherite_trim",
+      "predicate": {
+        "trim_type": 0.3
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/emerald/chestplate/redstone_trim",
+      "predicate": {
+        "trim_type": 0.4
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/emerald/chestplate/copper_trim",
+      "predicate": {
+        "trim_type": 0.5
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/emerald/chestplate/gold_trim",
+      "predicate": {
+        "trim_type": 0.6
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/emerald/chestplate/emerald_trim",
+      "predicate": {
+        "trim_type": 0.7
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/emerald/chestplate/diamond_trim",
+      "predicate": {
+        "trim_type": 0.8
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/emerald/chestplate/lapis_trim",
+      "predicate": {
+        "trim_type": 0.9
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/emerald/chestplate/amethyst_trim",
+      "predicate": {
+        "trim_type": 1.0
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/emerald/chestplate/ruby_trim",
+      "predicate": {
+        "trim_type": 1.1
+      }
+    }
+  ],
   "textures": {
     "layer0": "emeraldmod:item/emerald_chestplate"
   }

@@ -1,5 +1,73 @@
 {
   "parent": "minecraft:item/generated",
+  "overrides": [
+    {
+      "model": "emeraldmod:item/trims/basic_ruby/boots/quartz_trim",
+      "predicate": {
+        "trim_type": 0.1
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/basic_ruby/boots/iron_trim",
+      "predicate": {
+        "trim_type": 0.2
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/basic_ruby/boots/netherite_trim",
+      "predicate": {
+        "trim_type": 0.3
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/basic_ruby/boots/redstone_trim",
+      "predicate": {
+        "trim_type": 0.4
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/basic_ruby/boots/copper_trim",
+      "predicate": {
+        "trim_type": 0.5
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/basic_ruby/boots/gold_trim",
+      "predicate": {
+        "trim_type": 0.6
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/basic_ruby/boots/emerald_trim",
+      "predicate": {
+        "trim_type": 0.7
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/basic_ruby/boots/diamond_trim",
+      "predicate": {
+        "trim_type": 0.8
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/basic_ruby/boots/lapis_trim",
+      "predicate": {
+        "trim_type": 0.9
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/basic_ruby/boots/amethyst_trim",
+      "predicate": {
+        "trim_type": 1.0
+      }
+    },
+    {
+      "model": "emeraldmod:item/trims/basic_ruby/boots/ruby_trim",
+      "predicate": {
+        "trim_type": 1.1
+      }
+    }
+  ],
   "textures": {
     "layer0": "emeraldmod:item/basic_ruby_boots"
   }

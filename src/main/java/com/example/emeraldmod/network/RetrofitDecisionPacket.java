@@ -28,8 +28,8 @@ public class RetrofitDecisionPacket {
     public record DecisionPayload(boolean accepted, boolean isForce) implements CustomPayload {
         public static final CustomPayload.Id<DecisionPayload> ID = new CustomPayload.Id<>(DECISION_ID);
         public static final PacketCodec<RegistryByteBuf, DecisionPayload> CODEC = PacketCodec.tuple(
-                PacketCodecs.BOOLEAN, DecisionPayload::accepted,
-                PacketCodecs.BOOLEAN, DecisionPayload::isForce,
+                PacketCodecs.BOOL, DecisionPayload::accepted,
+                PacketCodecs.BOOL, DecisionPayload::isForce,
                 DecisionPayload::new
         );
 

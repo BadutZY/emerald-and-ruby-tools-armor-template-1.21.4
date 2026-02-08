@@ -3,10 +3,7 @@ package com.example.emeraldmod.item;
 import com.example.emeraldmod.EmeraldMod;
 import net.minecraft.item.Item;
 import net.minecraft.item.equipment.ArmorMaterial;
-import net.minecraft.item.equipment.EquipmentAsset;
-import net.minecraft.item.equipment.EquipmentAssetKeys;
 import net.minecraft.item.equipment.EquipmentType;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.sound.SoundEvents;
@@ -14,6 +11,11 @@ import net.minecraft.util.Identifier;
 
 import java.util.Map;
 
+/**
+ * ✅ FIXED: Updated for Minecraft 1.21.3
+ * - Removed EquipmentAsset and EquipmentAssetKeys (deprecated)
+ * - ArmorMaterial now uses Identifier for layers
+ */
 public class RubyArmorMaterial {
     // Set base durability ke 1 karena kita akan override di item class
     // Ini untuk menghindari durability bar yang sangat panjang
@@ -24,18 +26,12 @@ public class RubyArmorMaterial {
             Identifier.of(EmeraldMod.MOD_ID, "ruby_repair_ingredient")
     );
 
-    public static final RegistryKey<EquipmentAsset> RUBY_EQUIPMENT_ASSET = RegistryKey.of(
-            EquipmentAssetKeys.REGISTRY_KEY,
-            Identifier.of(EmeraldMod.MOD_ID, "ruby")
-    );
+    // ✅ FIXED: Use Identifier for armor layers (1.21.3)
+    public static final Identifier RUBY_LAYER = Identifier.of(EmeraldMod.MOD_ID, "ruby");
+    public static final Identifier BASIC_RUBY_LAYER = Identifier.of(EmeraldMod.MOD_ID, "basic_ruby");
 
-    public static final RegistryKey<EquipmentAsset> BASIC_RUBY_EQUIPMENT_ASSET = RegistryKey.of(
-            EquipmentAssetKeys.REGISTRY_KEY,
-            Identifier.of(EmeraldMod.MOD_ID, "basic_ruby")
-    );
-
-    // Ruby Armor Material - SUPERIOR TO EMERALD
-    // ArmorMaterial constructor parameters di 1.21.4:
+    // ✅ FIXED: Ruby Armor Material - SUPERIOR TO EMERALD
+    // ArmorMaterial constructor for 1.21.3:
     // 1. durability multiplier (int)
     // 2. protection values (Map<EquipmentType, Integer>)
     // 3. enchantability (int)
@@ -43,7 +39,7 @@ public class RubyArmorMaterial {
     // 5. toughness (float)
     // 6. knockback resistance (float)
     // 7. repair ingredient tag (TagKey<Item>)
-    // 8. equipment asset (RegistryKey<EquipmentAsset>)
+    // 8. armor layer identifier (Identifier) - NOT RegistryKey!
     public static final ArmorMaterial RUBY_ARMOR_MATERIAL = new ArmorMaterial(
             BASE_DURABILITY,
             Map.of(
@@ -58,24 +54,24 @@ public class RubyArmorMaterial {
             6.0F, // Toughness (lebih tinggi dari Emerald 5.0)
             0.4F, // Knockback resistance (lebih tinggi dari Emerald 0.3)
             RUBY_REPAIR_INGREDIENT,
-            RUBY_EQUIPMENT_ASSET
+            RUBY_LAYER  // ✅ FIXED: Use Identifier directly
     );
 
     public static final ArmorMaterial BASIC_RUBY_ARMOR_MATERIAL = new ArmorMaterial(
             BASE_DURABILITY,
             Map.of(
-                    EquipmentType.BOOTS, 5,        // Lebih tinggi dari Emerald (5)
-                    EquipmentType.LEGGINGS, 8,    // Lebih tinggi dari Emerald (8)
-                    EquipmentType.CHESTPLATE, 10,  // Lebih tinggi dari Emerald (10)
-                    EquipmentType.HELMET, 5,       // Lebih tinggi dari Emerald (5)
-                    EquipmentType.BODY, 22         // Lebih tinggi dari Emerald (22)
+                    EquipmentType.BOOTS, 5,        // Same as Emerald
+                    EquipmentType.LEGGINGS, 8,     // Same as Emerald
+                    EquipmentType.CHESTPLATE, 10,  // Same as Emerald
+                    EquipmentType.HELMET, 5,       // Same as Emerald
+                    EquipmentType.BODY, 22         // Same as Emerald
             ),
-            10, // Enchantability (lebih baik dari Diamond/Emerald 10)
+            10, // Enchantability (same as Diamond/Emerald)
             SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE,
-            5.0F, // Toughness (lebih tinggi dari Emerald 5.0)
-            0.3F, // Knockback resistance (lebih tinggi dari Emerald 0.3)
+            5.0F, // Toughness (same as Emerald)
+            0.3F, // Knockback resistance (same as Emerald)
             RUBY_REPAIR_INGREDIENT,
-            BASIC_RUBY_EQUIPMENT_ASSET
+            BASIC_RUBY_LAYER  // ✅ FIXED: Use Identifier directly
     );
 
     public static void initialize() {
@@ -85,5 +81,6 @@ public class RubyArmorMaterial {
         EmeraldMod.LOGGER.info("  - Toughness: 6.0 (Superior to Emerald 5.0)");
         EmeraldMod.LOGGER.info("  - Knockback Resistance: 0.4 (Superior to Emerald 0.3)");
         EmeraldMod.LOGGER.info("  - Protection: Superior to all existing armors");
+        EmeraldMod.LOGGER.info("  - Armor Layer: " + RUBY_LAYER);
     }
 }
