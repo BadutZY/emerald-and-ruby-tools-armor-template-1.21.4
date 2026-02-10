@@ -1,5 +1,5 @@
 {
-  "parent": "emeraldmod:emerald/emerald_cluster",
+  "parent": "emeraldmod:emerald/you_got_emerald_cluster",
   "criteria": {
     "basic_emerald_tools": {
       "conditions": {

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "#E#",
+    "###"
+  ],
+  "key": {
+    "#": "emeraldmod:ruby",
+    "E": "emeraldmod:emerald_carrot"
+  },
+  "result": {
+    "id": "emeraldmod:ruby_carrot",
+    "count": 1
+  }
+}

@@ -1,11 +1,11 @@
 {
   "parent": "emeraldmod:emerald/emerald_ore",
   "criteria": {
-    "emerald_upgrade_smithing_template": {
+    "emerald_totem": {
       "conditions": {
         "items": [
           {
-            "items": "emeraldmod:emerald_upgrade_smithing_template"
+            "items": "emeraldmod:emerald_totem"
           }
         ]
       },
@@ -13,19 +13,21 @@
     }
   },
   "display": {
-    "description": "You can upgrade now",
+    "description": "More Totem!",
+    "frame": "challenge",
     "icon": {
       "count": 1,
-      "id": "emeraldmod:emerald_upgrade_smithing_template"
+      "id": "emeraldmod:emerald_totem"
     },
-    "title": {
-      "translate": "Emerald Upgrade"
-    }
+    "title": "Emerald Totem!!!"
   },
   "requirements": [
     [
-      "emerald_upgrade_smithing_template"
+      "emerald_totem"
     ]
   ],
+  "rewards": {
+    "experience": 100
+  },
   "sends_telemetry_event": true
 }

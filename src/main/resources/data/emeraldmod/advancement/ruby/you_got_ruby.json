@@ -1,11 +1,11 @@
 {
-  "parent": "emeraldmod:emerald/emerald",
+  "parent": "emeraldmod:ruby/ruby_scrap",
   "criteria": {
-    "emerald": {
+    "ruby": {
       "conditions": {
         "items": [
           {
-            "items": "minecraft:emerald"
+            "items": "emeraldmod:ruby"
           }
         ]
       },
@@ -13,16 +13,16 @@
     }
   },
   "display": {
-    "description": "Keep going",
+    "description": "You can make Ruby Armor now",
     "icon": {
       "count": 1,
-      "id": "minecraft:emerald"
+      "id": "emeraldmod:ruby"
     },
-    "title":  "Emerald"
+    "title":  "You Got Ruby!"
   },
   "requirements": [
     [
-      "emerald"
+      "ruby"
     ]
   ],
   "sends_telemetry_event": true

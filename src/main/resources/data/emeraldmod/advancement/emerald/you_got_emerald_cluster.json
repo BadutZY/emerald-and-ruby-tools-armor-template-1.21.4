@@ -1,11 +1,11 @@
 {
   "parent": "emeraldmod:emerald/emerald",
   "criteria": {
-    "emerald": {
+    "emerald_cluster": {
       "conditions": {
         "items": [
           {
-            "items": "minecraft:emerald"
+            "items": "emeraldmod:emerald_cluster"
           }
         ]
       },
@@ -13,16 +13,18 @@
     }
   },
   "display": {
-    "description": "Keep going",
+    "description": "You can make Basic Emerald Armor now",
     "icon": {
       "count": 1,
-      "id": "minecraft:emerald"
+      "id": "emeraldmod:emerald_cluster"
     },
-    "title":  "Emerald"
+    "title": {
+      "translate": "You Got Emerald Cluster!"
+    }
   },
   "requirements": [
     [
-      "emerald"
+      "emerald_cluster"
     ]
   ],
   "sends_telemetry_event": true

@@ -1,11 +1,11 @@
 {
   "parent": "emeraldmod:ruby/you_got_ruby",
   "criteria": {
-    "ruby_upgrade_smithing_template": {
+    "ruby_totem": {
       "conditions": {
         "items": [
           {
-            "items": "emeraldmod:ruby_upgrade_smithing_template"
+            "items": "emeraldmod:ruby_totem"
           }
         ]
       },
@@ -13,19 +13,21 @@
     }
   },
   "display": {
-    "description": "You can upgrade now",
+    "description": "Yes Sir!",
+    "frame": "challenge",
     "icon": {
-      "count": 1,
-      "id": "emeraldmod:ruby_upgrade_smithing_template"
+      "id": "emeraldmod:ruby_totem",
+      "count": 1
     },
-    "title": {
-      "translate": "Ruby Upgrade"
-    }
+    "title": "Ruby Totem!!!"
   },
   "requirements": [
     [
-      "ruby_upgrade_smithing_template"
+      "ruby_totem"
     ]
   ],
+  "rewards": {
+    "experience": 100
+  },
   "sends_telemetry_event": true
 }

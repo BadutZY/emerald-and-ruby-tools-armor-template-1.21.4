@@ -1,26 +1,29 @@
 {
-  "display": {
-    "icon": {
-      "id": "emeraldmod:ruby_ore",
-      "components": {}
-    },
-    "title": "Ruby Ore",
-    "description": "Keep going",
-    "frame": "task",
-    "show_toast": false,
-    "announce_to_chat": false
-  },
-  "parent": "emeraldmod:ruby/ruby",
+  "parent": "emeraldmod:ruby/ruby_raw",
   "criteria": {
-    "raw_ruby": {
-      "trigger": "minecraft:inventory_changed",
+    "ruby_ingot": {
       "conditions": {
         "items": [
           {
             "items": "emeraldmod:ruby_ingot"
           }
         ]
-      }
+      },
+      "trigger": "minecraft:inventory_changed"
     }
-  }
+  },
+  "display": {
+    "description": "Keep going",
+    "icon": {
+      "count": 1,
+      "id": "emeraldmod:ruby_ingot"
+    },
+    "title":  "Ruby Ingot"
+  },
+  "requirements": [
+    [
+      "ruby_ingot"
+    ]
+  ],
+  "sends_telemetry_event": true
 }
