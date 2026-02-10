@@ -7,6 +7,7 @@
 		"EntityPowderSnowMixin",
 		"FallingBlockEntityMixin",
 		"FallingBlockMixin",
+		"GameRendererMixin",
 		"HorseEntityPowderSnowMixin",
 		"ItemStackMixin",
 		"LivingEntityNegativeImmunityMixin",
@@ -17,6 +18,8 @@
 		"SculkShriekerBlockMixin",
 		"ServerWorldMixin",
 		"TripwireHookBlockMixin"
+	],
+	"client": [
 	],
 	"injectors": {
 		"defaultRequire": 1
