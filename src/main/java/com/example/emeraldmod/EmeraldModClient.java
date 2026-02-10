@@ -115,6 +115,10 @@ public class EmeraldModClient implements ClientModInitializer {
         // Effect sprite loader
         EffectSpriteLoader.register();
         EmeraldMod.LOGGER.info("✅ Effect Sprite Loader");
+
+        // ✅ NEW: Totem animation handler
+        TotemAnimationHandler.register();
+        EmeraldMod.LOGGER.info("✅ Totem Animation Handler");
     }
 
     /**
@@ -177,7 +181,10 @@ public class EmeraldModClient implements ClientModInitializer {
             // ✅ NEW: Reset keybind state ke default
             ModKeybinds.reset();
 
-            EmeraldMod.LOGGER.info("[Client] ✅ All UI hidden, state reset, and keybinds reset to default");
+            // ✅ NEW: Reset totem animation tracking
+            TotemAnimationHandler.reset();
+
+            EmeraldMod.LOGGER.info("[Client] ✅ All UI hidden, state reset, keybinds reset, and totem tracking reset");
         });
 
         // Track setiap tick untuk detect world changes
@@ -265,6 +272,7 @@ public class EmeraldModClient implements ClientModInitializer {
         EmeraldMod.LOGGER.info("  - Retrofit Reminder Widget");
         EmeraldMod.LOGGER.info("  - Status Tooltips");
         EmeraldMod.LOGGER.info("  - Per-World UI Tracking ✨");
+        EmeraldMod.LOGGER.info("  - Custom Totem Pop Animations ✨");
         EmeraldMod.LOGGER.info("");
 
         // ✅ NEW: State sync info
